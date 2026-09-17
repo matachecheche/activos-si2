@@ -1,0 +1,50 @@
+REQUISITOS PARA CORRER ESTE PROYECTO
+Sistema de Activos Fijos y Presupuestos - Grupo 7 (UAGRM - FICCT)
+Snapshot generado: 2026-09-17 13:59
+
+Software necesario (instalar antes de correr restaurar_proyecto_actual.bat
+o, al menos, antes de iniciar backend/frontend):
+
+1) Java 17 o superior (JDK)
+   Descarga: https://adoptium.net/
+   Alternativa: winget install EclipseAdoptium.Temurin.17.JDK
+
+2) Maven 3.8 o superior
+   Descarga: https://maven.apache.org/download.cgi
+   Alternativa: winget install Apache.Maven
+
+3) Node.js 18 o superior (incluye npm)
+   Descarga: https://nodejs.org/
+   Alternativa: winget install OpenJS.NodeJS.LTS
+
+4) PostgreSQL 14 o superior (con el cliente psql en el PATH)
+   Descarga: https://www.postgresql.org/download/windows/
+   Importante: durante la instalacion, agregar la carpeta "bin" de
+   PostgreSQL al PATH del sistema para que el comando 'psql' funcione.
+
+5) Git (opcional, solo si vas a versionar el proyecto)
+   Descarga: https://git-scm.com/download/win
+
+--------------------------------------------------------
+Herramientas detectadas en el equipo donde se genero este
+paquete (referencia, no necesariamente las que tenes vos):
+
+  Java : no se pudo determinar la version
+  Maven: Apache Maven 3.9.16 (2bdd9fddda4b155ebf8000e807eb73fd829a51d5)
+  Node : v26.3.0
+  npm  : 11.16.0
+  psql : psql (PostgreSQL) 18.4
+  Git  : git version 2.54.0.windows.1
+
+--------------------------------------------------------
+Como usar este paquete en una maquina nueva:
+
+  1) Copia restaurar_proyecto_actual.bat y restaurar_proyecto_actual.ps1
+     a una carpeta vacia.
+  2) Doble clic en restaurar_proyecto_actual.bat
+  3) El script te va a avisar que falta instalar (si algo falta),
+     va a reconstruir backend\, frontend\ y database\ tal como estaban
+     al momento de la captura, y te va a ofrecer instalar dependencias
+     del frontend y configurar la base de datos.
+  4) Al final: cd backend ; mvn spring-boot:run
+              cd frontend ; npm start

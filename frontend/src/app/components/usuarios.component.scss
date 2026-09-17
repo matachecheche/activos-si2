@@ -1,0 +1,29 @@
+.usuarios-page p { margin: 5px 0 0; color: #6b7280; font-size: 14px; }
+.secondary-link { color: #2563eb; font-size: 13px; text-decoration: none; margin-left: 16px; }
+.table-card { padding: 0; overflow-x: auto; }
+.table-card table { min-width: 760px; }
+.user-name { font-weight: 600; color: #1f2937; }
+.badge-role { background: #dbeafe; color: #1e40af; }
+.badge-active { background: #dcfce7; color: #166534; }
+.badge-inactive { background: #fee2e2; color: #991b1b; }
+.row-actions { text-align: right; white-space: nowrap; }
+.row-actions button { border: 0; background: transparent; color: #2563eb; cursor: pointer; margin-left: 12px; font-size: 14px; }
+.row-actions .danger { color: #dc2626; }
+.alert-error { background: #fef2f2; border: 1px solid #fecaca; color: #991b1b; border-radius: 6px; padding: 11px 14px; margin-bottom: 16px; font-size: 14px; }
+.modal-backdrop { position: fixed; inset: 0; z-index: 10; display: flex; align-items: center; justify-content: center; padding: 16px; background: rgba(31, 42, 55, .55); }
+.user-modal { width: min(100%, 540px); margin: 0; }
+.modal-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 20px; }
+.modal-header h2 { margin: 4px 0 0; }
+.eyebrow { color: #2563eb; font-size: 11px; font-weight: 700; letter-spacing: .08em; }
+.close-button { border: 0; background: transparent; color: #6b7280; font-size: 26px; cursor: pointer; line-height: 1; }
+.user-modal .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px 16px; }
+.user-modal .field { display: flex; flex-direction: column; gap: 5px; }
+.user-modal .field label { color: #6b7280; font-size: 13px; }
+.user-modal .field label span { color: #9ca3af; }
+.user-modal input, .user-modal select { box-sizing: border-box; width: 100%; padding: 9px 10px; border: 1px solid #d1d5db; border-radius: 6px; font: inherit; }
+.user-modal input:focus, .user-modal select:focus { outline: 2px solid #bfdbfe; border-color: #2563eb; }
+.user-modal small { color: #6b7280; font-size: 12px; }
+.user-modal .span-2 { grid-column: span 2; }
+.modal-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 24px; }
+.btn-secondary { padding: 8px 16px; border: 1px solid #d1d5db; border-radius: 6px; background: #fff; color: #4b5563; cursor: pointer; }
+@media (max-width: 640px) { .user-modal .form-grid { grid-template-columns: 1fr; } .user-modal .span-2 { grid-column: auto; } }

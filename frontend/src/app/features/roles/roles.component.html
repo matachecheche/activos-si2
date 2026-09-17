@@ -1,0 +1,41 @@
+<div class="page-header">
+  <div><h2>Roles y permisos</h2><p>Define el acceso de cada perfil por módulo.</p></div>
+  <div><button class="btn-secondary" (click)="nuevoPermiso()">+ Nuevo permiso</button> <button class="btn-primary" (click)="nuevo()">+ Nuevo rol</button></div>
+</div>
+<div class="card permissions-card">
+  <div class="section-heading"><div><h3>Catálogo de permisos</h3><p>Cada permiso combina un módulo, una acción y una descripción clara.</p></div><span class="count">{{ permisos.length }} permisos</span></div>
+  <table>
+    <thead><tr><th>Módulo</th><th>Acción</th><th>Descripción</th><th>Acciones</th></tr></thead>
+    <tbody>
+      <tr *ngFor="let permiso of permisos"><td><span class="module-label">{{ permiso.modulo }}</span></td><td class="action-name">{{ permiso.accion }}</td><td>{{ permiso.descripcion }}</td><td class="row-actions"><button (click)="editarPermiso(permiso)">Editar</button><button class="danger" (click)="eliminarPermiso(permiso)">Eliminar</button></td></tr>
+      <tr *ngIf="!permisos.length"><td colspan="4" class="empty">No hay permisos registrados.</td></tr>
+    </tbody>
+  </table>
+</div>
+<div *ngIf="mensaje" class="alert-error">{{ mensaje }}</div>
+<div class="card table-card">
+  <table>
+    <thead><tr><th>Rol</th><th>Permisos asignados</th><th>Acciones</th></tr></thead>
+    <tbody>
+      <tr *ngFor="let rol of roles"><td class="role-name">{{ rol.nombre }}</td><td>{{ rol.permisos.length }} permisos</td><td class="row-actions"><button (click)="editar(rol)">Editar permisos</button></td></tr>
+      <tr *ngIf="!roles.length"><td colspan="3" class="empty">No hay roles registrados.</td></tr>
+    </tbody>
+  </table>
+</div>
+<div *ngIf="permisoModal" class="modal-backdrop" (click)="permisoModal = false">
+  <form class="card permission-modal" (ngSubmit)="guardarPermiso()" (click)="$event.stopPropagation()">
+    <div class="modal-header"><div><span class="eyebrow">CATÁLOGO</span><h2>{{ permisoActual.id ? 'Editar permiso' : 'Nuevo permiso' }}</h2></div><button type="button" class="close-button" (click)="permisoModal = false">&times;</button></div>
+    <div class="field"><label>Módulo</label><input name="modulo" [(ngModel)]="permisoActual.modulo" placeholder="Ej.: ACTIVOS" maxlength="50" required><small>Nombre del área funcional que se protegerá.</small></div>
+    <div class="field"><label>Acción</label><input name="accion" [(ngModel)]="permisoActual.accion" placeholder="Ej.: EDITAR" maxlength="20" required><small>Acción concreta permitida para ese módulo.</small></div>
+    <div class="field"><label>Descripción</label><textarea name="descripcion" [(ngModel)]="permisoActual.descripcion" placeholder="Ej.: Modificar datos de activos" maxlength="160" required></textarea></div>
+    <div class="modal-actions"><button type="button" class="btn-secondary" (click)="permisoModal = false">Cancelar</button><button type="submit" class="btn-primary">Guardar permiso</button></div>
+  </form>
+</div>
+<div *ngIf="modalAbierto" class="modal-backdrop" (click)="modalAbierto = false">
+  <form class="card role-modal" (ngSubmit)="guardar()" (click)="$event.stopPropagation()">
+    <div class="modal-header"><div><span class="eyebrow">SEGURIDAD</span><h2>{{ rolActual.id ? 'Editar rol' : 'Nuevo rol' }}</h2></div><button type="button" class="close-button" (click)="modalAbierto = false">&times;</button></div>
+    <div class="field"><label>Nombre del rol</label><input name="nombre" [(ngModel)]="rolActual.nombre" required maxlength="50"></div>
+    <div class="permission-grid"><div *ngFor="let modulo of modulos()" class="permission-group"><strong>{{ modulo }}</strong><label *ngFor="let permiso of porModulo(modulo)"><input type="checkbox" [checked]="tienePermiso(permiso)" (change)="alternar(permiso)"> {{ permiso.accion }}</label></div></div>
+    <div class="modal-actions"><button type="button" class="btn-secondary" (click)="modalAbierto = false">Cancelar</button><button type="submit" class="btn-primary">Guardar rol</button></div>
+  </form>
+</div>

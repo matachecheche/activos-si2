@@ -1,0 +1,65 @@
+<div class="page-header">
+  <h2>Activos fijos</h2>
+  <button class="btn-primary" (click)="mostrarFormulario = !mostrarFormulario">
+    {{ mostrarFormulario ? 'Cancelar' : '+ Nuevo activo' }}
+  </button>
+</div>
+
+<form *ngIf="mostrarFormulario" (ngSubmit)="registrar()" class="card form-grid">
+  <div class="field">
+    <label>Nombre</label>
+    <input placeholder="Nombre del activo" name="nombre" [(ngModel)]="nuevo.nombre" required />
+  </div>
+
+  <div class="field">
+    <label>Categoria</label>
+    <select name="categoriaId" [(ngModel)]="nuevo.categoriaId" required>
+      <option *ngFor="let c of categorias" [value]="c.id">{{ c.nombre }}</option>
+    </select>
+  </div>
+
+  <div class="field">
+    <label>Valor (Bs)</label>
+    <input placeholder="0.00" type="number" step="0.01" name="valor" [(ngModel)]="nuevo.valor" required />
+  </div>
+
+  <div class="field">
+    <label>Fecha de adquisicion</label>
+    <input type="date" name="fechaAdquisicion" [(ngModel)]="nuevo.fechaAdquisicion" required />
+  </div>
+
+  <div class="field span-2">
+    <label>Proveedor</label>
+    <input placeholder="Proveedor (opcional)" name="proveedor" [(ngModel)]="nuevo.proveedor" />
+  </div>
+
+  <div class="field span-2 actions">
+    <button type="submit" class="btn-primary">Guardar activo</button>
+  </div>
+</form>
+
+<div class="card">
+  <table>
+    <thead>
+      <tr>
+        <th>Codigo</th>
+        <th>Nombre</th>
+        <th>Categoria</th>
+        <th>Valor (Bs)</th>
+        <th>Estado</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let a of activos">
+        <td>{{ a.codigo }}</td>
+        <td>{{ a.nombre }}</td>
+        <td>{{ nombreCategoria(a.categoriaId) }}</td>
+        <td>{{ a.valor | number: '1.2-2' }}</td>
+        <td><span [class]="claseEstado(a.estado)">{{ a.estado }}</span></td>
+      </tr>
+      <tr *ngIf="!activos.length">
+        <td colspan="5" class="empty">No hay activos registrados todavia.</td>
+      </tr>
+    </tbody>
+  </table>
+</div>

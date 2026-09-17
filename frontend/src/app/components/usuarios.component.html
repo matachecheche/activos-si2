@@ -1,0 +1,81 @@
+<div class="usuarios-page">
+  <div class="page-header">
+    <div><h2>Administrar usuarios</h2><p>Gestiona las cuentas y permisos del sistema.</p></div>
+    <button *ngIf="authService.hasPermission('USUARIOS_CREAR')" (click)="abrirModalCrear()" class="btn-primary">
+      + Nuevo usuario
+    </button>
+    <a routerLink="/roles" class="secondary-link">Configurar roles y permisos</a>
+  </div>
+
+  <div *ngIf="mensajeError" class="alert-error">
+    {{ mensajeError }}
+  </div>
+
+  <div class="card table-card">
+    <table>
+      <thead class="bg-gray-50 border-b border-gray-200">
+        <tr>
+          <th>ID</th>
+          <th>Nombre</th>
+          <th>Correo</th>
+          <th>Rol</th><th>Estado</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let u of usuarios" class="hover:bg-gray-50">
+          <td>{{ u.id }}</td>
+          <td class="user-name">{{ u.nombre }}</td>
+          <td>{{ u.correo }}</td>
+          <td>
+            <span class="badge badge-role">
+              {{ u.rol }}
+            </span>
+          </td>
+          <td><span class="badge" [class.badge-active]="u.activo !== false" [class.badge-inactive]="u.activo === false">{{ u.activo === false ? 'Inactivo' : 'Activo' }}</span></td>
+          <td class="row-actions">
+            <button *ngIf="authService.hasPermission('USUARIOS_EDITAR')" (click)="abrirModalEditar(u)">Editar</button>
+            <button *ngIf="authService.hasPermission('USUARIOS_ELIMINAR')" class="danger" (click)="eliminarUsuario(u.id)">Eliminar</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Modal -->
+  <div *ngIf="modalAbierto" class="modal-backdrop" (click)="modalAbierto = false">
+    <div class="card user-modal" (click)="$event.stopPropagation()">
+      <div class="modal-header"><div><span class="eyebrow">CUENTAS</span><h2>{{ modoEdicion ? 'Editar usuario' : 'Nuevo usuario' }}</h2></div><button type="button" class="close-button" (click)="modalAbierto = false">&times;</button></div>
+      
+      <div class="form-grid">
+        <div>
+          <label>Nombre completo</label>
+          <input name="nombre" [(ngModel)]="usuarioActual.nombre" type="text" required maxlength="150">
+        </div>
+        <div>
+          <label>Correo electrónico</label>
+          <input name="correo" [(ngModel)]="usuarioActual.correo" type="email" required maxlength="150">
+        </div>
+        <div *ngIf="!modoEdicion">
+          <label>Contraseña</label>
+          <input name="password" [(ngModel)]="usuarioActual.password" type="password" required minlength="8" pattern="(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z\d]).{8,}">
+          <small>8 caracteres: mayúscula, minúscula, número y símbolo.</small>
+        </div>
+        <div>
+          <label>Rol</label>
+          <select name="rol" [(ngModel)]="usuarioActual.rol">
+            <option value="ADMINISTRADOR">ADMINISTRADOR</option>
+            <option value="ENCARGADO_ACTIVOS">ENCARGADO_ACTIVOS</option>
+            <option value="CONTADOR">CONTADOR</option>
+            <option value="RESPONSABLE_FINANCIERO">RESPONSABLE_FINANCIERO</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="modal-actions">
+        <button (click)="modalAbierto = false" class="btn-secondary">Cancelar</button>
+        <button (click)="guardarUsuario()" class="btn-primary">Guardar usuario</button>
+      </div>
+    </div>
+  </div>
+</div>

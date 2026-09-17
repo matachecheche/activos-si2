@@ -1,0 +1,30 @@
+<div class="login-shell">
+  <div class="login-brand"><span class="brand-mark">AF</span><span>Activos Fijos<br><small>Control y presupuesto</small></span></div>
+  <div class="login-container">
+  <span class="eyebrow">ACCESO SEGURO</span>
+  <h2>Bienvenido de nuevo</h2>
+  <p class="login-subtitle">Ingresa con tus credenciales institucionales.</p>
+  <form (ngSubmit)="onSubmit()">
+    <label>Correo institucional</label>
+    <input type="email" name="correo" [(ngModel)]="correo" (ngModelChange)="cambioCorreo($event)" required autocomplete="username" placeholder="nombre@uagrm.edu.bo" />
+
+    <label>Contrasena</label>
+    <input type="password" name="password" [(ngModel)]="password" required autocomplete="current-password" placeholder="Tu contraseña" />
+
+    <p class="error" *ngIf="errorMsg">{{ errorMsg }}</p>
+
+    <button type="submit" [disabled]="bloqueado || enviando">{{ bloqueado ? 'Cuenta bloqueada' : (enviando ? 'Verificando...' : 'Ingresar al sistema') }}</button>
+  </form>
+
+  <div class="usuarios-prueba">
+    <p class="usuarios-prueba__titulo">Usuarios de prueba (Sprint 1)</p>
+    <ul>
+      <li *ngFor="let u of usuariosPrueba">
+        <span class="rol">{{ u.rol }}</span>
+        <span class="credenciales">{{ u.correo }} / {{ u.password }}</span>
+        <button type="button" class="btn-usar" (click)="usarUsuario(u)">Usar</button>
+      </li>
+    </ul>
+  </div>
+  </div>
+</div>

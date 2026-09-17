@@ -1,0 +1,66 @@
+.login-shell { min-height: calc(100vh - 68px); display: grid; place-content: center; gap: 22px; padding: 30px 16px; background: radial-gradient(circle at 20% 20%, #dbeafe 0, transparent 32%), #f6f8fb; }
+.login-brand { display: flex; align-items: center; gap: 12px; color: #172033; font-size: 18px; font-weight: 700; }
+.brand-mark { display: grid; place-items: center; width: 42px; height: 42px; border-radius: 10px; background: #1769e0; color: #fff; font-size: 14px; }
+.login-brand small { color: #6b7890; font-size: 12px; font-weight: 400; }
+.login-container { width: min(100%, 420px); padding: 30px; border: 1px solid #e5eaf1; border-radius: 12px; background: #fff; box-shadow: 0 18px 45px rgba(23, 32, 51, .1); }
+.eyebrow { color: #1769e0; font-size: 11px; font-weight: 800; letter-spacing: .1em; }
+h2 { margin: 8px 0 4px; font-size: 26px; color: #172033; }
+.login-subtitle { margin: 0 0 24px; color: #718096; font-size: 14px; }
+
+form { display: flex; flex-direction: column; gap: 8px; }
+form label { color: #526078; font-size: 13px; font-weight: 600; margin-top: 8px; }
+form input { padding: 11px 12px; border: 1px solid #d6deea; border-radius: 7px; font: inherit; }
+form input:focus { outline: 2px solid #bfdbfe; border-color: #1769e0; }
+form button { margin-top: 10px; padding: 11px; border: 0; border-radius: 7px; background: #1769e0; color: #fff; cursor: pointer; font-weight: 700; }
+form button:disabled { background: #9aa8bb; cursor: not-allowed; }
+
+.error { color: #b42318; background: #fff1f0; border-radius: 6px; padding: 9px; }
+
+.usuarios-prueba {
+  margin-top: 24px;
+  padding-top: 16px;
+  border-top: 1px dashed #ccc;
+  font-size: 13px;
+
+  &__titulo {
+    font-weight: bold;
+    margin-bottom: 8px;
+    color: #555;
+  }
+
+  ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  li {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    background: #f7f7f7;
+    padding: 6px 8px;
+    border-radius: 4px;
+  }
+
+  .rol {
+    font-weight: 600;
+    color: #333;
+  }
+
+  .credenciales {
+    color: #666;
+    flex: 1;
+    text-align: left;
+    margin-left: 8px;
+  }
+
+  .btn-usar {
+    padding: 2px 10px;
+    cursor: pointer;
+  }
+}

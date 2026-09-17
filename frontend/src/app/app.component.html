@@ -1,0 +1,14 @@
+<header class="navbar" *ngIf="authService.isLoggedIn()">
+  <div class="brand"><span class="brand-mark">AF</span><div><strong>Activos Fijos</strong><small>Control y presupuesto</small></div></div>
+  <nav>
+    <a *ngIf="authService.hasPermission('ACTIVOS_LEER')" routerLink="/activos">Activos</a>
+    <a *ngIf="authService.isAdmin()" routerLink="/usuarios">Administrar usuarios</a>
+    <a *ngIf="authService.isAdmin()" routerLink="/roles">Roles y permisos</a>
+    <span class="user-chip"><span class="user-dot"></span>{{ authService.getName() }}</span>
+    <button class="logout-button" (click)="cerrarSesion()">Cerrar sesión</button>
+  </nav>
+</header>
+
+<main class="content">
+  <router-outlet />
+</main>
