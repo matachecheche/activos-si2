@@ -1,0 +1,25 @@
+<div class="login-container">
+  <h2>Iniciar sesion</h2>
+  <form (ngSubmit)="onSubmit()">
+    <label>Correo institucional</label>
+    <input type="email" name="correo" [(ngModel)]="correo" required />
+
+    <label>Contrasena</label>
+    <input type="password" name="password" [(ngModel)]="password" required />
+
+    <p class="error" *ngIf="errorMsg">{{ errorMsg }}</p>
+
+    <button type="submit">Ingresar</button>
+  </form>
+
+  <div class="usuarios-prueba">
+    <p class="usuarios-prueba__titulo">Usuarios de prueba (Sprint 1)</p>
+    <ul>
+      <li *ngFor="let u of usuariosPrueba">
+        <span class="rol">{{ u.rol }}</span>
+        <span class="credenciales">{{ u.correo }} / {{ u.password }}</span>
+        <button type="button" class="btn-usar" (click)="usarUsuario(u)">Usar</button>
+      </li>
+    </ul>
+  </div>
+</div>

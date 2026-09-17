@@ -1,0 +1,11 @@
+<header class="navbar" *ngIf="authService.isLoggedIn()">
+  <div class="navbar-title">Activos Fijos y Presupuestos</div>
+  <nav>
+    <a routerLink="/activos">Activos</a>
+    <button (click)="cerrarSesion()">Cerrar sesion</button>
+  </nav>
+</header>
+
+<main class="content">
+  <router-outlet />
+</main>

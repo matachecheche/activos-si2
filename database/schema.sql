@@ -1,0 +1,73 @@
+-- Sistema de Activos Fijos y Presupuestos - Grupo 7
+-- Modelo conceptual inicial del Sprint 1 (Usuario, Rol, Activo, Categoria, Ubicacion, Asignacion)
+-- Nota: la base de datos "activos_fijos_db" ya se crea desde setup.ps1 antes de correr este script.
+
+CREATE TABLE IF NOT EXISTS rol (
+    id BIGSERIAL PRIMARY KEY,
+    nombre VARCHAR(50) NOT NULL UNIQUE
+);
+
+CREATE TABLE IF NOT EXISTS usuario (
+    id BIGSERIAL PRIMARY KEY,
+    nombre VARCHAR(150) NOT NULL,
+    correo VARCHAR(150) NOT NULL UNIQUE,
+    password VARCHAR(255) NOT NULL,
+    rol_id BIGINT NOT NULL REFERENCES rol(id),
+    intentos_fallidos INT NOT NULL DEFAULT 0,
+    bloqueado_hasta TIMESTAMP NULL,
+    activo BOOLEAN NOT NULL DEFAULT TRUE
+);
+
+CREATE TABLE IF NOT EXISTS categoria (
+    id BIGSERIAL PRIMARY KEY,
+    nombre VARCHAR(100) NOT NULL UNIQUE
+);
+
+CREATE TABLE IF NOT EXISTS ubicacion (
+    id BIGSERIAL PRIMARY KEY,
+    nombre VARCHAR(150) NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS activo (
+    id BIGSERIAL PRIMARY KEY,
+    codigo VARCHAR(30) NOT NULL UNIQUE,
+    nombre VARCHAR(150) NOT NULL,
+    categoria_id BIGINT NOT NULL REFERENCES categoria(id),
+    valor NUMERIC(14,2) NOT NULL CHECK (valor > 0),
+    fecha_adquisicion DATE NOT NULL,
+    proveedor VARCHAR(150),
+    observaciones TEXT,
+    estado VARCHAR(20) NOT NULL DEFAULT 'SIN_ASIGNAR',
+    responsable_id BIGINT REFERENCES usuario(id),
+    ubicacion_id BIGINT REFERENCES ubicacion(id)
+);
+
+CREATE TABLE IF NOT EXISTS asignacion (
+    id BIGSERIAL PRIMARY KEY,
+    activo_id BIGINT NOT NULL REFERENCES activo(id),
+    responsable_id BIGINT NOT NULL REFERENCES usuario(id),
+    ubicacion_id BIGINT NOT NULL REFERENCES ubicacion(id),
+    fecha_asignacion TIMESTAMP NOT NULL,
+    activa BOOLEAN NOT NULL DEFAULT TRUE
+);
+
+-- Datos semilla
+INSERT INTO rol (nombre) VALUES
+    ('ADMINISTRADOR'),
+    ('ENCARGADO_ACTIVOS'),
+    ('CONTADOR'),
+    ('RESPONSABLE_FINANCIERO')
+ON CONFLICT (nombre) DO NOTHING;
+
+INSERT INTO categoria (nombre) VALUES
+    ('Mobiliario'),
+    ('Equipos informaticos'),
+    ('Vehiculos'),
+    ('Maquinaria'),
+    ('Inmuebles')
+ON CONFLICT (nombre) DO NOTHING;
+
+-- Usuario de prueba (password: "admin123" ya cifrado con BCrypt)
+-- Generar el hash real con BCrypt antes de usar en produccion.
+-- INSERT INTO usuario (nombre, correo, password, rol_id)
+-- VALUES ('Administrador', 'admin@uagrm.edu.bo', '<hash_bcrypt>', 1);

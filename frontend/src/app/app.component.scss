@@ -1,0 +1,48 @@
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 24px;
+  background: #1f2a37;
+  color: #fff;
+
+  .navbar-title {
+    font-weight: 600;
+  }
+
+  nav {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+
+    a {
+      color: #fff;
+      text-decoration: none;
+      font-size: 14px;
+
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+
+    button {
+      background: transparent;
+      border: 1px solid #fff;
+      color: #fff;
+      padding: 6px 12px;
+      border-radius: 4px;
+      cursor: pointer;
+
+      &:hover {
+        background: #fff;
+        color: #1f2a37;
+      }
+    }
+  }
+}
+
+.content {
+  max-width: 960px;
+  margin: 24px auto;
+  padding: 0 16px;
+}
