@@ -83,7 +83,7 @@ INSERT INTO categoria (nombre) VALUES
     ('Inmuebles')
 ON CONFLICT (nombre) DO NOTHING;
 
-INSERT INTO permiso (modulo, accion) VALUES
+INSERT INTO permiso (modulo, accion, descripcion) VALUES
     ('ACTIVOS', 'LEER', 'Consultar activos registrados'), ('ACTIVOS', 'CREAR', 'Registrar activos nuevos'), ('ACTIVOS', 'EDITAR', 'Modificar datos de activos'), ('ACTIVOS', 'ELIMINAR', 'Dar de baja activos'),
     ('PRESUPUESTO', 'LEER', 'Consultar presupuestos'), ('PRESUPUESTO', 'CREAR', 'Registrar presupuesto anual'), ('PRESUPUESTO', 'EDITAR', 'Modificar presupuesto'), ('PRESUPUESTO', 'ELIMINAR', 'Eliminar presupuesto'),
     ('REPORTES', 'LEER', 'Consultar reportes y estadisticas'), ('USUARIOS', 'LEER', 'Consultar usuarios'), ('USUARIOS', 'CREAR', 'Crear usuarios'), ('USUARIOS', 'EDITAR', 'Modificar usuarios'), ('USUARIOS', 'ELIMINAR', 'Desactivar usuarios')
