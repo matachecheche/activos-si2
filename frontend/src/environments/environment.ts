@@ -1,4 +1,4 @@
 export const environment = {
   production: false,
-  apiUrl: 'https://activos-backend.onrender.com/api'
+  apiUrl: 'https://activos-si2.onrender.com/api'
 };
