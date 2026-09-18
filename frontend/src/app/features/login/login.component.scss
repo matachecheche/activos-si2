@@ -57,10 +57,27 @@ form button:disabled { background: #9aa8bb; cursor: not-allowed; }
     flex: 1;
     text-align: left;
     margin-left: 8px;
+    min-width: 0;
+    overflow-wrap: anywhere;
   }
 
   .btn-usar {
     padding: 2px 10px;
     cursor: pointer;
+    flex-shrink: 0;
+  }
+}
+
+@media (max-width: 480px) {
+  .login-shell { padding: 20px 12px; }
+  .login-container { padding: 20px; }
+
+  .usuarios-prueba li {
+    flex-wrap: wrap;
+  }
+
+  .usuarios-prueba .credenciales {
+    flex-basis: 100%;
+    margin-left: 0;
   }
 }
