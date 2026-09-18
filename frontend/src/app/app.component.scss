@@ -51,3 +51,9 @@
   padding: 0 24px;
 }
 @media (max-width: 760px) { .navbar { align-items: flex-start; gap: 14px; flex-direction: column; } .navbar nav { flex-wrap: wrap; } .content { margin-top: 24px; padding: 0 14px; } }
+@media (max-width: 480px) {
+  .navbar { padding: 14px 16px; }
+  .navbar nav { gap: 8px; }
+  .navbar nav a, .navbar nav button { padding: 6px 8px; font-size: 13px; }
+  .navbar nav .user-chip { padding-left: 0; border-left: 0; }
+}
