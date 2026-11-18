@@ -1,0 +1,36 @@
+.kpis {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 14px;
+}
+
+.kpi {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  text-align: center;
+
+  &__valor { font-size: 30px; font-weight: 800; color: var(--color-primario, #1769e0); }
+  &__nombre { font-size: 12px; text-transform: uppercase; color: #8490a3; letter-spacing: .04em; }
+}
+
+.badge {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+
+  &--ok { background: #dcfce7; color: #166534; }
+  &--off { background: #fee2e2; color: #991b1b; }
+}
+
+.json {
+  background: #0f172a;
+  color: #dbeafe;
+  border-radius: 8px;
+  padding: 14px;
+  overflow: auto;
+  max-height: 320px;
+  font-size: 12px;
+}

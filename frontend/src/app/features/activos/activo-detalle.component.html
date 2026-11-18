@@ -1,0 +1,186 @@
+<a routerLink="/activos" class="volver">&larr; Volver a activos</a>
+
+<div *ngIf="error" class="alert-error">{{ error }}</div>
+<div *ngIf="ok" class="alert-ok">{{ ok }}</div>
+
+<ng-container *ngIf="activo">
+  <div class="page-header">
+    <div>
+      <span class="eyebrow mono">{{ activo.codigo }}</span>
+      <h2>{{ activo.nombre }}</h2>
+      <p class="sub">{{ activo.categoriaNombre }} · <span [class]="claseBadge(activo.estado)">{{ activo.estadoEtiqueta }}</span></p>
+    </div>
+    <button *ngIf="puedeEditar && activo.editable" class="btn-secondary" (click)="editando = true">Editar datos</button>
+  </div>
+
+  <div class="tabs">
+    <button [class.activa]="pestana === 'datos'" (click)="seleccionar('datos')">Datos</button>
+    <button [class.activa]="pestana === 'asignacion'" (click)="seleccionar('asignacion')">Asignación</button>
+    <button [class.activa]="pestana === 'estado'" (click)="seleccionar('estado')">Estado</button>
+    <button [class.activa]="pestana === 'qr'" (click)="seleccionar('qr')">Etiqueta QR</button>
+    <button *ngIf="veDepreciacion" [class.activa]="pestana === 'depreciacion'" (click)="seleccionar('depreciacion')">Depreciación</button>
+    <button *ngIf="veMantenimientos" [class.activa]="pestana === 'mantenimiento'" (click)="seleccionar('mantenimiento')">Mantenimientos</button>
+  </div>
+
+  <!-- DATOS -->
+  <div class="card" *ngIf="pestana === 'datos'">
+    <dl class="dl">
+      <div><dt>Código</dt><dd class="mono">{{ activo.codigo }}</dd></div>
+      <div><dt>Categoría</dt><dd>{{ activo.categoriaNombre }}</dd></div>
+      <div><dt>Valor de adquisición</dt><dd>Bs {{ activo.valor | number: '1.2-2' }}</dd></div>
+      <div><dt>Valor residual</dt><dd>{{ activo.valorResidual != null ? 'Bs ' + (activo.valorResidual | number: '1.2-2') : '-' }}</dd></div>
+      <div><dt>Fecha de adquisición</dt><dd>{{ activo.fechaAdquisicion | date: 'dd/MM/yyyy' }}</dd></div>
+      <div><dt>Inicio de depreciación</dt><dd>{{ activo.fechaInicioDepreciacion ? (activo.fechaInicioDepreciacion | date: 'dd/MM/yyyy') : '-' }}</dd></div>
+      <div><dt>Proveedor</dt><dd>{{ activo.proveedor || '-' }}</dd></div>
+      <div><dt>Estado</dt><dd><span [class]="claseBadge(activo.estado)">{{ activo.estadoEtiqueta }}</span></dd></div>
+      <div><dt>Responsable actual</dt><dd>{{ activo.responsable?.nombre || '-' }}</dd></div>
+      <div><dt>Ubicación actual</dt><dd>{{ activo.ubicacion?.nombre || '-' }}</dd></div>
+      <div *ngIf="activo.fechaBaja"><dt>Fecha de baja</dt><dd>{{ activo.fechaBaja | date: 'dd/MM/yyyy' }}</dd></div>
+      <div style="grid-column: 1 / -1"><dt>Observaciones</dt><dd>{{ activo.observaciones || '-' }}</dd></div>
+    </dl>
+    <p class="muted" *ngIf="activo.editable === false" style="margin-top:14px">Este activo ya tiene movimientos asociados (asignaciones, estados, mantenimientos o ejecuciones), por eso sus datos no pueden editarse.</p>
+  </div>
+
+  <!-- ASIGNACION -->
+  <div class="stack" *ngIf="pestana === 'asignacion'">
+    <div class="card">
+      <h3>Asignación actual</h3>
+      <p class="sub">Responsable: <strong>{{ activo.responsable?.nombre || 'sin asignar' }}</strong> · Ubicación: <strong>{{ activo.ubicacion?.nombre || 'sin asignar' }}</strong></p>
+      <div *ngIf="puedeAsignar" class="form-grid2" style="margin-top:14px">
+        <div class="field"><label>Responsable</label>
+          <select name="responsable" [(ngModel)]="responsableId">
+            <option [ngValue]="null">Seleccione...</option>
+            <option *ngFor="let r of responsables" [ngValue]="r.id">{{ r.nombre }} ({{ r.rol }})</option>
+          </select></div>
+        <div class="field"><label>Ubicación</label>
+          <select name="ubicacion" [(ngModel)]="ubicacionId">
+            <option [ngValue]="null">Seleccione...</option>
+            <option *ngFor="let u of ubicaciones" [ngValue]="u.id">{{ u.nombre }}{{ u.areaNombre ? ' — ' + u.areaNombre : '' }}</option>
+          </select></div>
+        <div class="field" *ngIf="puedeCrear"><label>¿Falta la ubicación?</label>
+          <div class="row"><input name="nuevaUbicacion" [(ngModel)]="nuevaUbicacion" placeholder="Nueva ubicación" maxlength="150" style="flex:1">
+          <button type="button" class="btn-secondary" (click)="crearUbicacion()">Agregar</button></div></div>
+        <div class="field span-2"><div class="row"><button class="btn-primary" (click)="asignar()">{{ activo.responsable ? 'Reasignar activo' : 'Asignar activo' }}</button>
+          <span class="muted">Al asignar, el estado pasa a «En uso» y la asignación anterior queda en el historial.</span></div></div>
+      </div>
+      <p *ngIf="!puedeAsignar && motivoSinAsignar" class="alert-warn" style="margin-top:12px">{{ motivoSinAsignar }}</p>
+    </div>
+    <div class="card table-wrap">
+      <h3>Historial de asignaciones</h3>
+      <table class="data">
+        <thead><tr><th>Fecha</th><th>Responsable</th><th>Ubicación</th><th>Vigente</th></tr></thead>
+        <tbody>
+          <tr *ngFor="let h of historialAsignaciones">
+            <td>{{ h.fechaAsignacion | date: 'dd/MM/yyyy HH:mm' }}</td><td>{{ h.responsable.nombre }}</td><td>{{ h.ubicacion.nombre }}</td>
+            <td><span class="badge" [class.badge-en-uso]="h.activa">{{ h.activa ? 'Sí' : 'No' }}</span></td>
+          </tr>
+          <tr *ngIf="!historialAsignaciones.length"><td colspan="4" class="empty">Sin asignaciones registradas.</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ESTADO -->
+  <div class="stack" *ngIf="pestana === 'estado'">
+    <div class="card">
+      <h3>Control de estado</h3>
+      <p class="sub">Estado actual: <span [class]="claseBadge(activo.estado)">{{ activo.estadoEtiqueta }}</span></p>
+      <p *ngIf="ayudaEstado" class="muted" style="margin-top:6px">{{ ayudaEstado }}</p>
+      <div *ngIf="puedeEditar && opcionesEstado.length" class="form-grid2" style="margin-top:14px">
+        <div class="field"><label>Nuevo estado</label>
+          <select name="nuevoEstado" [(ngModel)]="nuevoEstado">
+            <option value="">Seleccione...</option>
+            <option *ngFor="let e of opcionesEstado" [value]="e">{{ etiqueta(e) }}</option>
+          </select></div>
+        <div class="field"><label>Motivo *</label>
+          <input name="motivo" [(ngModel)]="motivo" maxlength="255" placeholder="Obligatorio para registrar el cambio"></div>
+        <div class="field span-2"><div><button class="btn-primary" (click)="cambiarEstado()">Cambiar estado</button></div></div>
+      </div>
+      <p *ngIf="puedeEditar && !opcionesEstado.length" class="alert-warn" style="margin-top:12px">No hay cambios manuales disponibles para este estado.</p>
+    </div>
+    <div class="card table-wrap">
+      <h3>Historial de estados</h3>
+      <table class="data">
+        <thead><tr><th>Fecha</th><th>Cambio</th><th>Motivo</th><th>Usuario</th></tr></thead>
+        <tbody>
+          <tr *ngFor="let h of historialEstados">
+            <td>{{ h.fecha | date: 'dd/MM/yyyy HH:mm' }}</td>
+            <td><span *ngIf="h.estadoAnterior" [class]="claseBadge(h.estadoAnterior)">{{ h.estadoAnteriorEtiqueta }}</span><span *ngIf="h.estadoAnterior"> &rarr; </span><span [class]="claseBadge(h.estadoNuevo)">{{ h.estadoNuevoEtiqueta }}</span></td>
+            <td>{{ h.motivo }}</td><td>{{ h.usuario }}</td>
+          </tr>
+          <tr *ngIf="!historialEstados.length"><td colspan="4" class="empty">El activo no registra cambios de estado.</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- QR -->
+  <div class="card qr-card" *ngIf="pestana === 'qr'">
+    <div class="qr-vista">
+      <img *ngIf="qrUrl" [src]="qrUrl" alt="Código QR de {{ activo.codigo }}" width="240" height="240">
+      <p *ngIf="cargandoQr" class="muted">Generando QR...</p>
+    </div>
+    <div class="qr-info">
+      <h3>Etiqueta del activo</h3>
+      <p class="sub">El QR codifica el código único <strong class="mono">{{ activo.codigo }}</strong>. Al escanearlo o escribirlo en el buscador de activos se abre esta ficha.</p>
+      <div class="row" style="margin-top:14px">
+        <button class="btn-primary" (click)="descargarPng()" [disabled]="!qrUrl">Descargar PNG</button>
+        <button class="btn-secondary" (click)="descargarPdf()">Descargar PDF</button>
+        <button class="btn-secondary" (click)="imprimir()" [disabled]="!qrUrl">Imprimir</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- DEPRECIACION -->
+  <div class="stack" *ngIf="pestana === 'depreciacion' && veDepreciacion">
+    <ng-container *ngIf="depreciacion as d">
+      <div *ngIf="!d.resumen.depreciable" class="alert-warn">{{ d.resumen.observacion }}</div>
+      <div class="kpis">
+        <div class="kpi"><span>Valor de adquisición</span><strong>Bs {{ d.resumen.valorAdquisicion | number: '1.2-2' }}</strong></div>
+        <div class="kpi"><span>Valor residual</span><strong>Bs {{ d.resumen.valorResidual | number: '1.2-2' }}</strong></div>
+        <div class="kpi" *ngIf="d.resumen.depreciable"><span>Vida útil</span><strong>{{ d.resumen.vidaUtilAnios }} años ({{ d.resumen.vidaUtilMeses }} meses)</strong></div>
+        <div class="kpi" *ngIf="d.resumen.depreciable"><span>Depreciación mensual</span><strong>Bs {{ d.resumen.depreciacionMensual | number: '1.2-2' }}</strong></div>
+        <div class="kpi"><span>Depreciación acumulada</span><strong>Bs {{ d.resumen.depreciacionAcumulada | number: '1.2-2' }}</strong></div>
+        <div class="kpi bien"><span>Valor en libros</span><strong>Bs {{ d.resumen.valorEnLibros | number: '1.2-2' }}</strong></div>
+      </div>
+      <div class="card table-wrap" *ngIf="d.resumen.depreciable">
+        <div class="row"><h3>Tabla de depreciación (línea recta)</h3><span class="spacer"></span>
+          <button *ngIf="auth.hasPermission('DEPRECIACION_CREAR')" class="btn-secondary" (click)="calcularDepreciacion()" [disabled]="calculando">{{ calculando ? 'Calculando...' : 'Calcular periodos pendientes' }}</button></div>
+        <div class="scroll-tabla">
+          <table class="data">
+            <thead><tr><th>Periodo</th><th class="num">Depreciación del periodo</th><th class="num">Depreciación acumulada</th><th class="num">Valor en libros</th></tr></thead>
+            <tbody>
+              <tr *ngFor="let f of d.filas"><td class="mono">{{ f.periodo }}</td><td class="num">{{ f.depreciacionPeriodo | number: '1.2-2' }}</td><td class="num">{{ f.depreciacionAcumulada | number: '1.2-2' }}</td><td class="num">{{ f.valorEnLibros | number: '1.2-2' }}</td></tr>
+              <tr *ngIf="!d.filas.length"><td colspan="4" class="empty">Todavía no hay periodos calculados.</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </ng-container>
+  </div>
+
+  <!-- MANTENIMIENTOS -->
+  <div class="stack" *ngIf="pestana === 'mantenimiento' && veMantenimientos">
+    <div class="kpis" *ngIf="mantenimientos">
+      <div class="kpi"><span>Mantenimientos</span><strong>{{ mantenimientos.items.length }}</strong></div>
+      <div class="kpi alerta"><span>Costo total acumulado</span><strong>Bs {{ mantenimientos.costoTotal | number: '1.2-2' }}</strong></div>
+    </div>
+    <div class="card table-wrap">
+      <div class="row"><h3>Historial de mantenimientos</h3><span class="spacer"></span>
+        <a *ngIf="auth.hasPermission('MANTENIMIENTO_CREAR')" class="btn-secondary enlace-boton" routerLink="/mantenimientos" [queryParams]="{ activoId: activo.id }">+ Programar mantenimiento</a></div>
+      <table class="data">
+        <thead><tr><th>Tipo</th><th>Estado</th><th>Programado</th><th>Realizado</th><th>Técnico</th><th class="num">Costo (Bs)</th><th>Descripción</th></tr></thead>
+        <tbody>
+          <tr *ngFor="let m of mantenimientos?.items">
+            <td><span [class]="claseBadge(m.tipo)">{{ etiqueta(m.tipo) }}</span></td><td><span [class]="claseBadge(m.estado)">{{ etiqueta(m.estado) }}</span></td>
+            <td>{{ m.fechaProgramada | date: 'dd/MM/yyyy' }}</td><td>{{ m.fechaRealizada ? (m.fechaRealizada | date: 'dd/MM/yyyy') : '-' }}</td>
+            <td>{{ m.tecnico || '-' }}</td><td class="num">{{ m.costo != null ? (m.costo | number: '1.2-2') : '-' }}</td><td>{{ m.descripcion || '-' }}</td>
+          </tr>
+          <tr *ngIf="mantenimientos && !mantenimientos.items.length"><td colspan="7" class="empty">El activo no tiene mantenimientos registrados.</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <app-activo-form *ngIf="editando" [activo]="activo" [categorias]="categorias" (guardado)="alGuardar($event)" (cerrar)="editando = false" />
+</ng-container>

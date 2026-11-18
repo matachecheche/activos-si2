@@ -1,0 +1,106 @@
+<ng-container *ngIf="authService.isLoggedIn(); else publico">
+  <div class="shell" [class.shell--lateral]="esLateral">
+    <!-- Ronda 11: motivo real del servidor al cambiar de empresa -->
+    <div class="empresa-error" *ngIf="mensajeError">{{ mensajeError }}</div>
+
+    <header class="navbar" *ngIf="!esLateral">
+      <div class="brand">
+        <img *ngIf="tema.obtener()?.tieneLogo" [src]="logoUrl" class="brand-logo" alt="logo" />
+        <span class="brand-mark" *ngIf="!tema.obtener()?.tieneLogo">AF</span>
+        <div>
+          <strong>Activos Fijos</strong>
+          <small>{{ authService.getEmpresaNombre() || 'Control y presupuesto' }}</small>
+        </div>
+      </div>
+      <nav>
+        <a *ngFor="let item of itemsMenu" [routerLink]="item.ruta" routerLinkActive="activo">{{ etiqueta(item) }}</a>
+
+      <!-- Sprint 3 / multiempresa: selector de empresa y alta de empresas -->
+      <button class="empresa-btn empresa-btn--nueva" (click)="agregarEmpresa()"
+              title="Registrar otra empresa en tu cuenta">
+        <span class="empresa-icon">+</span>
+        <span class="empresa-nombre">Agregar empresa</span>
+      </button>
+      <div class="empresa-selector" *ngIf="empresas.length > 0">
+        <button class="empresa-btn" (click)="selectorAbierto = !selectorAbierto" title="Cambiar de empresa">
+          <span class="empresa-icon">▤</span>
+          <span class="empresa-nombre">{{ authService.getEmpresaNombre() || 'Empresa' }}</span>
+          <span class="empresa-caret">▾</span>
+        </button>
+        <div class="empresa-menu" *ngIf="selectorAbierto">
+          <p class="empresa-menu__titulo">Mis empresas</p>
+          <button *ngFor="let e of empresas" class="empresa-item" [class.activo]="e.actual"
+                  (click)="cambiarEmpresa(e)" [disabled]="cambiando">
+            <strong>{{ e.empresaNombre }}</strong>
+            <small>{{ e.rol }}<span *ngIf="e.actual"> · actual</span></small>
+          </button>
+          <button class="empresa-item empresa-item--nueva" (click)="agregarEmpresa()">
+            <strong>+ Agregar empresa</strong>
+            <small>Registra otra empresa a tu cuenta</small>
+          </button>
+        </div>
+      </div>
+        <span class="user-chip"><span class="user-dot"></span>{{ authService.getName() }} · {{ authService.getNivel() }}</span>
+        <button class="lang-button" (click)="cambiarIdioma()">{{ idioma === 'es' ? 'EN' : 'ES' }}</button>
+        <button class="logout-button" (click)="cerrarSesion()">{{ ('comun.salir' | t) }}</button>
+      </nav>
+    </header>
+
+    <div class="empresa-error empresa-error--lateral" *ngIf="mensajeError">{{ mensajeError }}</div>
+
+    <aside class="sidebar" *ngIf="esLateral">
+      <div class="sidebar__brand">
+        <img *ngIf="tema.obtener()?.tieneLogo" [src]="logoUrl" class="brand-logo" alt="logo" />
+        <span class="brand-mark" *ngIf="!tema.obtener()?.tieneLogo">AF</span>
+        <div>
+          <strong>Activos Fijos</strong>
+          <small>{{ authService.getEmpresaNombre() }}</small>
+        </div>
+      </div>
+      <nav class="sidebar__nav">
+        <a *ngFor="let item of itemsMenu" [routerLink]="item.ruta" routerLinkActive="activo">{{ etiqueta(item) }}</a>
+      </nav>
+      <div class="sidebar__pie">
+        <button class="empresa-btn empresa-btn--nueva empresa-btn--bloque" (click)="agregarEmpresa()"
+                title="Registrar otra empresa en tu cuenta">
+          <span class="empresa-icon">+</span>
+          <span class="empresa-nombre">Agregar empresa</span>
+        </button>
+        <div class="empresa-selector empresa-selector--sidebar" *ngIf="empresas.length > 0">
+          <button class="empresa-btn" (click)="selectorAbierto = !selectorAbierto" title="Cambiar de empresa">
+            <span class="empresa-icon">▤</span>
+            <span class="empresa-nombre">{{ authService.getEmpresaNombre() || 'Empresa' }}</span>
+            <span class="empresa-caret">▾</span>
+          </button>
+          <div class="empresa-menu" *ngIf="selectorAbierto">
+            <p class="empresa-menu__titulo">Mis empresas</p>
+            <button *ngFor="let e of empresas" class="empresa-item" [class.activo]="e.actual"
+                    (click)="cambiarEmpresa(e)" [disabled]="cambiando">
+              <strong>{{ e.empresaNombre }}</strong>
+              <small>{{ e.rol }}<span *ngIf="e.actual"> · actual</span></small>
+            </button>
+            <button class="empresa-item empresa-item--nueva" (click)="agregarEmpresa()">
+              <strong>+ Agregar empresa</strong>
+              <small>Registra otra empresa a tu cuenta</small>
+            </button>
+          </div>
+        </div>
+        <span class="user-chip"><span class="user-dot"></span>{{ authService.getName() }}</span>
+        <div class="row">
+          <button class="lang-button" (click)="cambiarIdioma()">{{ idioma === 'es' ? 'EN' : 'ES' }}</button>
+          <button class="logout-button" (click)="cerrarSesion()">{{ ('comun.salir' | t) }}</button>
+        </div>
+      </div>
+    </aside>
+
+    <main class="content" [class.content--lateral]="esLateral">
+      <router-outlet />
+    </main>
+  </div>
+</ng-container>
+
+<ng-template #publico>
+  <main class="content content--publico">
+    <router-outlet />
+  </main>
+</ng-template>

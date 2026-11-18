@@ -1,0 +1,67 @@
+<div class="stack">
+  <div class="page-header">
+    <div>
+      <h2>Administración de la plataforma</h2>
+      <p class="sub">Gestión centralizada de empresas (tenants) y métricas del SaaS.</p>
+    </div>
+    <button class="btn-secondary" (click)="cargar()">Actualizar</button>
+  </div>
+
+  <div class="alert-error" *ngIf="errorMsg">{{ errorMsg }}</div>
+
+  <section class="kpis">
+    <article class="kpi card" *ngFor="let entrada of entradasMetrica()">
+      <span class="kpi__valor">{{ entrada[1] }}</span>
+      <span class="kpi__nombre">{{ entrada[0] }}</span>
+    </article>
+  </section>
+
+  <div class="card">
+    <div class="row">
+      <h3>Empresas registradas</h3>
+      <span class="spacer"></span>
+      <input class="input" placeholder="Buscar por nombre, NIT o correo..." [(ngModel)]="filtro" />
+    </div>
+
+    <p class="empty" *ngIf="cargando">Cargando...</p>
+    <div class="table-wrap">
+      <table class="data">
+        <thead>
+          <tr>
+            <th>ID</th><th>Nombre</th><th>NIT</th><th>Contacto</th><th>Registro</th><th>Estado</th><th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let e of empresasFiltradas">
+            <td>{{ e.id }}</td>
+            <td>{{ e.nombre }}</td>
+            <td class="mono">{{ e.nit }}</td>
+            <td>{{ e.correoContacto }}</td>
+            <td>{{ e.fechaRegistro | date:'short' }}</td>
+            <td>
+              <span class="badge" [class.badge--ok]="e.estado === 'ACTIVA'" [class.badge--off]="e.estado !== 'ACTIVA'">{{ e.estado }}</span>
+            </td>
+            <td class="row">
+              <button class="btn-link" (click)="verDetalle(e.id)">Ver detalle</button>
+              <button
+                class="btn-link"
+                [class.danger]="e.estado === 'ACTIVA'"
+                (click)="cambiarEstado(e)"
+              >{{ e.estado === 'ACTIVA' ? 'Suspender' : 'Activar' }}</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="empty" *ngIf="!cargando && empresasFiltradas.length === 0">No hay empresas que coincidan.</p>
+  </div>
+
+  <div class="card" *ngIf="detalle">
+    <div class="row">
+      <h3>Detalle de la empresa</h3>
+      <span class="spacer"></span>
+      <button class="btn-link" (click)="detalle = null">Cerrar</button>
+    </div>
+    <pre class="json">{{ detalle | json }}</pre>
+  </div>
+</div>

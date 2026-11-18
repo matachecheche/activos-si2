@@ -1,0 +1,326 @@
+================================================================================
+ PASARELAS DE PAGO REALES: COMO CONFIGURARLAS PASO A PASO (Sprint 3)
+================================================================================
+
+Este archivo explica, paso a paso, como dejar cobrar de verdad con Mercado Pago,
+PayPal, Stripe o QR Simple (Red Enlace / ATC), y como comprobar que todo
+funciona en el despliegue de Azure.
+
+
+--------------------------------------------------------------------------------
+0. RESUMEN: LAS 3 FORMAS DE HACERLO
+--------------------------------------------------------------------------------
+
+A) CON EL ASISTENTE AUTOMATICO (recomendado)
+     python configurar_pasarelas.py
+
+   El asistente te pregunta que pasarela quieres dejar lista, pide las claves
+   (se escriben ocultas), **las valida contra la API real** de cada proveedor
+   (si estan mal te lo dice en el momento, no cuando un cliente intente pagar)
+   y las guarda en Azure App Service. Al final te imprime la URL del webhook
+   que tienes que registrar en el panel del proveedor.
+
+B) A MANO (si prefieres control total)
+     setx APP_PAGOS_PROVEEDOR STRIPE
+     setx STRIPE_SECRET_KEY "sk_test_..."
+     ... y despues:  python desplegar_azure.py
+
+C) SOLO REVISAR COMO ESTA AHORA
+     python configurar_pasarelas.py --verificar
+
+   Entra al despliegue, consulta /api/pagos/estado y te dice que pasarelas hay
+   configuradas, cual es la activa y que URL de webhook debes registrar.
+
+   Y para probar que el webhook responde:
+     python configurar_pasarelas.py --probar-webhook
+
+
+--------------------------------------------------------------------------------
+1. LO QUE NECESITAS ANTES DE EMPEZAR (esto es lo importante)
+--------------------------------------------------------------------------------
+
+La URL publica de tu aplicacion, por ejemplo:
+
+    https://waf-activosfijos-cpejk6.azurewebsites.net
+
+Con esa URL, el webhook SIEMPRE es:
+
+    https://TU-WEBAPP.azurewebsites.net/api/pagos/webhook
+
+Cosas que el despliegue ya hace por ti (no tienes que hacerlas a mano):
+
+  * La web y el backend viven en el MISMO App Service: la web llama a la API
+    con la ruta relativa "/api", asi que no hay problemas de CORS ni de
+    dominios cruzados. Desplegar "en el mismo sitio" es lo correcto.
+  * APP_URL_PUBLICA se fija solo con la URL de tu web. IMPORTANTE: sin esta
+    variable las pasarelas apuntan a localhost, el webhook nunca llega y el
+    pago nunca se confirma. (Ya esta corregido en el script de despliegue.)
+  * APP_PAGOS_SANDBOX queda en false: el sistema NO simula pagos.
+  * La carpeta de respaldos/fotos y la bitacora apuntan a /home/site/wwwroot
+    (el disco del contenedor), y ademas el respaldo se guarda tambien dentro
+    de la base de datos, asi que sobrevive a reinicios.
+
+Lo que SI tienes que hacer tu: registrar el webhook en el panel de cada
+proveedor (paso 3 de cada uno de los cuatro) y tener las credenciales.
+
+
+--------------------------------------------------------------------------------
+1 BIS. PROBAR LA PASARELA EN LOCAL (Stripe y las demas)
+--------------------------------------------------------------------------------
+
+Esto es lo que mas preguntas genera, asi que aqui esta todo el paso a paso.
+
+1) Crea el archivo de credenciales local
+   En la carpeta del proyecto hay una plantilla. Copiala y rellenala:
+
+       copy pasarelas.env.ejemplo pasarelas.env     (Windows CMD)
+       cp    pasarelas.env.ejemplo pasarelas.env     (Linux/Mac)
+
+   Pon dentro tus claves, por ejemplo para Stripe:
+
+       APP_PAGOS_PROVEEDOR=STRIPE
+       STRIPE_SECRET_KEY=sk_test_TU_CLAVE_REAL
+       STRIPE_WEBHOOK_SECRET=whsec_TU_SECRETO
+       STRIPE_MONEDA=usd
+       STRIPE_FACTOR_CONVERSION=6.9
+       APP_URL_PUBLICA=http://localhost:8080
+
+2) Arranca el proyecto
+       iniciar_proyecto.bat        (o: python iniciar_proyecto.py)
+
+   El backend lee "pasarelas.env" solo: NO hace falta escribir setx ni
+   exportar nada a mano. Al arrancar te avisa en consola:
+       "Pasarela de pago: APP_PAGOS_PROVEEDOR, STRIPE_SECRET_KEY, ..."
+   (tambien lo comprueba con el servidor al iniciar, por si el archivo esta
+   mal escrito).
+
+3) Comprueba que el backend ve las claves
+       python configurar_pasarelas.py --verificar --url-publica http://localhost:8080
+
+   Debe decir "STRIPE ... SI". Si dice "no", mira la tabla de problemas de
+   mas abajo.
+
+4) Prueba un cobro de verdad (crea el checkout en Stripe de verdad)
+       python configurar_pasarelas.py --probar-pago --url-publica http://localhost:8080
+
+   El script inicia sesion, llama a /api/pagos/estado y crea un checkout real
+   en la pasarela. Te imprime la URL para pagar y la tarjeta de prueba:
+       Stripe:        4242 4242 4242 4242  (cualquier fecha, cualquier CVC)
+       Mercado Pago: 4509 2535 6163 2451   (12/30, 123)
+
+5) Confirma el pago. Hay DOS caminos:
+
+   A) SIN webhook (lo mas rapido para probar):
+      en la pantalla "Suscripcion" pulsa "Ya pague: comprobar estado".
+      El backend consulta a la pasarela (servidor a servidor) y, si el pago
+      esta hecho, activa la suscripcion. Funciona en local sin internet
+      extra.
+
+   B) CON webhook (para probar el webhook de verdad):
+      la pasarela tiene que poder llamar a tu maquina, y en local eso no
+      pasa (no tiene tu IP publica). Usa un tunel:
+
+        - Stripe CLI (gratis):
+              stripe login
+              stripe listen --forward-to localhost:8080/api/pagos/webhook
+          Te muestra un "whsec_..." NUEVO: copialo a pasarelas.env como
+          STRIPE_WEBHOOK_SECRET y reinicia el backend.
+
+        - ngrok (gratis):
+              ngrok http 8080
+          Te da una URL publica (https://xxxx.ngrok-free.app). Ponla en
+          pasarelas.env como APP_URL_PUBLICA y registra EL MISMO webhook en
+          el panel de Stripe con esa URL.
+
+      Con el tunel, el backend recibe el evento, valida la firma
+      (Stripe-Signature) y consulta la sesion en la API de Stripe antes de
+      aprobar. Si la firma no cuadra, NO aprueba nada (es lo correcto).
+
+6) Repite la prueba cada vez que cambies una clave: reinicia el backend
+   (el archivo se lee al arrancar).
+
+PROBLEMAS FRECUENTES Y SOLUCION
+| Sintoma | Causa | Solucion |
+|---|---|---|
+| "Ninguna pasarela esta configurada" | el backend no leyó pasarelas.env | reinicia el backend; revisa que el archivo esté en la carpeta del proyecto (no en subcarpetas) y que las líneas sean "CLAVE=valor" sin comillas rarezas |
+| HTTP 401 "Invalid API Key provided" | la clave está mal o es de otro modo (live/test) | copia otra vez la clave desde el panel del proveedor |
+| HTTP 503 "STRIPE_SECRET_KEY ... falta" | el proveedor elegido no tiene credenciales | revisa APP_PAGOS_PROVEEDOR y la clave de ese proveedor en pasarelas.env |
+| El pago se hizo pero la suscripcion sigue pendiente | llego la notificacion pero el backend no la aprueba | el backend necesita el webhook-secret correcto (whsec_...) para validar la firma; o usa el botón "Ya pagué: comprobar estado" |
+| Stripe devuelve un error de monto | no pusiste STRIPE_MONEDA/STRIPE_FACTOR_CONVERSION | Stripe cobra en USD: deja STRIPE_MONEDA=usd y STRIPE_FACTOR_CONVERSION=6.9 |
+
+
+--------------------------------------------------------------------------------
+2. MERCADO PAGO (Bolivia: bolivianos, tarjetas y saldo)
+--------------------------------------------------------------------------------
+
+1. Entra a https://www.mercadopago.com.bo/developers/panel/app y crea una
+   aplicacion ("App") en tu cuenta de Mercado Pago.
+2. Copia el **Access token** (empieza por APP_USR-...). Con la cuenta de
+   prueba el token empieza por "TEST-".
+3. (Recomendado) En la pestana "Webhooks" de tu app, agrega un webhook:
+       URL de notificacion:  https://TU-WEBAPP.azurewebsites.net/api/pagos/webhook
+       Evento:               payment
+       Copia el "Secreto de la firma" -> sera MERCADOPAGO_WEBHOOK_SECRET
+4. Configura las variables:
+       setx APP_PAGOS_PROVEEDOR MERCADO_PAGO
+       setx MERCADOPAGO_ACCESS_TOKEN "APP_USR-..."
+       setx MERCADOPAGO_WEBHOOK_SECRET "..."
+       setx APP_PAGOS_MONEDA BOB
+       setx APP_PAGOS_FACTOR_CONVERSION 1
+5. Vuelve a desplegar:      python desplegar_azure.py
+6. Comprueba:               python configurar_pasarelas.py --verificar
+
+Con el asistente automatico los pasos 4 y 5 los hace el script por ti:
+     python configurar_pasarelas.py   ->  elige "1" (Mercado Pago)
+
+
+--------------------------------------------------------------------------------
+3. PAYPAL (internacional)
+--------------------------------------------------------------------------------
+
+1. Entra a https://developer.paypal.com/dashboard/applications y crea una app
+   (para pruebas, elige el ambiente "Sandbox"; para cobrar de verdad, "Live").
+2. Copia el **Client ID** y el **Client secret**.
+3. (Recomendado) En "Add Webhook" de tu app:
+       URL:    https://TU-WEBAPP.azurewebsites.net/api/pagos/webhook
+       Evento: PAYMENT.CAPTURE.COMPLETED (y PAYMENT.CAPTURE.DENIED)
+4. Configura:
+       setx APP_PAGOS_PROVEEDOR PAYPAL
+       setx PAYPAL_CLIENT_ID "..."
+       setx PAYPAL_CLIENT_SECRET "..."
+       setx PAYPAL_AMBIENTE live          (o sandbox para pruebas)
+       setx APP_PAGOS_MONEDA USD
+       setx APP_PAGOS_FACTOR_CONVERSION 6.9   (de bolivianos a dolares)
+5. Despliega y comprueba igual que en Mercado Pago.
+
+   Asistente: elige "2" (PayPal).
+
+
+--------------------------------------------------------------------------------
+4. STRIPE (internacional, Checkout Sessions)
+--------------------------------------------------------------------------------
+
+1. Crea la cuenta en https://dashboard.stripe.com/apikeys
+   - Para probar usa la clave "sk_test_...", para cobrar de verdad "sk_live_...".
+2. Copia la **clave secreta** (sk_test_... / sk_live_...).
+3. Crea el webhook:  Workbench -> Webhooks -> Add endpoint
+       URL:     https://TU-WEBAPP.azurewebsites.net/api/pagos/webhook
+       Eventos: checkout.session.completed
+                 checkout.session.async_payment_succeeded
+   Copia el **Signing secret** (empieza por whsec_...) -> STRIPE_WEBHOOK_SECRET
+4. IMPORTANTE: Stripe no admite bolivianos. Cobra en USD (o EUR):
+       setx APP_PAGOS_PROVEEDOR STRIPE
+       setx STRIPE_SECRET_KEY "sk_test_..."
+       setx STRIPE_WEBHOOK_SECRET "whsec_..."
+       setx STRIPE_MONEDA usd
+       setx STRIPE_FACTOR_CONVERSION 6.9    (1 Bs = 1/6.9 USD)
+   Con el factor 6.9, un plan de 100 Bs se cobra 100/6.9 = 14.49 USD.
+   El backend convierte el monto a centavos y comprueba que el pago coincida.
+5. Despliega y comprueba.
+
+   Asistente: elige "3" (Stripe).
+
+   Para probar sin cobrar de verdad, en el panel de Stripe usa la tarjeta de
+   prueba 4242 4242 4242 4242 con cualquier fecha futura y CVC.
+
+
+--------------------------------------------------------------------------------
+5. QR SIMPLE (Red Enlace / ATC): el QR oficial del BCB en Bolivia
+--------------------------------------------------------------------------------
+
+Es el codigo QR interoperable del Banco Central de Bolivia: el cliente lo
+escanea con la app de SU banco (cualquier banco) y el pago se acredita en la
+red interbancaria.
+
+1. Hay que habilitar el comercio con ATC / Red Enlace (es un alta comercial):
+   te dan  client_id,  client_secret  y  el id del establecimiento.
+   - Sin el "id de establecimiento" la API de ATC no genera el QR.
+2. Elige el ambiente:
+       certificacion:  https://atcgwapitest.redenlace.com.bo/sandbox
+       produccion:     https://api.redenlace.com.bo
+3. Configura:
+       setx APP_PAGOS_PROVEEDOR QR
+       setx APP_PAGOS_QR_CLIENT_ID "..."
+       setx APP_PAGOS_QR_CLIENT_SECRET "..."
+       setx APP_PAGOS_QR_ID_ESTABLECIMIENTO 422717
+       setx APP_PAGOS_QR_NOMBRE_ESTABLECIMIENTO "Activos Fijos"
+       setx APP_PAGOS_QR_BASE_URL https://atcgwapitest.redenlace.com.bo/sandbox
+       setx APP_PAGOS_QR_WEBHOOK_KEY x-api-key
+       setx APP_PAGOS_QR_WEBHOOK_VALUE "una-clave-larga-que-solo-conozcas-tu"
+       setx APP_PAGOS_QR_VIGENCIA 900
+   La clave del webhook (APP_PAGOS_QR_WEBHOOK_VALUE) es la que el backend
+   manda en la cabecera de cada notificacion: si no la pones, las
+   notificaciones se rechazan por seguridad (no se aprueba nada por su cuenta).
+4. Despliega y comprueba.
+
+   Asistente: elige "4" (QR Simple).
+
+Como se ve en la app:
+   En "Suscripcion" eliges el metodo "QR Simple (Red Enlace)", pulsas
+   "Contratar / renovar" y la pantalla te muestra el codigo QR con el monto;
+   el cliente lo escanea y pays. Con el boton "Ya pague: comprobar estado" la
+   app pregunta a la pasarela (servidor a servidor) si el pago ya entró.
+
+
+--------------------------------------------------------------------------------
+6. COMPROBACION FINAL (hazlo siempre)
+--------------------------------------------------------------------------------
+
+    python configurar_pasarelas.py --verificar
+
+Debe mostrar tu pasarela con "SI". Ejemplo:
+
+       Proveedor activo: Stripe (STRIPE)
+       Configurado: True | Moneda: USD | Modo sandbox: False
+
+         STRIPE         SI  (Stripe, moneda USD)
+         MERCADO_PAGO   no  (Mercado Pago, moneda BOB)
+         PAYPAL         no  (PayPal, moneda BOB)
+         QR             no  (QR Simple (Red Enlace), moneda BOB)
+
+Y despues, con la app abierta:
+  1. Entra a "Suscripcion".
+  2. Elige un plan y un mes, pulsa "Contratar / renovar".
+  3. Con Stripe/PayPal/Mercado Pago se abre el checkout del proveedor.
+     Paga con la tarjeta de prueba:
+         Stripe:        4242 4242 4242 4242, cualquier fecha futura, cualquier CVC
+         Mercado Pago:  tarjeta de prueba que da Mercado Pago (4509 2535 6163 2451)
+  4. Espera unos segundos y vuelve a la app: la suscripcion debe quedar ACTIVA
+     con la nueva vigencia (si el pago llego bien, el webhook la activo solo).
+  5. Si el pago se hizo pero la suscripcion sigue pendiente, el webhook no
+     llego: revisa que la URL del webhook sea publica y que el proveedor tenga
+     el evento correcto suscrito.
+
+Prueba rapida del webhook (sin pagar nada):
+
+    python configurar_pasarelas.py --probar-webhook
+
+
+--------------------------------------------------------------------------------
+7. SI TE EQUIVOCAS O QUIERES CAMBIAR DE PASARELA
+--------------------------------------------------------------------------------
+
+  * Cambiar de proveedor: setx APP_PAGOS_PROVEEDOR OTRO   + volver a desplegar.
+    (Tambien puedes elegir el metodo de pago en la propia pantalla de
+    suscripcion, sin tocar el servidor.)
+  * Quitar una credencial: borra la variable y vuelve a desplegar.
+    El sistema nunca simula: sin credencial avisa y devuelve HTTP 503.
+  * Modo demostracion (solo para exposure, NUNCA en produccion):
+       setx APP_PAGOS_SANDBOX=true
+    La pantalla lo rotula como "MODO DEMOSTRACION" y no se cobra nada.
+
+--------------------------------------------------------------------------------
+8. LO QUE PIDE EL USUARIO FINAL (el flujo completo)
+--------------------------------------------------------------------------------
+
+  1. Entra a "Suscripcion" y elige plan + meses + metodo de pago.
+  2. "Contratar / renovar" -> se crea el pago PENDIENTE y se llama a la
+     API real del proveedor (Mercado Pago / PayPal / Stripe) o se genera el QR.
+  3. El cliente paga (o escanea el QR).
+  4. El proveedor avisa a POST /api/pagos/webhook. El backend NO se fia del
+     aviso: valida la firma (Stripe: Stripe-Signature; Mercado Pago:
+     x-signature/x-hash; QR Simple: la clave que definiste) y consulta el pago
+     en la API del proveedor. Solo entonces lo aprueba.
+  5. La suscripcion queda ACTIVA con la nueva vigencia y el cambio se
+     registra en la bitacora de auditoria.
+  6. En la web y en el movil, "Suscripcion" muestra los pagos registrados.

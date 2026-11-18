@@ -1,0 +1,4 @@
+.toolbar { display: flex; flex-direction: column; gap: 12px; margin-bottom: 16px; }
+.buscador input { flex: 1; min-width: 240px; }
+.filtros .input { flex: 1; min-width: 180px; }
+.input { padding: 9px 10px; border: 1px solid #d1d5db; border-radius: 7px; font-size: 14px; }

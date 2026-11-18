@@ -1,0 +1,207 @@
+.ia-shell {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.chat {
+  display: flex;
+  flex-direction: column;
+  min-height: 480px;
+  max-height: 72vh;
+  padding: 0;
+  overflow: hidden;
+
+  &__mensajes {
+    flex: 1;
+    overflow-y: auto;
+    padding: 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  &__ejemplos {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 0 18px 12px;
+  }
+
+  &__entrada {
+    display: flex;
+    gap: 10px;
+    padding: 14px 18px;
+    border-top: 1px solid #e5e7eb;
+    background: #f9fafb;
+
+    input {
+      flex: 1;
+      padding: 11px 12px;
+      border: 1px solid #d1d5db;
+      border-radius: 8px;
+      font-size: 14px;
+    }
+  }
+}
+
+.btn-mic {
+  flex: 0 0 auto;
+  width: 44px;
+  height: 42px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  background: #fff;
+  color: #1769e0;
+  cursor: pointer;
+  transition: background .15s ease, border-color .15s ease, color .15s ease;
+
+  &:hover:not(:disabled) { background: #eff6ff; border-color: #bfdbfe; }
+  &:disabled { opacity: .5; cursor: not-allowed; }
+
+  &.escuchando {
+    background: #fee2e2;
+    border-color: #fca5a5;
+    color: #b91c1c;
+    animation: pulsoVoz 1.3s ease-out infinite;
+  }
+}
+
+@keyframes pulsoVoz {
+  0%   { box-shadow: 0 0 0 0 rgba(220, 38, 38, .35); }
+  70%  { box-shadow: 0 0 0 9px rgba(220, 38, 38, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(220, 38, 38, 0); }
+}
+
+.voz-aviso {
+  margin: 0;
+  padding: 0 18px 12px;
+  font-size: 12.5px;
+  color: #92400e;
+}
+
+.chip {
+  border: 1px solid #bfdbfe;
+  background: #eff6ff;
+  color: #1e40af;
+  border-radius: 999px;
+  padding: 7px 13px;
+  font-size: 13px;
+  cursor: pointer;
+
+  &:hover { background: #dbeafe; }
+}
+
+.mensaje {
+  max-width: 85%;
+  padding: 12px 14px;
+  border-radius: 12px;
+  background: #f3f4f6;
+
+  p { margin: 6px 0 0; white-space: pre-wrap; }
+
+  &--usuario {
+    align-self: flex-end;
+    background: var(--color-primario, #1769e0);
+    color: #fff;
+  }
+
+  &--error {
+    background: #fef2f2;
+    color: #991b1b;
+    border: 1px solid #fecaca;
+  }
+
+  &__cabecera {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    font-size: 12px;
+    opacity: .85;
+  }
+
+  .modo {
+    background: rgba(0, 0, 0, .12);
+    border-radius: 999px;
+    padding: 2px 8px;
+    font-weight: 700;
+  }
+
+  details {
+    margin-top: 10px;
+
+    summary { cursor: pointer; font-size: 13px; font-weight: 600; }
+    code {
+      display: block;
+      margin-top: 6px;
+      background: #0f172a;
+      color: #dbeafe;
+      padding: 10px;
+      border-radius: 8px;
+      font-size: 12px;
+      white-space: pre-wrap;
+    }
+  }
+}
+
+.sugerencias {
+  margin: 10px 0 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.header-acciones {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.pruebas {
+  margin-bottom: 16px;
+
+  h3 {
+    margin: 0 0 10px;
+    font-size: 15px;
+  }
+
+  &__ayuda {
+    margin: 10px 0 0;
+    font-size: 12.5px;
+    color: #5b6470;
+  }
+}
+
+.badge {
+  display: inline-block;
+  padding: 2px 10px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 600;
+
+  &--ok {
+    background: #e3f6e8;
+    color: #1d7a37;
+  }
+
+  &--fail {
+    background: #fde8e8;
+    color: #b42318;
+  }
+}
+
+.diagnostico {
+  margin: 6px 0 10px;
+  padding-left: 18px;
+  font-size: 13px;
+  color: #8a4b08;
+
+  li {
+    margin-bottom: 4px;
+  }
+}

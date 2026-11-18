@@ -1,0 +1,72 @@
+import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
+import { environment } from '../../../environments/environment';
+import { Plan, RegistroEmpresaRequest, Empresa } from '../../core/models/sprint3.models';
+
+/** HU-11: registro publico de empresas y planes. */
+@Injectable({ providedIn: 'root' })
+export class SaasService {
+  constructor(private http: HttpClient) {}
+
+  planesPublicos(): Observable<Plan[]> {
+    return this.http.get<Plan[]>(`${environment.apiUrl}/public/planes`);
+  }
+
+  registrarEmpresa(req: RegistroEmpresaRequest): Observable<unknown> {
+    return this.http.post(`${environment.apiUrl}/public/registro-empresa`, req);
+  }
+}
+
+/** HU-11/HU-12: administracion de la suscripcion de la empresa. */
+@Injectable({ providedIn: 'root' })
+export class SuscripcionService {
+  constructor(private http: HttpClient) {}
+
+  miSuscripcion(): Observable<Record<string, unknown>> {
+    return this.http.get<Record<string, unknown>>(`${environment.apiUrl}/suscripcion`);
+  }
+
+  contratar(planId: number, metodoPago: string, meses: number): Observable<Record<string, unknown>> {
+    return this.http.post<Record<string, unknown>>(`${environment.apiUrl}/suscripcion/contratar`, { planId, metodoPago, meses });
+  }
+
+  /** Estado de la pasarela de pagos real (si esta configurada y con que moneda). */
+  estadoPasarela(): Observable<Record<string, unknown>> {
+    return this.http.get<Record<string, unknown>>(`${environment.apiUrl}/pagos/estado`);
+  }
+
+  /** Crea el checkout en la pasarela real y devuelve la URL de pago. */
+  crearCheckout(planId: number, meses: number): Observable<Record<string, unknown>> {
+    return this.http.post<Record<string, unknown>>(`${environment.apiUrl}/pagos/checkout`, { planId, meses });
+  }
+
+  /** Estado de un pago por su referencia. */
+  estadoPago(referencia: string): Observable<Record<string, unknown>> {
+    return this.http.get<Record<string, unknown>>(`${environment.apiUrl}/pagos/${referencia}`);
+  }
+}
+
+/** HU-12: Super Admin de la plataforma (metricas, empresas, suspension). */
+@Injectable({ providedIn: 'root' })
+export class PlataformaService {
+  constructor(private http: HttpClient) {}
+
+  empresas(): Observable<Empresa[]> {
+    return this.http.get<Empresa[]>(`${environment.apiUrl}/plataforma/empresas`);
+  }
+
+  metricas(): Observable<Record<string, number>> {
+    return this.http.get<Record<string, number>>(`${environment.apiUrl}/plataforma/metricas`);
+  }
+
+  detalleEmpresa(id: number): Observable<Record<string, unknown>> {
+    return this.http.get<Record<string, unknown>>(`${environment.apiUrl}/plataforma/empresas/${id}`);
+  }
+
+  cambiarEstado(id: number, estado: 'ACTIVA' | 'SUSPENDIDA'): Observable<Empresa> {
+    return this.http.post<Empresa>(`${environment.apiUrl}/plataforma/empresas/${id}/estado`, null, {
+      params: { estado }
+    });
+  }
+}

@@ -1,0 +1,267 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: "Segoe UI", system-ui, sans-serif;
+  background: #f6f8fb;
+  color: #172033;
+  line-height: 1.45;
+}
+
+a {
+  color: inherit;
+}
+
+button {
+  font-family: inherit;
+}
+
+input, select, textarea { font-family: inherit; }
+.card { background: #fff; border: 1px solid #e5eaf1; border-radius: 10px; box-shadow: 0 8px 24px rgba(23, 32, 51, .06); padding: 20px; }
+.page-header { display: flex; justify-content: space-between; align-items: center; gap: 20px; margin-bottom: 22px; }
+.page-header h2 { margin: 0; color: #172033; font-size: 24px; letter-spacing: -.02em; }
+.btn-primary { border: 0; border-radius: 7px; background: #1769e0; color: #fff; padding: 10px 16px; cursor: pointer; font-weight: 600; transition: background .2s, transform .2s; }
+.btn-primary:hover { background: #0e56be; transform: translateY(-1px); }
+.field { display: flex; flex-direction: column; gap: 6px; }
+.field label { color: #526078; font-size: 13px; font-weight: 600; }
+.empty { color: #8490a3; padding: 30px; text-align: center; }
+
+@media (max-width: 640px) {
+  .page-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .card {
+    padding: 14px;
+  }
+}
+
+/* ===== Sprint 2: componentes compartidos ===== */
+.sub { margin: 4px 0 0; color: #6b7280; font-size: 14px; }
+.muted { color: #8490a3; font-size: 13px; }
+.right { text-align: right; }
+.mono { font-family: ui-monospace, "Cascadia Mono", Consolas, monospace; }
+.stack { display: flex; flex-direction: column; gap: 16px; }
+.row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.spacer { flex: 1; }
+.card h3 { margin: 0 0 4px; font-size: 16px; color: #172033; }
+
+.btn-secondary { padding: 9px 14px; border: 1px solid #d1d5db; border-radius: 7px; background: #fff; color: #374151; cursor: pointer; font-weight: 600; }
+.btn-secondary:hover { background: #f3f4f6; }
+.btn-danger { padding: 9px 14px; border: 0; border-radius: 7px; background: #dc2626; color: #fff; cursor: pointer; font-weight: 600; }
+.btn-danger:hover { background: #b91c1c; }
+.btn-ok { padding: 9px 14px; border: 0; border-radius: 7px; background: #15803d; color: #fff; cursor: pointer; font-weight: 600; }
+.btn-ok:hover { background: #166534; }
+.btn-primary[disabled], .btn-secondary[disabled], .btn-danger[disabled], .btn-ok[disabled] { opacity: .55; cursor: not-allowed; transform: none; }
+.btn-link { border: 0; background: transparent; color: #1769e0; cursor: pointer; padding: 4px 6px; font-weight: 600; }
+.btn-link:hover { text-decoration: underline; }
+.btn-link.danger { color: #dc2626; }
+
+.alert-error, .alert-ok, .alert-warn { border-radius: 8px; padding: 11px 14px; margin-bottom: 16px; font-size: 14px; }
+.alert-error { background: #fef2f2; border: 1px solid #fecaca; color: #991b1b; }
+.alert-ok { background: #f0fdf4; border: 1px solid #bbf7d0; color: #166534; }
+.alert-warn { background: #fffbeb; border: 1px solid #fde68a; color: #92400e; }
+
+.input, .field input, .field select, .field textarea { padding: 9px 10px; border: 1px solid #d1d5db; border-radius: 7px; font-size: 14px; background: #fff; color: #172033; }
+.field textarea { min-height: 70px; resize: vertical; }
+.field input:focus, .field select:focus, .field textarea:focus, .input:focus { outline: 2px solid #bfdbfe; border-color: #60a5fa; }
+.field small { color: #8490a3; font-size: 12px; }
+.form-grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px 16px; }
+.form-grid2 .span-2 { grid-column: span 2; }
+
+.table-wrap { overflow-x: auto; }
+table.data { width: 100%; border-collapse: collapse; min-width: 640px; }
+table.data th, table.data td { padding: 10px 12px; text-align: left; border-bottom: 1px solid #e5e7eb; font-size: 14px; vertical-align: middle; }
+table.data th { color: #6b7280; font-weight: 600; font-size: 12px; text-transform: uppercase; white-space: nowrap; }
+table.data tbody tr:hover td { background: #f9fafb; }
+table.data td.num, table.data th.num { text-align: right; white-space: nowrap; }
+table.data tr.clicable { cursor: pointer; }
+table.data tr.seleccionada td { background: #eff6ff; }
+table.data td.acciones { text-align: right; white-space: nowrap; }
+
+.badge { display: inline-block; padding: 3px 10px; border-radius: 999px; font-size: 12px; font-weight: 600; background: #e5e7eb; color: #374151; white-space: nowrap; }
+.badge-disponible { background: #dbeafe; color: #1e40af; }
+.badge-en-uso, .badge-finalizado, .badge-aprobado, .badge-ejecucion { background: #dcfce7; color: #166534; }
+.badge-en-mantenimiento, .badge-en-ejecucion, .badge-compromiso { background: #fef3c7; color: #92400e; }
+.badge-inactivo, .badge-cancelado, .badge-borrador { background: #e5e7eb; color: #374151; }
+.badge-dado-de-baja { background: #fee2e2; color: #991b1b; }
+.badge-programado, .badge-preventivo { background: #e0e7ff; color: #3730a3; }
+.badge-correctivo { background: #ffedd5; color: #9a3412; }
+.badge-cerrado { background: #e2e8f0; color: #334155; }
+
+.modal-backdrop { position: fixed; inset: 0; z-index: 20; display: flex; align-items: center; justify-content: center; padding: 16px; background: rgba(31, 42, 55, .55); }
+.modal { width: min(100%, 620px); max-height: 92vh; overflow-y: auto; margin: 0; }
+.modal.ancho { width: min(100%, 780px); }
+.modal-header { display: flex; justify-content: space-between; margin-bottom: 18px; }
+.modal-header h2 { margin: 4px 0 0; font-size: 20px; }
+.modal-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 22px; }
+.eyebrow { color: #2563eb; font-size: 11px; font-weight: 700; letter-spacing: .08em; }
+.close-button { border: 0; background: transparent; color: #6b7280; font-size: 26px; cursor: pointer; line-height: 1; }
+
+.kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 12px; margin-bottom: 16px; }
+.kpi { background: #fff; border: 1px solid #e5eaf1; border-radius: 10px; padding: 12px 14px; }
+.kpi span { display: block; color: #6b7280; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: .03em; }
+.kpi strong { display: block; margin-top: 4px; font-size: 19px; color: #172033; }
+.kpi.alerta strong { color: #b45309; }
+.kpi.bien strong { color: #15803d; }
+.kpi.mal strong { color: #b91c1c; }
+
+.tabs { display: flex; gap: 4px; border-bottom: 1px solid #e5e7eb; margin-bottom: 16px; overflow-x: auto; }
+.tabs button { border: 0; background: transparent; padding: 10px 14px; cursor: pointer; font-weight: 600; color: #6b7280; border-bottom: 3px solid transparent; white-space: nowrap; }
+.tabs button.activa { color: #1769e0; border-bottom-color: #1769e0; }
+
+.progreso { width: 100%; min-width: 90px; height: 8px; background: #e5e7eb; border-radius: 999px; overflow: hidden; }
+.progreso > i { display: block; height: 100%; background: #2563eb; }
+.progreso.alto > i { background: #d97706; }
+.progreso.lleno > i { background: #dc2626; }
+
+.dl { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px 24px; margin: 0; }
+.dl div { display: flex; flex-direction: column; gap: 2px; }
+.dl dt { color: #6b7280; font-size: 12px; font-weight: 600; text-transform: uppercase; }
+.dl dd { margin: 0; font-size: 15px; color: #172033; }
+
+@media (max-width: 640px) {
+  .form-grid2 { grid-template-columns: 1fr; }
+  .form-grid2 .span-2 { grid-column: span 1; }
+  .modal-actions { flex-direction: column-reverse; }
+  .modal-actions button { width: 100%; }
+}
+
+/* ===== Sprint 3: tema de marca personalizable (HU-15) ===== */
+:root {
+  --color-primario: #1769e0;
+  --color-secundario: #172033;
+}
+
+.btn-primary { background: var(--color-primario, #1769e0); }
+.btn-primary:hover { background: color-mix(in srgb, var(--color-primario, #1769e0) 85%, #000); }
+
+a { cursor: pointer; }
+
+/* ===== Sprint 3 / multiempresa: selector de empresa ===== */
+.empresa-selector {
+  position: relative;
+
+  .empresa-menu {
+    position: absolute;
+    top: calc(100% + 6px);
+    right: 0;
+    min-width: 230px;
+    background: #fff;
+    color: #172033;
+    border: 1px solid #e5eaf1;
+    border-radius: 8px;
+    box-shadow: 0 10px 28px rgba(15, 25, 45, .18);
+    padding: 8px;
+    z-index: 60;
+
+    .empresa-menu__titulo {
+      margin: 4px 6px 6px;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: .04em;
+      color: #6b7280;
+    }
+
+    .empresa-item {
+      display: block;
+      width: 100%;
+      text-align: left;
+      background: transparent;
+      border: 0;
+      border-radius: 6px;
+      padding: 8px 10px;
+      cursor: pointer;
+
+      strong { display: block; font-size: 13.5px; }
+      small { color: #6b7280; font-size: 11.5px; }
+      &:hover { background: #f2f6fc; }
+      &.activo { background: #e8f1ff; }
+      &:disabled { opacity: .6; cursor: wait; }
+
+      // Boton para registrar otra empresa a la misma cuenta.
+      &--nueva {
+        border-top: 1px dashed #cbd5e1;
+        margin-top: 4px;
+        padding-top: 10px;
+        strong { color: #1d4ed8; }
+        &:hover { background: #eef4ff; }
+      }
+    }
+  }
+
+  &--sidebar {
+    .empresa-btn {
+      background: rgba(255, 255, 255, .1);
+      border-color: rgba(255, 255, 255, .2);
+      width: 100%;
+    }
+    .empresa-menu { right: auto; left: 0; }
+  }
+}
+
+
+
+/* Boton de empresa (selector) y "+ Agregar empresa" (siempre visible).
+   Va en la raiz para que tambien aplique al boton suelto de la barra
+   superior y del menu lateral, que estan fuera de .empresa-selector. */
+.empresa-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(255, 255, 255, .12);
+  border: 1px solid rgba(255, 255, 255, .25);
+  color: #fff;
+  padding: 6px 10px;
+  border-radius: 6px;
+  font-size: 13px;
+  max-width: 220px;
+  cursor: pointer;
+
+  .empresa-icon { font-size: 12px; }
+  .empresa-nombre { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .empresa-caret { font-size: 10px; opacity: .8; }
+  &:hover { background: rgba(255, 255, 255, .2); }
+}
+
+/* "+ Agregar empresa": siempre visible, este en la barra o en el menu. */
+.empresa-btn--nueva {
+  background: rgba(255, 255, 255, .08);
+  border: 1px dashed rgba(255, 255, 255, .45);
+  color: #fff;
+  white-space: nowrap;
+  &:hover { background: rgba(255, 255, 255, .18); border-color: #fff; color: #fff; }
+}
+.empresa-btn--bloque {
+  width: 100%;
+  max-width: none;
+  justify-content: flex-start;
+  margin-bottom: 6px;
+}
+.sin-contenido {
+  font-size: 11px;
+  color: #92400e;
+  background: #fef3c7;
+  border-radius: 4px;
+  padding: 2px 6px;
+  white-space: nowrap;
+}
+
+/* Ronda 11: aviso del error real al cambiar de empresa (web). */
+.empresa-error {
+  background: #fee2e2;
+  color: #991b1b;
+  border-bottom: 1px solid #fca5a5;
+  padding: 10px 16px;
+  font-size: 13px;
+  font-weight: 600;
+}
+.empresa-error--lateral {
+  margin: 12px 12px 0;
+  border: 1px solid #fca5a5;
+  border-radius: 8px;
+}

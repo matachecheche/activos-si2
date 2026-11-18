@@ -1,0 +1,136 @@
+<div class="stack">
+  <div class="page-header">
+    <div>
+      <h2>Suscripción</h2>
+      <p class="sub">Plan vigente, historial de pagos y cambio de plan con la pasarela de pago real.</p>
+    </div>
+  </div>
+
+  <div class="alert-error" *ngIf="errorMsg">{{ errorMsg }}</div>
+  <div class="alert-ok" *ngIf="okMsg">{{ okMsg }}</div>
+
+  <div class="alert-warn" *ngIf="pasarela && !pasarela['configurado']">
+    <strong>Pagos reales no configurados.</strong> {{ pasarela['mensaje'] }}
+  </div>
+  <div class="alert-ok" *ngIf="pasarela && pasarela['configurado']">
+    Pasarela activa: <strong>{{ pasarela['nombreProveedor'] }}</strong> (moneda {{ pasarela['moneda'] }}).
+  </div>
+
+  <!-- Ronda 11: datos de la transferencia bancaria -->
+  <div class="card" *ngIf="datosBancarios">
+    <h3>Transfiere a esta cuenta</h3>
+    <p class="sub">
+      {{ instruccionesPago || 'Realiza la transferencia usando la referencia indicada.' }}
+    </p>
+    <div class="table-wrap">
+      <table class="data">
+        <tbody>
+          <tr><td>Banco</td><td><strong>{{ datosBancarios['banco'] || '—' }}</strong></td></tr>
+          <tr><td>Cuenta</td><td class="mono">{{ datosBancarios['cuenta'] || '—' }}</td></tr>
+          <tr><td>Titular</td><td>{{ datosBancarios['titular'] || '—' }}</td></tr>
+          <tr><td>NIT / CI</td><td>{{ datosBancarios['nit'] || '—' }}</td></tr>
+          <tr><td>Sucursal</td><td>{{ datosBancarios['sucursal'] || '—' }}</td></tr>
+          <tr><td>Monto</td><td><strong>Bs {{ montoPasarela || info?.['monto'] }}</strong></td></tr>
+          <tr><td>Referencia</td><td class="mono">{{ referenciaPago }}</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="muted">
+      La suscripcion se activa en cuanto el administrador de la plataforma confirma el deposito.
+      Puedes volver a comprobar el estado con el boton de abajo.
+    </p>
+    <button class="btn-primary" (click)="consultarPago()" [disabled]="procesando">
+      {{ procesando ? 'Comprobando...' : 'Ya transferi: comprobar estado' }}
+    </button>
+  </div>
+
+  <div class="card card--qr" *ngIf="qrImagen">
+    <h3>Paga con el codigo QR</h3>
+    <p class="sub">
+      Escanea el codigo con la app de tu banco para pagar
+      <strong *ngIf="montoPasarela">{{ montoPasarela }}</strong>.
+      La suscripcion se activa sola en cuanto la pasarela confirma el pago.
+    </p>
+    <img class="qr-imagen" [src]="qrImagen" alt="Codigo QR de pago" />
+    <p class="muted mono">Referencia: {{ referenciaPago }}</p>
+    <button class="btn-primary" (click)="consultarPago()" [disabled]="procesando">
+      {{ procesando ? 'Comprobando...' : 'Ya pague: comprobar estado' }}
+    </button>
+  </div>
+
+  <div class="card" *ngIf="info">
+    <h3>Plan actual</h3>
+    <div class="actual">
+      <div>
+        <strong>{{ info['plan']?.nombre }}</strong>
+        <span class="badge" [class.badge--ok]="info['estado'] === 'ACTIVA'">{{ info['estado'] }}</span>
+      </div>
+      <p class="muted">
+        Vigencia: {{ info['fechaInicio'] | date:'shortDate' }} → {{ info['fechaVencimiento'] | date:'shortDate' }}
+      </p>
+      <p class="muted">Empresa: {{ info['empresa']?.nombre }} (NIT {{ info['empresa']?.nit }})</p>
+    </div>
+
+    <h3>Pagos registrados</h3>
+    <div class="table-wrap">
+      <table class="data" *ngIf="info['pagos']?.length; else sinPagos">
+        <thead>
+          <tr><th>Fecha</th><th>Monto</th><th>Método</th><th>Referencia</th><th>Estado</th></tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let p of info['pagos']">
+            <td>{{ p.fecha | date:'short' }}</td>
+            <td>Bs {{ p.monto }}</td>
+            <td>{{ p.proveedor || p.metodo }}</td>
+            <td class="mono">{{ p.referencia }}</td>
+            <td><span class="badge badge--ok">{{ p.estado }}</span></td>
+          </tr>
+        </tbody>
+      </table>
+      <ng-template #sinPagos><p class="empty">Sin pagos registrados.</p></ng-template>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Contratar o renovar</h3>
+    <div class="planes">
+      <article
+        *ngFor="let plan of planes"
+        class="plan"
+        [class.plan--activo]="planSeleccionado === plan.id"
+        (click)="planSeleccionado = plan.id"
+      >
+        <strong>{{ plan.nombre }}</strong>
+        <span class="precio">Bs {{ plan.precioMensual }}<small>/mes</small></span>
+        <ul>
+          <li>{{ plan.maxUsuarios ?? '∞' }} usuarios · {{ plan.maxActivos ?? '∞' }} activos</li>
+          <li *ngIf="plan.incluyeBi">BI e IA con consultas dinámicas</li>
+          <li *ngIf="plan.respaldoProgramado">Respaldos programados</li>
+        </ul>
+      </article>
+    </div>
+
+    <div class="row form-contrato">
+      <label class="field">
+        <span>Meses</span>
+        <input type="number" min="1" max="36" [(ngModel)]="meses" />
+      </label>
+      <label class="field">
+        <span>Método de pago</span>
+        <select [(ngModel)]="metodoPago">
+          <option value="STRIPE">Stripe (tarjeta)</option>
+          <option value="QR">QR Simple (Red Enlace)</option>
+          <option value="MERCADO_PAGO">Mercado Pago</option>
+          <option value="PAYPAL">PayPal</option>
+          <option value="TRANSFERENCIA">Transferencia bancaria</option>
+        </select>
+        <small class="muted" *ngIf="mensajeMetodo(metodoPago)">{{ mensajeMetodo(metodoPago) }}</small>
+      </label>
+      <button class="btn-primary"
+              [disabled]="procesando || !planSeleccionado || (pasarela && !pasarela['configurado'] && !pasarela['sandbox'])"
+              (click)="contratar()">
+        {{ procesando ? 'Procesando...' : 'Contratar / renovar' }}
+      </button>
+    </div>
+  </div>
+</div>

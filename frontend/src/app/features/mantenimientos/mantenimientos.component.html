@@ -1,0 +1,110 @@
+<div class="page-header">
+  <div><h2>Mantenimientos</h2><p class="sub">Programa preventivos, registra correctivos y controla su costo.</p></div>
+  <button *ngIf="auth.hasPermission('MANTENIMIENTO_CREAR')" class="btn-primary" (click)="nuevo()">+ Programar mantenimiento</button>
+</div>
+
+<div *ngIf="error && !formAbierto && !finalizando" class="alert-error">{{ error }}</div>
+<div *ngIf="ok" class="alert-ok">{{ ok }}</div>
+
+<div class="kpis">
+  <div class="kpi mal"><span>Vencidos sin ejecutar</span><strong>{{ alertas.vencidos.length }}</strong></div>
+  <div class="kpi alerta"><span>Vencen en 7 días</span><strong>{{ alertas.proximos.length }}</strong></div>
+</div>
+
+<div class="card alertas" *ngIf="alertas.vencidos.length || alertas.proximos.length">
+  <h3>Alertas de mantenimiento</h3>
+  <ul>
+    <li *ngFor="let m of alertas.vencidos" class="vencido"><span class="badge badge-dado-de-baja">Vencido</span>
+      <a [routerLink]="['/activos', m.activoId]" class="mono">{{ m.activoCodigo }}</a> {{ m.activoNombre }} · {{ etiqueta(m.tipo) }} · {{ m.fechaProgramada | date: 'dd/MM/yyyy' }} ({{ textoDias(m) }})</li>
+    <li *ngFor="let m of alertas.proximos"><span class="badge badge-en-mantenimiento">Próximo</span>
+      <a [routerLink]="['/activos', m.activoId]" class="mono">{{ m.activoCodigo }}</a> {{ m.activoNombre }} · {{ etiqueta(m.tipo) }} · {{ m.fechaProgramada | date: 'dd/MM/yyyy' }} ({{ textoDias(m) }})</li>
+  </ul>
+</div>
+
+<div class="card filtros row">
+  <input class="input" name="texto" [(ngModel)]="filtroTexto" placeholder="Filtrar por código o nombre del activo" style="flex:1;min-width:220px">
+  <select class="input" name="estado" [(ngModel)]="filtroEstado">
+    <option value="">Todos los estados</option>
+    <option value="PROGRAMADO">Programado</option><option value="EN_EJECUCION">En ejecución</option>
+    <option value="FINALIZADO">Finalizado</option><option value="CANCELADO">Cancelado</option>
+  </select>
+</div>
+
+<div class="card table-wrap">
+  <table class="data">
+    <thead><tr><th>Activo</th><th>Tipo</th><th>Estado</th><th>Programado</th><th>Realizado</th><th>Técnico</th><th class="num">Costo (Bs)</th><th></th></tr></thead>
+    <tbody>
+      <tr *ngFor="let m of filtrados">
+        <td><a [routerLink]="['/activos', m.activoId]" class="mono">{{ m.activoCodigo }}</a><br><span class="muted">{{ m.activoNombre }}</span></td>
+        <td><span [class]="claseBadge(m.tipo)">{{ etiqueta(m.tipo) }}</span><div class="muted" *ngIf="m.periodicidadDias">cada {{ m.periodicidadDias }} días</div></td>
+        <td><span [class]="claseBadge(m.estado)">{{ etiqueta(m.estado) }}</span></td>
+        <td>{{ m.fechaProgramada | date: 'dd/MM/yyyy' }}<div class="muted" *ngIf="m.estado === 'PROGRAMADO'">{{ textoDias(m) }}</div></td>
+        <td>{{ m.fechaRealizada ? (m.fechaRealizada | date: 'dd/MM/yyyy') : '-' }}</td>
+        <td>{{ m.tecnico || '-' }}</td>
+        <td class="num">{{ m.costo != null ? (m.costo | number: '1.2-2') : '-' }}</td>
+        <td class="acciones">
+          <ng-container *ngIf="auth.hasPermission('MANTENIMIENTO_EDITAR')">
+            <button *ngIf="m.estado === 'PROGRAMADO'" class="btn-link" (click)="iniciar(m)">Iniciar</button>
+            <button *ngIf="m.estado === 'EN_EJECUCION'" class="btn-link" (click)="abrirFinalizar(m)">Finalizar</button>
+            <button *ngIf="m.estado === 'PROGRAMADO'" class="btn-link" (click)="editar(m)">Reprogramar</button>
+            <button *ngIf="m.estado === 'PROGRAMADO' || m.estado === 'EN_EJECUCION'" class="btn-link danger" (click)="abrirCancelar(m)">Cancelar</button>
+          </ng-container>
+        </td>
+      </tr>
+      <tr *ngIf="!filtrados.length"><td colspan="8" class="empty">No hay mantenimientos para mostrar.</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- Programar / reprogramar -->
+<div *ngIf="formAbierto" class="modal-backdrop" (click)="formAbierto = false">
+  <form class="card modal" (ngSubmit)="guardar()" (click)="$event.stopPropagation()">
+    <div class="modal-header"><div><span class="eyebrow">MANTENIMIENTO</span><h2>{{ editandoId ? 'Reprogramar mantenimiento' : 'Programar mantenimiento' }}</h2></div>
+      <button type="button" class="close-button" (click)="formAbierto = false">&times;</button></div>
+    <div *ngIf="error" class="alert-error">{{ error }}</div>
+    <div class="form-grid2">
+      <div class="field span-2"><label>Activo *</label>
+        <select name="activo" [(ngModel)]="form.activoId" [disabled]="!!editandoId">
+          <option [ngValue]="null">Seleccione...</option>
+          <option *ngFor="let a of activos" [ngValue]="a.id">{{ a.codigo }} — {{ a.nombre }} ({{ a.estadoEtiqueta }})</option>
+        </select></div>
+      <div class="field"><label>Tipo *</label>
+        <select name="tipo" [(ngModel)]="form.tipo"><option value="PREVENTIVO">Preventivo</option><option value="CORRECTIVO">Correctivo</option></select></div>
+      <div class="field"><label>Fecha programada {{ form.tipo === 'PREVENTIVO' ? '*' : '' }}</label>
+        <input name="fecha" type="date" [(ngModel)]="form.fechaProgramada"></div>
+      <div class="field" *ngIf="form.tipo === 'PREVENTIVO'"><label>Periodicidad (días)</label>
+        <input name="periodicidad" type="number" min="1" [(ngModel)]="form.periodicidadDias" placeholder="Opcional">
+        <small>Si se indica, al finalizar se programa el siguiente automáticamente.</small></div>
+      <div class="field span-2"><label>{{ form.tipo === 'CORRECTIVO' ? 'Descripción de la falla *' : 'Descripción del trabajo' }}</label>
+        <textarea name="descripcion" [(ngModel)]="form.descripcion" maxlength="500"></textarea></div>
+    </div>
+    <div class="modal-actions"><button type="button" class="btn-secondary" (click)="formAbierto = false">Cancelar</button><button type="submit" class="btn-primary">Guardar</button></div>
+  </form>
+</div>
+
+<!-- Finalizar -->
+<div *ngIf="finalizando" class="modal-backdrop" (click)="finalizando = null">
+  <form class="card modal" (ngSubmit)="finalizar()" (click)="$event.stopPropagation()">
+    <div class="modal-header"><div><span class="eyebrow">{{ finalizando.activoCodigo }}</span><h2>Finalizar mantenimiento</h2></div>
+      <button type="button" class="close-button" (click)="finalizando = null">&times;</button></div>
+    <div *ngIf="error" class="alert-error">{{ error }}</div>
+    <div class="form-grid2">
+      <div class="field"><label>Fecha realizada</label><input name="fr" type="date" [(ngModel)]="fin.fechaRealizada"></div>
+      <div class="field"><label>Costo (Bs) *</label><input name="costo" type="number" step="0.01" min="0" [(ngModel)]="fin.costo"></div>
+      <div class="field span-2"><label>Técnico responsable *</label><input name="tecnico" [(ngModel)]="fin.tecnico" maxlength="150"></div>
+      <div class="field span-2"><label>Observaciones</label><textarea name="obs" [(ngModel)]="fin.observaciones" maxlength="500"></textarea></div>
+    </div>
+    <p class="muted" style="margin-top:10px">El activo regresará a su estado previo (Disponible o En uso).</p>
+    <div class="modal-actions"><button type="button" class="btn-secondary" (click)="finalizando = null">Cancelar</button><button type="submit" class="btn-ok">Finalizar mantenimiento</button></div>
+  </form>
+</div>
+
+<!-- Cancelar -->
+<div *ngIf="cancelando" class="modal-backdrop" (click)="cancelando = null">
+  <form class="card modal" (ngSubmit)="cancelar()" (click)="$event.stopPropagation()">
+    <div class="modal-header"><div><span class="eyebrow">{{ cancelando.activoCodigo }}</span><h2>Cancelar mantenimiento</h2></div>
+      <button type="button" class="close-button" (click)="cancelando = null">&times;</button></div>
+    <div class="field"><label>Motivo (opcional)</label><textarea name="motivo" [(ngModel)]="motivoCancelacion" maxlength="500"></textarea></div>
+    <div class="modal-actions"><button type="button" class="btn-secondary" (click)="cancelando = null">Volver</button><button type="submit" class="btn-danger">Cancelar mantenimiento</button></div>
+  </form>
+</div>

@@ -1,0 +1,132 @@
+==========================================================================
+ DESPLIEGUE DE SPRINT 3 - SEGUNDA WEB AZURE + SEGUNDA BASE NEON (AISLADA)
+==========================================================================
+
+Este script NO reutiliza nada del despliegue de Sprint 1/2:
+  * Usa el perfil aislado  .azure-despliegue-sp3/  (config.json propio).
+  * Genera un sufijo aleatorio nuevo -> otro grupo de recursos, otro
+    App Service (otra pagina https://....azurewebsites.net) y otra Neon.
+  * La base se llama  activos_fijos_sp3  para no chocar con la anterior.
+  * Puedes convivir con ambos despliegues a la vez, sin tocar el primero.
+
+--------------------------------------------------------------------------
+1) PRERREQUISITOS (una sola vez en Windows)
+--------------------------------------------------------------------------
+  - Python 3.10+              https://www.python.org/downloads/
+  - Azure CLI instalado       winget install Microsoft.AzureCLI
+      (la primera vez ejecuta:  az login   con tu cuenta Azure for Students)
+  - JDK 17 o 21 y Node.js 18+ (Maven se descarga solo, no hace falta instalarlo)
+  - Un proyecto GRATIS en Neon: https://neon.tech  -> crea un proyecto NUEVO
+      para Sprint 3 y copia su cadena de conexion, que se ve asi:
+      postgresql://usuario:clave@ep-xxxx.us-east-2.aws.neon.tech/neondb?sslmode=require
+
+--------------------------------------------------------------------------
+2) DESPLIEGUE COMPLETO (Neon gratis + App Service F1 gratis)
+--------------------------------------------------------------------------
+  Abre una terminal DENTRO de la carpeta del proyecto y ejecuta:
+
+      python desplegar_azure.py --neon-cadena "PEGA_AQUI_LA_CADENA_NEON_NUEVA"
+
+  Que hace solo:
+    1. Crea el perfil .azure-despliegue-sp3 con sufijo aleatorio.
+    2. Crea en Azure: grupo de recursos, plan F1 (gratis) y App Service Linux.
+    3. Aplica schema.sql + V2 + V3 y datos en la Neon NUEVA (vía Node, SSL).
+    4. Compila Angular, lo incrusta en el JAR de Spring Boot y despliega.
+    5. Prueba el login y te imprime la URL publica.
+
+  Si quieres otra region (la de estudiantes puede estar restringida):
+      python desplegar_azure.py --region brazilsouth --neon-cadena "..."
+
+  Si prefieres PostgreSQL dentro de Azure (CONSUME credito de estudiante):
+      python desplegar_azure.py --bd azure
+
+--------------------------------------------------------------------------
+3) PERFILES MULTIPLES (tercer, cuarto despliegue...)
+--------------------------------------------------------------------------
+  Cada carpeta de perfil es un entorno independiente:
+
+      python desplegar_azure.py --perfil .azure-despliegue-pruebas --neon-cadena "..."
+      python desplegar_azure.py --perfil .azure-despliegue-sp3     --estado
+
+  Tambien funciona con la variable de entorno:
+      set AZURE_PERFIL=.azure-despliegue-sp3
+      python desplegar_azure.py --estado
+
+  Comandos utiles del perfil activo:
+      python desplegar_azure.py --estado      muestra recursos y la URL
+      python desplegar_azure.py --logs        logs en vivo (Ctrl+C para salir)
+      python desplegar_azure.py --solo-app    recompila y redespliega solo el JAR
+      python desplegar_azure.py --eliminar    borra TODO el grupo de recursos
+      python desplegar_azure.py --dry-run     ensaya sin crear nada
+
+--------------------------------------------------------------------------
+4) CONFIGURACION DE LA IA GRATUITA (GROQ + GEMINI + MODO GUIADO)
+--------------------------------------------------------------------------
+  La clave se puede poner de TRES formas (la app toma la primera que exista):
+    a) en el archivo ia_config.json del proyecto (se crea con "python configurar_ia.py");
+    b) en una variable de Windows:  setx GROQ_API_KEY "gsk_..."  (y abre otra consola);
+    c) en la linea de comandos:  python desplegar_azure.py --groq-clave gsk_...
+
+  El despliegue copia esa clave a las variables de entorno de App Service
+  (GROQ_API_KEY / GEMINI_API_KEY, cifradas en reposo por Azure). NO se escribe
+  en el codigo ni en el JAR. Despues del despliegue, el script imprime si la IA
+  quedo configurada o en MODO GUIADO.
+
+      GROQ_API_KEY   = clave_gratuita_de_https://console.groq.com/keys
+      GROQ_MODEL     = openai/gpt-oss-120b            (opcional, tiene valor por defecto)
+      GEMINI_API_KEY = clave_gratuita_de_Google_AI_Studio  (respaldo automatico)
+      GEMINI_MODEL   = gemini-3.8-flash              (opcional)
+
+  La seleccion es automatica: si hay GROQ_API_KEY se usa Groq; si falla o
+  no existe, se intenta Gemini; sin ninguna clave el asistente funciona en
+  MODO GUIADO. En cualquier modo solo se ejecutan SELECT de la lista blanca
+  (13 tablas), con parametros enlazados y alcance limitado a la empresa del
+  usuario (text-to-SQL seguro, multi-tenant).
+
+  Para cambiar la clave mas adelante (sin volver a desplegar todo):
+      python desplegar_azure.py --solo-app
+  (reaplica las variables de entorno, vuelve a sembrar los datos y verifica
+   que ninguna tabla quedo vacia).
+
+--------------------------------------------------------------------------
+5) SI AL DEPLOYAR ALGUNAS PANTALLAS SALEN VACIAS O LA IA NO RESPONDE
+--------------------------------------------------------------------------
+  Causas ya corregidas por el script (usa esta version):
+    * Los datos se sembraban antes de que el backend terminara de inicializar
+      (las areas todavia no existian): el seed de presupuestos insertaba cero
+      filas "con exito" y el de Sprint 3 fallaba con
+      "null value in column partida_id", dejando la base sin datos.
+      Ahora el script ESPERA a que la base este lista, ejecuta cada sentencia
+      por separado (un error ya no borra todo) y al final CUENTA las filas de
+      cada tabla y avisa de las que quedaron vacias.
+    * La IA se quedaba en modo guiado porque la clave no se copiaba a App
+      Service. Ahora se copia desde ia_config.json / variables de entorno.
+    * Los respaldos, las fotos de inventario y la bitacora en archivo fallaban
+      porque el backend usaba rutas de escritorio (/home/user/...) que en Azure
+      no existen. Ahora se apuntan a /home/site/wwwroot/...
+    * El APK movil apuntaba al despliegue viejo (.azure-despliegue). Ahora
+      busca primero el perfil del Sprint 3 (.azure-despliegue-sp3).
+
+  Si aun ves pantallas vacias, ejecuta esto y lee el resumen de filas:
+      python desplegar_azure.py --solo-app
+  y luego, para ver el error exacto del backend:
+      python desplegar_azure.py --logs
+
+  Nota sobre Neon: en la consola de Neon, "Connection string" -> elige la
+  version DIRECTA (sin "-pooler") para Spring Boot. Si usaste el pooler, el
+  script avisa y ajusta el pool de conexiones.
+
+--------------------------------------------------------------------------
+6) LA APLICACION MOVIL APUNTA A ESTA NUEVA WEB
+--------------------------------------------------------------------------
+  Compila el APK indicando la URL publica (termina en /api):
+
+      flutter build apk --release --dart-define=API_URL=https://TU-WEB.azurewebsites.net/api
+
+  O usa el lanzador, que toma la URL sola del perfil de despliegue:
+      Generar_APK_Azure.bat
+
+  La primera vez:  flutter pub get
+  Permisos ya declarados: camara (QR/fotos), GPS, microfono (voz), con
+  alternativa manual si el usuario los deniega.
+==========================================================================

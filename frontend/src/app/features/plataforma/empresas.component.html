@@ -1,0 +1,171 @@
+<div class="stack">
+  <div class="page-header">
+    <div>
+      <h2>Administración de la plataforma</h2>
+      <p class="sub">Gestión centralizada de empresas (tenants) y métricas del SaaS.</p>
+    </div>
+    <button class="btn-secondary" (click)="cargar()">Actualizar</button>
+  </div>
+
+  <div class="alert-error" *ngIf="errorMsg">{{ errorMsg }}</div>
+  <div class="alert-ok" *ngIf="okMsg">{{ okMsg }}</div>
+
+  <div class="card">
+    <div class="row">
+      <div>
+        <h3>Datos de ejemplo</h3>
+        <p class="sub">
+          Completa lo que falte en cada empresa (categorias, areas, ubicaciones, activos, asignaciones,
+          mantenimiento, presupuesto, consultas, inventario, historial y respaldos).
+          No se pisa ningun dato real: solo se crea lo que no existe.
+        </p>
+      </div>
+      <span class="spacer"></span>
+      <button class="btn-secondary" [disabled]="completando !== 0" (click)="completarEjemploTodas()">
+        {{ completando === -1 ? 'Completando...' : 'Completar todas' }}
+      </button>
+    </div>
+  </div>
+
+  <!-- Ronda 11: transferencias bancarias pendientes de confirmar -->
+  <div class="card" *ngIf="transferencias.length">
+    <div class="row">
+      <div>
+        <h3>Transferencias bancarias</h3>
+        <p class="sub">
+          Confirma el deposito cuando el dinero lleguó a la cuenta: la suscripción de la empresa
+          queda activa al instante.
+        </p>
+      </div>
+      <span class="spacer"></span>
+      <button class="btn-secondary" (click)="cargarTransferencias()">Actualizar</button>
+    </div>
+    <div class="table-wrap">
+      <table class="data">
+        <thead>
+          <tr><th>Fecha</th><th>Empresa</th><th>Monto</th><th>Referencia</th><th>Estado</th><th></th></tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let t of transferencias">
+            <td>{{ t.fecha | date:'short' }}</td>
+            <td>{{ t.empresa || '—' }}</td>
+            <td>Bs {{ t.monto }}</td>
+            <td class="mono">{{ t.referencia }}</td>
+            <td><span class="badge" [class.badge--ok]="t.estado === 'APROBADO'">{{ t.estado }}</span></td>
+            <td class="row-actions">
+              <button class="btn-primary" *ngIf="t.estado === 'PENDIENTE'"
+                      [disabled]="!!procesandoTransferencia" (click)="aprobarTransferencia(t)">
+                Confirmar deposito
+              </button>
+              <button class="btn-secondary" *ngIf="t.estado === 'PENDIENTE'"
+                      [disabled]="!!procesandoTransferencia" (click)="rechazarTransferencia(t)">
+                Rechazar
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <section class="kpis">
+    <article class="kpi card" *ngFor="let entrada of entradasMetrica()">
+      <span class="kpi__valor">{{ entrada[1] }}</span>
+      <span class="kpi__nombre">{{ entrada[0] }}</span>
+    </article>
+  </section>
+
+  <div class="card">
+    <div class="row">
+      <h3>Empresas registradas</h3>
+      <span class="spacer"></span>
+      <input class="input" placeholder="Buscar por nombre, NIT o correo..." [(ngModel)]="filtro" />
+    </div>
+
+    <p class="empty" *ngIf="cargando">Cargando...</p>
+    <div class="table-wrap">
+      <table class="data">
+        <thead>
+          <tr>
+            <th>ID</th><th>Nombre</th><th>NIT</th><th>Contacto</th><th>Registro</th><th>Estado</th><th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let e of empresasFiltradas">
+            <td>{{ e.id }}</td>
+            <td>{{ e.nombre }}</td>
+            <td class="mono">{{ e.nit }}</td>
+            <td>{{ e.correoContacto }}</td>
+            <td>{{ e.fechaRegistro | date:'short' }}</td>
+            <td>
+              <span class="badge" [class.badge--ok]="e.estado === 'ACTIVA'" [class.badge--off]="e.estado !== 'ACTIVA'">{{ e.estado }}</span>
+            </td>
+            <td class="row">
+              <button class="btn-link" (click)="verDetalle(e.id)">Ver detalle</button>
+              <button
+                class="btn-link"
+                [disabled]="completando === e.id"
+                (click)="completarEjemplo(e)"
+              >{{ completando === e.id ? 'Completando...' : 'Datos de ejemplo' }}</button>
+              <button
+                class="btn-link"
+                [disabled]="entrando === e.id"
+                (click)="entrarComo(e)"
+              >{{ entrando === e.id ? 'Entrando...' : 'Entrar como' }}</button>
+              <button
+                class="btn-link"
+                [class.danger]="e.estado === 'ACTIVA'"
+                (click)="cambiarEstado(e)"
+              >{{ e.estado === 'ACTIVA' ? 'Suspender' : 'Activar' }}</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="empty" *ngIf="!cargando && empresasFiltradas.length === 0">No hay empresas que coincidan.</p>
+  </div>
+
+  <div class="card" *ngIf="detalle">
+    <div class="row">
+      <h3>Detalle de la empresa</h3>
+      <span class="spacer"></span>
+      <button class="btn-link" (click)="detalle = null">Cerrar</button>
+    </div>
+    <div class="row" *ngIf="detalle.empresa">
+      <strong>{{ detalle.empresa.nombre }}</strong>
+      <span class="muted">NIT {{ detalle.empresa.nit }}</span>
+      <span class="badge" [class.badge--ok]="detalle.empresa.estado === 'ACTIVA'" [class.badge--off]="detalle.empresa.estado !== 'ACTIVA'">{{ detalle.empresa.estado }}</span>
+    </div>
+    <div class="kpis" *ngIf="detalle.empresa">
+      <div class="kpi">
+        <span class="kpi__valor">{{ detalle.usuarios ?? 0 }}</span>
+        <span class="kpi__nombre">Usuarios</span>
+      </div>
+      <div class="kpi">
+        <span class="kpi__valor">{{ detalle.activos ?? 0 }}</span>
+        <span class="kpi__nombre">Activos</span>
+      </div>
+      <div class="kpi">
+        <span class="kpi__valor">{{ detalle.presupuestos ?? 0 }}</span>
+        <span class="kpi__nombre">Presupuestos</span>
+      </div>
+      <div class="kpi">
+        <span class="kpi__valor">{{ detalle.mantenimientos ?? 0 }}</span>
+        <span class="kpi__nombre">Mantenimientos</span>
+      </div>
+      <div class="kpi">
+        <span class="kpi__valor">{{ detalle.respaldos ?? 0 }}</span>
+        <span class="kpi__nombre">Respaldos</span>
+      </div>
+    </div>
+    <p class="muted" *ngIf="detalle.suscripcion">
+      Plan {{ detalle.suscripcion.plan?.nombre }} ·
+      {{ detalle.suscripcion.estado }} ·
+      vence el {{ detalle.suscripcion.fechaVencimiento | date:'mediumDate' }}
+    </p>
+    <details>
+      <summary>Ver respuesta completa (JSON)</summary>
+      <pre class="json">{{ detalle | json }}</pre>
+    </details>
+  </div>
+</div>

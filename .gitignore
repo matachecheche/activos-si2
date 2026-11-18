@@ -1,0 +1,33 @@
+# Backend
+backend/target/
+backend/.mvn/
+*.class
+*.bat
+*.ps1
+
+# Frontend
+frontend/node_modules/
+frontend/dist/
+frontend/.angular/
+
+# IDE / SO
+.idea/
+.vscode/
+*.iml
+.DS_Store
+Thumbs.db
+
+# copias de seguridad que genera aplicar_sprint2.py
+.backup_sprint2/
+
+# lanzador local
+logs/
+.tools/
+.local_config.json
+*.apk
+.azure-despliegue/
+.azure-despliegue-sp3/
+backend/src/main/resources/static/
+ia_config.json
+
+pasarelas.env

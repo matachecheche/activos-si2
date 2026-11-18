@@ -1,0 +1,94 @@
+<div class="stack">
+  <div class="page-header">
+    <div>
+      <h2>Verificación de inventario</h2>
+      <p class="sub">Registra el conteo físico con evidencia fotográfica y ubicación GPS. También funciona sin GPS ni cámara, con ingreso manual.</p>
+    </div>
+  </div>
+
+  <div class="alert-error" *ngIf="errorMsg">{{ errorMsg }}</div>
+  <div class="alert-ok" *ngIf="okMsg">{{ okMsg }}</div>
+
+  <section class="stats">
+    <article class="stat card" *ngFor="let entrada of contadores">
+      <strong>{{ entrada.valor }}</strong>
+      <span>{{ etiquetasStats[entrada.clave] || entrada.clave }}</span>
+    </article>
+  </section>
+
+  <div class="card">
+    <h3>Nueva verificación</h3>
+    <div class="form-grid2">
+      <label class="field">
+        <span>ID del activo</span>
+        <input type="number" [(ngModel)]="form.activoId" placeholder="Ej: 12" />
+      </label>
+      <label class="field">
+        <span>Resultado</span>
+        <select [(ngModel)]="form.resultado">
+          <option *ngFor="let r of resultados" [value]="r">{{ r }}</option>
+        </select>
+      </label>
+      <label class="field">
+        <span>Latitud (manual o GPS)</span>
+        <input type="number" step="any" [(ngModel)]="form.latitud" placeholder="-17.7832" />
+      </label>
+      <label class="field">
+        <span>Longitud (manual o GPS)</span>
+        <input type="number" step="any" [(ngModel)]="form.longitud" placeholder="-63.1821" />
+      </label>
+      <label class="field span-2">
+        <span>Observación</span>
+        <textarea [(ngModel)]="form.observacion" placeholder="Estado encontrado, novedades..."></textarea>
+      </label>
+    </div>
+
+    <div class="row herramientas">
+      <button class="btn-secondary" type="button" (click)="capturarGps()" [disabled]="gpsBuscando">
+        {{ gpsBuscando ? 'Obteniendo ubicación...' : 'Usar mi ubicación GPS' }}
+      </button>
+      <span class="muted" *ngIf="form.precisionM">Precisión: ±{{ form.precisionM | number:'1.0-1' }} m</span>
+      <label class="btn-secondary file-btn">
+        Adjuntar foto
+        <input type="file" accept="image/jpeg,image/png,image/webp" (change)="subirFoto($event)" hidden />
+      </label>
+      <span class="muted" *ngIf="subiendoFoto">Subiendo...</span>
+      <span class="muted" *ngIf="form.fotoUrl">✓ {{ form.fotoUrl }}</span>
+      <span class="spacer"></span>
+      <button class="btn-primary" (click)="registrar()">Registrar verificación</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Verificaciones recientes</h3>
+    <p class="empty" *ngIf="cargando">Cargando...</p>
+    <div class="table-wrap">
+      <table class="data">
+        <thead>
+          <tr><th>Fecha</th><th>Activo</th><th>Resultado</th><th>GPS</th><th>Foto</th><th>Observación</th></tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let v of verificaciones">
+            <td class="nowrap">{{ v.fechaHora | date:'short' }}</td>
+            <td>#{{ v.activoId }}</td>
+            <td><span class="badge" [class.badge--ok]="v.resultado === 'ENCONTRADO'">{{ v.resultado }}</span></td>
+            <td class="mono">
+              <ng-container *ngIf="v.latitud != null; else sinGps">{{ v.latitud | number:'1.0-4' }}, {{ v.longitud | number:'1.0-4' }}</ng-container>
+              <ng-template #sinGps>Manual / sin GPS</ng-template>
+            </td>
+            <td>
+              <a *ngIf="v.fotoUrl" [href]="urlFoto(v.fotoUrl)" target="_blank" rel="noopener">Ver foto</a>
+              <span *ngIf="!v.fotoUrl" class="muted">—</span>
+            </td>
+            <td class="detalle">{{ v.observacion }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="paginacion" *ngIf="total > tamano">
+      <button class="btn-secondary" [disabled]="pagina === 0" (click)="cargar(pagina - 1)">Anterior</button>
+      <span class="muted">Página {{ pagina + 1 }} de {{ totalPaginas }} ({{ total }} registros)</span>
+      <button class="btn-secondary" [disabled]="pagina >= totalPaginas - 1" (click)="cargar(pagina + 1)">Siguiente</button>
+    </div>
+  </div>
+</div>

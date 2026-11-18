@@ -1,0 +1,361 @@
+ACTIVOS-FIJOS-BACKUP-V1
+empresaId=1
+fecha=2026-10-28T14:12:55.886050600
+## rol
+{"id":1,"nombre":"ADMINISTRADOR","activo":true,"descripcion":"Acceso total al sistema","empresa_id":1,"es_sistema":true}
+{"id":2,"nombre":"ENCARGADO_ACTIVOS","activo":true,"descripcion":"Registra, asigna y controla los activos fijos","empresa_id":1,"es_sistema":true}
+{"id":3,"nombre":"CONTADOR","activo":true,"descripcion":"Consulta activos y administra la depreciación","empresa_id":1,"es_sistema":true}
+{"id":4,"nombre":"RESPONSABLE_FINANCIERO","activo":true,"descripcion":"Administra presupuestos y su ejecución","empresa_id":1,"es_sistema":true}
+{"id":5,"nombre":"TECNICO","activo":true,"descripcion":"Programa y registra mantenimientos","empresa_id":1,"es_sistema":true}
+## rol_permiso
+{"rol_id":1,"permiso_id":1}
+{"rol_id":1,"permiso_id":2}
+{"rol_id":1,"permiso_id":3}
+{"rol_id":1,"permiso_id":4}
+{"rol_id":1,"permiso_id":5}
+{"rol_id":1,"permiso_id":6}
+{"rol_id":1,"permiso_id":7}
+{"rol_id":1,"permiso_id":8}
+{"rol_id":1,"permiso_id":9}
+{"rol_id":1,"permiso_id":10}
+{"rol_id":1,"permiso_id":11}
+{"rol_id":1,"permiso_id":12}
+{"rol_id":1,"permiso_id":13}
+{"rol_id":1,"permiso_id":14}
+{"rol_id":1,"permiso_id":15}
+{"rol_id":1,"permiso_id":16}
+{"rol_id":1,"permiso_id":17}
+{"rol_id":1,"permiso_id":18}
+{"rol_id":1,"permiso_id":19}
+{"rol_id":1,"permiso_id":20}
+{"rol_id":1,"permiso_id":21}
+{"rol_id":1,"permiso_id":22}
+{"rol_id":1,"permiso_id":23}
+{"rol_id":1,"permiso_id":24}
+{"rol_id":1,"permiso_id":25}
+{"rol_id":1,"permiso_id":26}
+{"rol_id":1,"permiso_id":27}
+{"rol_id":1,"permiso_id":28}
+{"rol_id":1,"permiso_id":29}
+{"rol_id":1,"permiso_id":30}
+{"rol_id":2,"permiso_id":1}
+{"rol_id":2,"permiso_id":2}
+{"rol_id":2,"permiso_id":3}
+{"rol_id":2,"permiso_id":23}
+{"rol_id":2,"permiso_id":27}
+{"rol_id":2,"permiso_id":28}
+{"rol_id":2,"permiso_id":29}
+{"rol_id":3,"permiso_id":1}
+{"rol_id":3,"permiso_id":9}
+{"rol_id":3,"permiso_id":23}
+{"rol_id":3,"permiso_id":24}
+{"rol_id":3,"permiso_id":25}
+{"rol_id":4,"permiso_id":5}
+{"rol_id":4,"permiso_id":6}
+{"rol_id":4,"permiso_id":7}
+{"rol_id":5,"permiso_id":1}
+{"rol_id":5,"permiso_id":27}
+{"rol_id":5,"permiso_id":28}
+{"rol_id":5,"permiso_id":29}
+## usuario
+{"id":2,"nombre":"Administrador (prueba)","correo":"admin@uagrm.edu.bo","password":"$2b$10$Vn.kCG30k/5rvSbwY9jPI.ZXSMnmtzZSAH.Lrxb7cFHzUfNyEcScy","rol_id":1,"intentos_fallidos":0,"bloqueado_hasta":null,"activo":true,"cuenta_id":1,"empresa_id":1,"nivel":"ADMIN"}
+{"id":3,"nombre":"Encargado de Activos (prueba)","correo":"encargado@uagrm.edu.bo","password":"$2b$10$Hmr7ACmODagliVeslQB82eOX.Cfq7gpaxuJ2N9pH5SA2WdoVwnmSC","rol_id":2,"intentos_fallidos":0,"bloqueado_hasta":null,"activo":true,"cuenta_id":3,"empresa_id":1,"nivel":"REGULAR"}
+{"id":4,"nombre":"Contador (prueba)","correo":"contador@uagrm.edu.bo","password":"$2b$10$R4KjaSKjvE6j7l/bAwOmLOWzf7P3J6/qZy8GFhDlw3doLlVijztOi","rol_id":3,"intentos_fallidos":0,"bloqueado_hasta":null,"activo":true,"cuenta_id":2,"empresa_id":1,"nivel":"REGULAR"}
+{"id":5,"nombre":"Responsable Financiero (prueba)","correo":"financiero@uagrm.edu.bo","password":"$2b$10$R4DyovKsPU52RcaD4o6eAuVSQ9ZPJh.363GlQDLw8d/U4zp17Dgvu","rol_id":4,"intentos_fallidos":0,"bloqueado_hasta":null,"activo":true,"cuenta_id":4,"empresa_id":1,"nivel":"REGULAR"}
+## categoria
+{"id":1,"nombre":"Mobiliario","depreciable":true,"metodo_depreciacion":"LINEA_RECTA","valor_residual_pct":0.00,"vida_util":10,"empresa_id":1}
+{"id":2,"nombre":"Equipos informaticos","depreciable":true,"metodo_depreciacion":"LINEA_RECTA","valor_residual_pct":0.00,"vida_util":4,"empresa_id":1}
+{"id":3,"nombre":"Vehiculos","depreciable":true,"metodo_depreciacion":"LINEA_RECTA","valor_residual_pct":0.00,"vida_util":5,"empresa_id":1}
+{"id":4,"nombre":"Maquinaria","depreciable":true,"metodo_depreciacion":"LINEA_RECTA","valor_residual_pct":0.00,"vida_util":8,"empresa_id":1}
+{"id":5,"nombre":"Inmuebles","depreciable":true,"metodo_depreciacion":"LINEA_RECTA","valor_residual_pct":0.00,"vida_util":40,"empresa_id":1}
+{"id":6,"nombre":"Terrenos","depreciable":false,"metodo_depreciacion":"LINEA_RECTA","valor_residual_pct":0.00,"vida_util":null,"empresa_id":1}
+## area
+{"id":1,"activo":true,"descripcion":"Administración general de la facultad","empresa_id":1,"nombre":"Dirección administrativa"}
+{"id":2,"activo":true,"descripcion":"Infraestructura y soporte informático","empresa_id":1,"nombre":"Sistemas"}
+{"id":3,"activo":true,"descripcion":"Laboratorios de redes y cómputo","empresa_id":1,"nombre":"Laboratorios"}
+{"id":4,"activo":true,"descripcion":"Biblioteca y centro de documentación","empresa_id":1,"nombre":"Biblioteca"}
+{"id":5,"activo":true,"descripcion":"Almacén central de bienes","empresa_id":1,"nombre":"Almacén"}
+## ubicacion
+{"id":1,"nombre":"Almacen central","empresa_id":1,"area_id":null}
+{"id":2,"nombre":"Oficina de sistemas","empresa_id":1,"area_id":2}
+{"id":3,"nombre":"Laboratorio de redes","empresa_id":1,"area_id":3}
+{"id":4,"nombre":"Direccion administrativa","empresa_id":1,"area_id":null}
+{"id":5,"nombre":"Biblioteca","empresa_id":1,"area_id":null}
+## activo
+{"id":1,"codigo":"ACT-2026-0001","nombre":"Laptop Dell Latitude 5440","categoria_id":2,"valor":8500.00,"fecha_adquisicion":"2026-01-15","proveedor":"Tecnodata SRL","observaciones":null,"estado":"EN_USO","responsable_id":3,"ubicacion_id":2,"empresa_id":1,"fecha_baja":null,"fecha_inicio_depreciacion":null,"foto_url":null,"valor_residual":null}
+{"id":2,"codigo":"ACT-2026-0002","nombre":"Laptop HP ProBook 450","categoria_id":2,"valor":7900.00,"fecha_adquisicion":"2026-01-15","proveedor":"Tecnodata SRL","observaciones":null,"estado":"EN_USO","responsable_id":2,"ubicacion_id":2,"empresa_id":1,"fecha_baja":null,"fecha_inicio_depreciacion":null,"foto_url":null,"valor_residual":null}
+{"id":3,"codigo":"ACT-2026-0003","nombre":"Impresora multifuncional Epson L5590","categoria_id":2,"valor":2300.00,"fecha_adquisicion":"2026-02-02","proveedor":"Comercial Andina","observaciones":null,"estado":"EN_USO","responsable_id":3,"ubicacion_id":1,"empresa_id":1,"fecha_baja":null,"fecha_inicio_depreciacion":null,"foto_url":null,"valor_residual":null}
+{"id":4,"codigo":"ACT-2026-0004","nombre":"Proyector Epson PowerLite X49","categoria_id":2,"valor":3200.00,"fecha_adquisicion":"2026-02-10","proveedor":"Comercial Andina","observaciones":null,"estado":"MANTENIMIENTO","responsable_id":null,"ubicacion_id":null,"empresa_id":1,"fecha_baja":null,"fecha_inicio_depreciacion":null,"foto_url":null,"valor_residual":null}
+{"id":5,"codigo":"ACT-2026-0005","nombre":"Escritorio ejecutivo de melamina","categoria_id":1,"valor":950.00,"fecha_adquisicion":"2026-01-20","proveedor":"Muebleria San Martin","observaciones":null,"estado":"EN_USO","responsable_id":4,"ubicacion_id":1,"empresa_id":1,"fecha_baja":null,"fecha_inicio_depreciacion":null,"foto_url":null,"valor_residual":null}
+{"id":6,"codigo":"ACT-2026-0006","nombre":"Silla ergonomica giratoria","categoria_id":1,"valor":480.00,"fecha_adquisicion":"2026-01-20","proveedor":"Muebleria San Martin","observaciones":null,"estado":"SIN_ASIGNAR","responsable_id":null,"ubicacion_id":null,"empresa_id":1,"fecha_baja":null,"fecha_inicio_depreciacion":null,"foto_url":null,"valor_residual":null}
+{"id":7,"codigo":"ACT-2026-0007","nombre":"Archivador metalico 4 gavetas","categoria_id":1,"valor":620.00,"fecha_adquisicion":"2026-01-25","proveedor":"Muebleria San Martin","observaciones":null,"estado":"EN_USO","responsable_id":5,"ubicacion_id":1,"empresa_id":1,"fecha_baja":null,"fecha_inicio_depreciacion":null,"foto_url":null,"valor_residual":null}
+{"id":8,"codigo":"ACT-2026-0008","nombre":"Vehiculo Toyota Hilux 2024","categoria_id":3,"valor":245000.00,"fecha_adquisicion":"2026-03-05","proveedor":"Toyotasa","observaciones":null,"estado":"EN_USO","responsable_id":2,"ubicacion_id":4,"empresa_id":1,"fecha_baja":null,"fecha_inicio_depreciacion":null,"foto_url":null,"valor_residual":null}
+{"id":9,"codigo":"ACT-2026-0009","nombre":"Motocicleta Honda CB125","categoria_id":3,"valor":12500.00,"fecha_adquisicion":"2026-03-10","proveedor":"Motos del Oriente","observaciones":null,"estado":"BAJA","responsable_id":null,"ubicacion_id":null,"empresa_id":1,"fecha_baja":null,"fecha_inicio_depreciacion":null,"foto_url":null,"valor_residual":null}
+{"id":10,"codigo":"ACT-2026-0010","nombre":"Generador electrico 5kva","categoria_id":4,"valor":9800.00,"fecha_adquisicion":"2026-02-18","proveedor":"Ferreteria Central","observaciones":null,"estado":"SIN_ASIGNAR","responsable_id":null,"ubicacion_id":null,"empresa_id":1,"fecha_baja":null,"fecha_inicio_depreciacion":null,"foto_url":null,"valor_residual":null}
+{"id":11,"codigo":"ACT-2026-0011","nombre":"Aire acondicionado split 24000 BTU","categoria_id":4,"valor":5400.00,"fecha_adquisicion":"2026-02-20","proveedor":"ClimaTech","observaciones":null,"estado":"EN_USO","responsable_id":5,"ubicacion_id":4,"empresa_id":1,"fecha_baja":null,"fecha_inicio_depreciacion":null,"foto_url":null,"valor_residual":null}
+{"id":12,"codigo":"ACT-2026-0012","nombre":"Edificio Bloque C - Facultad","categoria_id":5,"valor":1850000.00,"fecha_adquisicion":"2020-01-01","proveedor":"N/A","observaciones":null,"estado":"SIN_ASIGNAR","responsable_id":null,"ubicacion_id":null,"empresa_id":1,"fecha_baja":null,"fecha_inicio_depreciacion":null,"foto_url":null,"valor_residual":null}
+## asignacion
+{"id":1,"activo_id":1,"responsable_id":3,"ubicacion_id":2,"fecha_asignacion":"2026-10-28T18:11:06.879+00:00","activa":true,"empresa_id":1}
+{"id":2,"activo_id":5,"responsable_id":4,"ubicacion_id":1,"fecha_asignacion":"2026-10-28T18:11:06.879+00:00","activa":true,"empresa_id":1}
+{"id":3,"activo_id":2,"responsable_id":2,"ubicacion_id":2,"fecha_asignacion":"2026-02-01T13:00:00.000+00:00","activa":true,"empresa_id":1}
+{"id":4,"activo_id":3,"responsable_id":3,"ubicacion_id":1,"fecha_asignacion":"2026-02-01T13:00:00.000+00:00","activa":true,"empresa_id":1}
+{"id":5,"activo_id":7,"responsable_id":5,"ubicacion_id":1,"fecha_asignacion":"2026-02-01T13:00:00.000+00:00","activa":true,"empresa_id":1}
+{"id":6,"activo_id":8,"responsable_id":2,"ubicacion_id":4,"fecha_asignacion":"2026-02-01T13:00:00.000+00:00","activa":true,"empresa_id":1}
+{"id":7,"activo_id":11,"responsable_id":5,"ubicacion_id":4,"fecha_asignacion":"2026-02-01T13:00:00.000+00:00","activa":true,"empresa_id":1}
+## historial_estado_activo
+{"id":1,"empresa_id":1,"estado_anterior":null,"estado_nuevo":"DISPONIBLE","fecha":"2026-01-15T13:00:00.000+00:00","motivo":"Registro inicial del activo (dato de fabrica)","activo_id":1,"usuario_id":2}
+{"id":2,"empresa_id":1,"estado_anterior":"DISPONIBLE","estado_nuevo":"EN_USO","fecha":"2026-02-01T13:00:00.000+00:00","motivo":"Asignacion de responsable mediante el modulo de activos (dato de fabrica)","activo_id":1,"usuario_id":2}
+{"id":3,"empresa_id":1,"estado_anterior":null,"estado_nuevo":"DISPONIBLE","fecha":"2026-01-15T13:00:00.000+00:00","motivo":"Registro inicial del activo (dato de fabrica)","activo_id":2,"usuario_id":2}
+{"id":4,"empresa_id":1,"estado_anterior":"DISPONIBLE","estado_nuevo":"EN_USO","fecha":"2026-02-01T13:00:00.000+00:00","motivo":"Asignacion de responsable mediante el modulo de activos (dato de fabrica)","activo_id":2,"usuario_id":2}
+{"id":5,"empresa_id":1,"estado_anterior":null,"estado_nuevo":"DISPONIBLE","fecha":"2026-02-02T13:00:00.000+00:00","motivo":"Registro inicial del activo (dato de fabrica)","activo_id":3,"usuario_id":2}
+{"id":6,"empresa_id":1,"estado_anterior":"DISPONIBLE","estado_nuevo":"EN_USO","fecha":"2026-02-01T13:00:00.000+00:00","motivo":"Asignacion de responsable mediante el modulo de activos (dato de fabrica)","activo_id":3,"usuario_id":2}
+{"id":7,"empresa_id":1,"estado_anterior":null,"estado_nuevo":"DISPONIBLE","fecha":"2026-02-10T13:00:00.000+00:00","motivo":"Registro inicial del activo (dato de fabrica)","activo_id":4,"usuario_id":2}
+{"id":8,"empresa_id":1,"estado_anterior":null,"estado_nuevo":"DISPONIBLE","fecha":"2026-01-20T13:00:00.000+00:00","motivo":"Registro inicial del activo (dato de fabrica)","activo_id":5,"usuario_id":2}
+{"id":9,"empresa_id":1,"estado_anterior":"DISPONIBLE","estado_nuevo":"EN_USO","fecha":"2026-02-01T13:00:00.000+00:00","motivo":"Asignacion de responsable mediante el modulo de activos (dato de fabrica)","activo_id":5,"usuario_id":2}
+{"id":10,"empresa_id":1,"estado_anterior":null,"estado_nuevo":"DISPONIBLE","fecha":"2026-01-20T13:00:00.000+00:00","motivo":"Registro inicial del activo (dato de fabrica)","activo_id":6,"usuario_id":2}
+{"id":11,"empresa_id":1,"estado_anterior":null,"estado_nuevo":"DISPONIBLE","fecha":"2026-01-25T13:00:00.000+00:00","motivo":"Registro inicial del activo (dato de fabrica)","activo_id":7,"usuario_id":2}
+{"id":12,"empresa_id":1,"estado_anterior":"DISPONIBLE","estado_nuevo":"EN_USO","fecha":"2026-02-01T13:00:00.000+00:00","motivo":"Asignacion de responsable mediante el modulo de activos (dato de fabrica)","activo_id":7,"usuario_id":2}
+{"id":13,"empresa_id":1,"estado_anterior":null,"estado_nuevo":"DISPONIBLE","fecha":"2026-03-05T13:00:00.000+00:00","motivo":"Registro inicial del activo (dato de fabrica)","activo_id":8,"usuario_id":2}
+{"id":14,"empresa_id":1,"estado_anterior":"DISPONIBLE","estado_nuevo":"EN_USO","fecha":"2026-02-01T13:00:00.000+00:00","motivo":"Asignacion de responsable mediante el modulo de activos (dato de fabrica)","activo_id":8,"usuario_id":2}
+{"id":15,"empresa_id":1,"estado_anterior":null,"estado_nuevo":"DISPONIBLE","fecha":"2026-03-10T13:00:00.000+00:00","motivo":"Registro inicial del activo (dato de fabrica)","activo_id":9,"usuario_id":2}
+{"id":16,"empresa_id":1,"estado_anterior":null,"estado_nuevo":"DISPONIBLE","fecha":"2026-02-18T13:00:00.000+00:00","motivo":"Registro inicial del activo (dato de fabrica)","activo_id":10,"usuario_id":2}
+{"id":17,"empresa_id":1,"estado_anterior":null,"estado_nuevo":"DISPONIBLE","fecha":"2026-02-20T13:00:00.000+00:00","motivo":"Registro inicial del activo (dato de fabrica)","activo_id":11,"usuario_id":2}
+{"id":18,"empresa_id":1,"estado_anterior":"DISPONIBLE","estado_nuevo":"EN_USO","fecha":"2026-02-01T13:00:00.000+00:00","motivo":"Asignacion de responsable mediante el modulo de activos (dato de fabrica)","activo_id":11,"usuario_id":2}
+{"id":19,"empresa_id":1,"estado_anterior":null,"estado_nuevo":"DISPONIBLE","fecha":"2020-01-01T13:00:00.000+00:00","motivo":"Registro inicial del activo (dato de fabrica)","activo_id":12,"usuario_id":2}
+## depreciacion_activo
+{"id":1,"depreciacion_acumulada":177.08,"depreciacion_periodo":177.08,"empresa_id":1,"fecha_calculo":"2026-10-28T18:11:08.246+00:00","periodo":"2026-01","valor_en_libros":8322.92,"activo_id":1}
+{"id":2,"depreciacion_acumulada":354.16,"depreciacion_periodo":177.08,"empresa_id":1,"fecha_calculo":"2026-10-28T18:11:08.246+00:00","periodo":"2026-02","valor_en_libros":8145.84,"activo_id":1}
+{"id":3,"depreciacion_acumulada":531.24,"depreciacion_periodo":177.08,"empresa_id":1,"fecha_calculo":"2026-10-28T18:11:08.246+00:00","periodo":"2026-03","valor_en_libros":7968.76,"activo_id":1}
+{"id":4,"depreciacion_acumulada":708.32,"depreciacion_periodo":177.08,"empresa_id":1,"fecha_calculo":"2026-10-28T18:11:08.246+00:00","periodo":"2026-04","valor_en_libros":7791.68,"activo_id":1}
+{"id":5,"depreciacion_acumulada":885.40,"depreciacion_periodo":177.08,"empresa_id":1,"fecha_calculo":"2026-10-28T18:11:08.246+00:00","periodo":"2026-05","valor_en_libros":7614.60,"activo_id":1}
+{"id":6,"depreciacion_acumulada":1062.48,"depreciacion_periodo":177.08,"empresa_id":1,"fecha_calculo":"2026-10-28T18:11:08.246+00:00","periodo":"2026-06","valor_en_libros":7437.52,"activo_id":1}
+{"id":7,"depreciacion_acumulada":1239.56,"depreciacion_periodo":177.08,"empresa_id":1,"fecha_calculo":"2026-10-28T18:11:08.246+00:00","periodo":"2026-07","valor_en_libros":7260.44,"activo_id":1}
+{"id":8,"depreciacion_acumulada":1416.64,"depreciacion_periodo":177.08,"empresa_id":1,"fecha_calculo":"2026-10-28T18:11:08.246+00:00","periodo":"2026-08","valor_en_libros":7083.36,"activo_id":1}
+{"id":9,"depreciacion_acumulada":1593.72,"depreciacion_periodo":177.08,"empresa_id":1,"fecha_calculo":"2026-10-28T18:11:08.246+00:00","periodo":"2026-09","valor_en_libros":6906.28,"activo_id":1}
+{"id":10,"depreciacion_acumulada":1770.80,"depreciacion_periodo":177.08,"empresa_id":1,"fecha_calculo":"2026-10-28T18:11:08.246+00:00","periodo":"2026-10","valor_en_libros":6729.20,"activo_id":1}
+{"id":11,"depreciacion_acumulada":164.58,"depreciacion_periodo":164.58,"empresa_id":1,"fecha_calculo":"2026-10-28T18:11:08.272+00:00","periodo":"2026-01","valor_en_libros":7735.42,"activo_id":2}
+{"id":12,"depreciacion_acumulada":329.16,"depreciacion_periodo":164.58,"empresa_id":1,"fecha_calculo":"2026-10-28T18:11:08.272+00:00","periodo":"2026-02","valor_en_libros":7570.84,"activo_id":2}
+{"id":13,"depreciacion_acumulada":493.74,"depreciacion_periodo":164.58,"empresa_id":1,"fecha_calculo":"2026-10-28T18:11:08.272+00:00","periodo":"2026-03","valor_en_libros":7406.26,"activo_id":2}
+{"id":14,"depreciacion_acumulada":658.32,"depreciacion_periodo":164.58,"empresa_id":1,"fecha_calculo":"2026-10-28T18:11:08.272+00:00","periodo":"2026-04","valor_en_libros":7241.68,"activo_id":2}
+{"id":15,"depreciacion_acumulada":822.90,"depreciacion_periodo":164.58,"empresa_id":1,"fecha_calculo":"2026-10-28T18:11:08.272+00:00","periodo":"2026-05","valor_en_libros":7077.10,"activo_id":2}
+{"id":16,"depreciacion_acumulada":987.48,"depreciacion_periodo":164.58,"empresa_id":1,"fecha_calculo":"2026-10-28T18:11:08.272+00:00","periodo":"2026-06","valor_en_libros":6912.52,"activo_id":2}
+{"id":17,"depreciacion_acumulada":1152.06,"depreciacion_periodo":164.58,"empresa_id":1,"fecha_calculo":"2026-10-28T18:11:08.272+00:00","periodo":"2026-07","valor_en_libros":6747.94,"activo_id":2}
+{"id":18,"depreciacion_acumulada":1316.64,"depreciacion_periodo":164.58,"empresa_id":1,"fecha_calculo":"2026-10-28T18:11:08.272+00:00","periodo":"2026-08","valor_en_libros":6583.36,"activo_id":2}
+{"id":19,"depreciacion_acumulada":1481.22,"depreciacion_periodo":164.58,"empresa_id":1,"fecha_calculo":"2026-10-28T18:11:08.272+00:00","periodo":"2026-09","valor_en_libros":6418.78,"activo_id":2}
+{"id":20,"depreciacion_acumulada":1645.80,"depreciacion_periodo":164.58,"empresa_id":1,"fecha_calculo":"2026-10-28T18:11:08.272+00:00","periodo":"2026-10","valor_en_libros":6254.20,"activo_id":2}
+{"id":21,"depreciacion_acumulada":47.92,"depreciacion_periodo":47.92,"empresa_id":1,"fecha_calculo":"2026-10-28T18:11:08.289+00:00","periodo":"2026-02","valor_en_libros":2252.08,"activo_id":3}
+{"id":22,"depreciacion_acumulada":95.84,"depreciacion_periodo":47.92,"empresa_id":1,"fecha_calculo":"2026-10-28T18:11:08.289+00:00","periodo":"2026-03","valor_en_libros":2204.16,"activo_id":3}
+{"id":23,"depreciacion_acumulada":143.76,"depreciacion_periodo":47.92,"empresa_id":1,"fecha_calculo":"2026-10-28T18:11:08.289+00:00","periodo":"2026-04","valor_en_libros":2156.24,"activo_id":3}
+{"id":24,"depreciacion_acumulada":191.68,"depreciacion_periodo":47.92,"empresa_id":1,"fecha_calculo":"2026-10-28T18:11:08.289+00:00","periodo":"2026-05","valor_en_libros":2108.32,"activo_id":3}
+{"id":25,"depreciacion_acumulada":239.60,"depreciacion_periodo":47.92,"empresa_id":1,"fecha_calculo":"2026-10-28T18:11:08.289+00:00","periodo":"2026-06","valor_en_libros":2060.40,"activo_id":3}
+{"id":26,"depreciacion_acumulada":287.52,"depreciacion_periodo":47.92,"empresa_id":1,"fecha_calculo":"2026-10-28T18:11:08.289+00:00","periodo":"2026-07","valor_en_libros":2012.48,"activo_id":3}
+{"id":27,"depreciacion_acumulada":335.44,"depreciacion_periodo":47.92,"empresa_id":1,"fecha_calculo":"2026-10-28T18:11:08.289+00:00","periodo":"2026-08","valor_en_libros":1964.56,"activo_id":3}
+{"id":28,"depreciacion_acumulada":383.36,"depreciacion_periodo":47.92,"empresa_id":1,"fecha_calculo":"2026-10-28T18:11:08.289+00:00","periodo":"2026-09","valor_en_libros":1916.64,"activo_id":3}
+{"id":29,"depreciacion_acumulada":431.28,"depreciacion_periodo":47.92,"empresa_id":1,"fecha_calculo":"2026-10-28T18:11:08.289+00:00","periodo":"2026-10","valor_en_libros":1868.72,"activo_id":3}
+{"id":30,"depreciacion_acumulada":66.67,"depreciacion_periodo":66.67,"empresa_id":1,"fecha_calculo":"2026-10-28T18:11:08.293+00:00","periodo":"2026-02","valor_en_libros":3133.33,"activo_id":4}
+{"id":31,"depreciacion_acumulada":133.34,"depreciacion_periodo":66.67,"empresa_id":1,"fecha_calculo":"2026-10-28T18:11:08.293+00:00","periodo":"2026-03","valor_en_libros":3066.66,"activo_id":4}
+{"id":32,"depreciacion_acumulada":200.01,"depreciacion_periodo":66.67,"empresa_id":1,"fecha_calculo":"2026-10-28T18:11:08.293+00:00","periodo":"2026-04","valor_en_libros":2999.99,"activo_id":4}
+{"id":33,"depreciacion_acumulada":266.68,"depreciacion_periodo":66.67,"empresa_id":1,"fecha_calculo":"2026-10-28T18:11:08.293+00:00","periodo":"2026-05","valor_en_libros":2933.32,"activo_id":4}
+{"id":34,"depreciacion_acumulada":333.35,"depreciacion_periodo":66.67,"empresa_id":1,"fecha_calculo":"2026-10-28T18:11:08.293+00:00","periodo":"2026-06","valor_en_libros":2866.65,"activo_id":4}
+{"id":35,"depreciacion_acumulada":400.02,"depreciacion_periodo":66.67,"empresa_id":1,"fecha_calculo":"2026-10-28T18:11:08.293+00:00","periodo":"2026-07","valor_en_libros":2799.98,"activo_id":4}
+{"id":36,"depreciacion_acumulada":466.69,"depreciacion_periodo":66.67,"empresa_id":1,"fecha_calculo":"2026-10-28T18:11:08.293+00:00","periodo":"2026-08","valor_en_libros":2733.31,"activo_id":4}
+{"id":37,"depreciacion_acumulada":533.36,"depreciacion_periodo":66.67,"empresa_id":1,"fecha_calculo":"2026-10-28T18:11:08.293+00:00","periodo":"2026-09","valor_en_libros":2666.64,"activo_id":4}
+{"id":38,"depreciacion_acumulada":600.03,"depreciacion_periodo":66.67,"empresa_id":1,"fecha_calculo":"2026-10-28T18:11:08.293+00:00","periodo":"2026-10","valor_en_libros":2599.97,"activo_id":4}
+{"id":39,"depreciacion_acumulada":7.92,"depreciacion_periodo":7.92,"empresa_id":1,"fecha_calculo":"2026-10-28T18:11:08.321+00:00","periodo":"2026-01","valor_en_libros":942.08,"activo_id":5}
+{"id":40,"depreciacion_acumulada":15.84,"depreciacion_periodo":7.92,"empresa_id":1,"fecha_calculo":"2026-10-28T18:11:08.321+00:00","periodo":"2026-02","valor_en_libros":934.16,"activo_id":5}
+{"id":41,"depreciacion_acumulada":23.76,"depreciacion_periodo":7.92,"empresa_id":1,"fecha_calculo":"2026-10-28T18:11:08.321+00:00","periodo":"2026-03","valor_en_libros":926.24,"activo_id":5}
+{"id":42,"depreciacion_acumulada":31.68,"depreciacion_periodo":7.92,"empresa_id":1,"fecha_calculo":"2026-10-28T18:11:08.321+00:00","periodo":"2026-04","valor_en_libros":918.32,"activo_id":5}
+{"id":43,"depreciacion_acumulada":39.60,"depreciacion_periodo":7.92,"empresa_id":1,"fecha_calculo":"2026-10-28T18:11:08.321+00:00","periodo":"2026-05","valor_en_libros":910.40,"activo_id":5}
+{"id":44,"depreciacion_acumulada":47.52,"depreciacion_periodo":7.92,"empresa_id":1,"fecha_calculo":"2026-10-28T18:11:08.321+00:00","periodo":"2026-06","valor_en_libros":902.48,"activo_id":5}
+{"id":45,"depreciacion_acumulada":55.44,"depreciacion_periodo":7.92,"empresa_id":1,"fecha_calculo":"2026-10-28T18:11:08.321+00:00","periodo":"2026-07","valor_en_libros":894.56,"activo_id":5}
+{"id":46,"depreciacion_acumulada":63.36,"depreciacion_periodo":7.92,"empresa_id":1,"fecha_calculo":"2026-10-28T18:11:08.321+00:00","periodo":"2026-08","valor_en_libros":886.64,"activo_id":5}
+{"id":47,"depreciacion_acumulada":71.28,"depreciacion_periodo":7.92,"empresa_id":1,"fecha_calculo":"2026-10-28T18:11:08.321+00:00","periodo":"2026-09","valor_en_libros":878.72,"activo_id":5}
+{"id":48,"depreciacion_acumulada":79.20,"depreciacion_periodo":7.92,"empresa_id":1,"fecha_calculo":"2026-10-28T18:11:08.321+00:00","periodo":"2026-10","valor_en_libros":870.80,"activo_id":5}
+{"id":49,"depreciacion_acumulada":4.00,"depreciacion_periodo":4.00,"empresa_id":1,"fecha_calculo":"2026-10-28T18:11:08.339+00:00","periodo":"2026-01","valor_en_libros":476.00,"activo_id":6}
+{"id":50,"depreciacion_acumulada":8.00,"depreciacion_periodo":4.00,"empresa_id":1,"fecha_calculo":"2026-10-28T18:11:08.339+00:00","periodo":"2026-02","valor_en_libros":472.00,"activo_id":6}
+{"id":51,"depreciacion_acumulada":12.00,"depreciacion_periodo":4.00,"empresa_id":1,"fecha_calculo":"2026-10-28T18:11:08.339+00:00","periodo":"2026-03","valor_en_libros":468.00,"activo_id":6}
+{"id":52,"depreciacion_acumulada":16.00,"depreciacion_periodo":4.00,"empresa_id":1,"fecha_calculo":"2026-10-28T18:11:08.339+00:00","periodo":"2026-04","valor_en_libros":464.00,"activo_id":6}
+{"id":53,"depreciacion_acumulada":20.00,"depreciacion_periodo":4.00,"empresa_id":1,"fecha_calculo":"2026-10-28T18:11:08.339+00:00","periodo":"2026-05","valor_en_libros":460.00,"activo_id":6}
+{"id":54,"depreciacion_acumulada":24.00,"depreciacion_periodo":4.00,"empresa_id":1,"fecha_calculo":"2026-10-28T18:11:08.339+00:00","periodo":"2026-06","valor_en_libros":456.00,"activo_id":6}
+{"id":55,"depreciacion_acumulada":28.00,"depreciacion_periodo":4.00,"empresa_id":1,"fecha_calculo":"2026-10-28T18:11:08.339+00:00","periodo":"2026-07","valor_en_libros":452.00,"activo_id":6}
+{"id":56,"depreciacion_acumulada":32.00,"depreciacion_periodo":4.00,"empresa_id":1,"fecha_calculo":"2026-10-28T18:11:08.339+00:00","periodo":"2026-08","valor_en_libros":448.00,"activo_id":6}
+{"id":57,"depreciacion_acumulada":36.00,"depreciacion_periodo":4.00,"empresa_id":1,"fecha_calculo":"2026-10-28T18:11:08.339+00:00","periodo":"2026-09","valor_en_libros":444.00,"activo_id":6}
+{"id":58,"depreciacion_acumulada":40.00,"depreciacion_periodo":4.00,"empresa_id":1,"fecha_calculo":"2026-10-28T18:11:08.339+00:00","periodo":"2026-10","valor_en_libros":440.00,"activo_id":6}
+{"id":59,"depreciacion_acumulada":5.17,"depreciacion_periodo":5.17,"empresa_id":1,"fecha_calculo":"2026-10-28T18:11:08.354+00:00","periodo":"2026-01","valor_en_libros":614.83,"activo_id":7}
+{"id":60,"depreciacion_acumulada":10.34,"depreciacion_periodo":5.17,"empresa_id":1,"fecha_calculo":"2026-10-28T18:11:08.354+00:00","periodo":"2026-02","valor_en_libros":609.66,"activo_id":7}
+{"id":61,"depreciacion_acumulada":15.51,"depreciacion_periodo":5.17,"empresa_id":1,"fecha_calculo":"2026-10-28T18:11:08.354+00:00","periodo":"2026-03","valor_en_libros":604.49,"activo_id":7}
+{"id":62,"depreciacion_acumulada":20.68,"depreciacion_periodo":5.17,"empresa_id":1,"fecha_calculo":"2026-10-28T18:11:08.354+00:00","periodo":"2026-04","valor_en_libros":599.32,"activo_id":7}
+{"id":63,"depreciacion_acumulada":25.85,"depreciacion_periodo":5.17,"empresa_id":1,"fecha_calculo":"2026-10-28T18:11:08.354+00:00","periodo":"2026-05","valor_en_libros":594.15,"activo_id":7}
+{"id":64,"depreciacion_acumulada":31.02,"depreciacion_periodo":5.17,"empresa_id":1,"fecha_calculo":"2026-10-28T18:11:08.354+00:00","periodo":"2026-06","valor_en_libros":588.98,"activo_id":7}
+{"id":65,"depreciacion_acumulada":36.19,"depreciacion_periodo":5.17,"empresa_id":1,"fecha_calculo":"2026-10-28T18:11:08.354+00:00","periodo":"2026-07","valor_en_libros":583.81,"activo_id":7}
+{"id":66,"depreciacion_acumulada":41.36,"depreciacion_periodo":5.17,"empresa_id":1,"fecha_calculo":"2026-10-28T18:11:08.354+00:00","periodo":"2026-08","valor_en_libros":578.64,"activo_id":7}
+{"id":67,"depreciacion_acumulada":46.53,"depreciacion_periodo":5.17,"empresa_id":1,"fecha_calculo":"2026-10-28T18:11:08.354+00:00","periodo":"2026-09","valor_en_libros":573.47,"activo_id":7}
+{"id":68,"depreciacion_acumulada":51.70,"depreciacion_periodo":5.17,"empresa_id":1,"fecha_calculo":"2026-10-28T18:11:08.354+00:00","periodo":"2026-10","valor_en_libros":568.30,"activo_id":7}
+{"id":69,"depreciacion_acumulada":4083.33,"depreciacion_periodo":4083.33,"empresa_id":1,"fecha_calculo":"2026-10-28T18:11:08.372+00:00","periodo":"2026-03","valor_en_libros":240916.67,"activo_id":8}
+{"id":70,"depreciacion_acumulada":8166.66,"depreciacion_periodo":4083.33,"empresa_id":1,"fecha_calculo":"2026-10-28T18:11:08.372+00:00","periodo":"2026-04","valor_en_libros":236833.34,"activo_id":8}
+{"id":71,"depreciacion_acumulada":12249.99,"depreciacion_periodo":4083.33,"empresa_id":1,"fecha_calculo":"2026-10-28T18:11:08.372+00:00","periodo":"2026-05","valor_en_libros":232750.01,"activo_id":8}
+{"id":72,"depreciacion_acumulada":16333.32,"depreciacion_periodo":4083.33,"empresa_id":1,"fecha_calculo":"2026-10-28T18:11:08.372+00:00","periodo":"2026-06","valor_en_libros":228666.68,"activo_id":8}
+{"id":73,"depreciacion_acumulada":20416.65,"depreciacion_periodo":4083.33,"empresa_id":1,"fecha_calculo":"2026-10-28T18:11:08.372+00:00","periodo":"2026-07","valor_en_libros":224583.35,"activo_id":8}
+{"id":74,"depreciacion_acumulada":24499.98,"depreciacion_periodo":4083.33,"empresa_id":1,"fecha_calculo":"2026-10-28T18:11:08.372+00:00","periodo":"2026-08","valor_en_libros":220500.02,"activo_id":8}
+{"id":75,"depreciacion_acumulada":28583.31,"depreciacion_periodo":4083.33,"empresa_id":1,"fecha_calculo":"2026-10-28T18:11:08.372+00:00","periodo":"2026-09","valor_en_libros":216416.69,"activo_id":8}
+{"id":76,"depreciacion_acumulada":32666.64,"depreciacion_periodo":4083.33,"empresa_id":1,"fecha_calculo":"2026-10-28T18:11:08.372+00:00","periodo":"2026-10","valor_en_libros":212333.36,"activo_id":8}
+{"id":77,"depreciacion_acumulada":208.33,"depreciacion_periodo":208.33,"empresa_id":1,"fecha_calculo":"2026-10-28T18:11:08.378+00:00","periodo":"2026-03","valor_en_libros":12291.67,"activo_id":9}
+{"id":78,"depreciacion_acumulada":416.66,"depreciacion_periodo":208.33,"empresa_id":1,"fecha_calculo":"2026-10-28T18:11:08.378+00:00","periodo":"2026-04","valor_en_libros":12083.34,"activo_id":9}
+{"id":79,"depreciacion_acumulada":624.99,"depreciacion_periodo":208.33,"empresa_id":1,"fecha_calculo":"2026-10-28T18:11:08.378+00:00","periodo":"2026-05","valor_en_libros":11875.01,"activo_id":9}
+{"id":80,"depreciacion_acumulada":833.32,"depreciacion_periodo":208.33,"empresa_id":1,"fecha_calculo":"2026-10-28T18:11:08.378+00:00","periodo":"2026-06","valor_en_libros":11666.68,"activo_id":9}
+{"id":81,"depreciacion_acumulada":1041.65,"depreciacion_periodo":208.33,"empresa_id":1,"fecha_calculo":"2026-10-28T18:11:08.378+00:00","periodo":"2026-07","valor_en_libros":11458.35,"activo_id":9}
+{"id":82,"depreciacion_acumulada":1249.98,"depreciacion_periodo":208.33,"empresa_id":1,"fecha_calculo":"2026-10-28T18:11:08.378+00:00","periodo":"2026-08","valor_en_libros":11250.02,"activo_id":9}
+{"id":83,"depreciacion_acumulada":1458.31,"depreciacion_periodo":208.33,"empresa_id":1,"fecha_calculo":"2026-10-28T18:11:08.378+00:00","periodo":"2026-09","valor_en_libros":11041.69,"activo_id":9}
+{"id":84,"depreciacion_acumulada":1666.64,"depreciacion_periodo":208.33,"empresa_id":1,"fecha_calculo":"2026-10-28T18:11:08.378+00:00","periodo":"2026-10","valor_en_libros":10833.36,"activo_id":9}
+{"id":85,"depreciacion_acumulada":102.08,"depreciacion_periodo":102.08,"empresa_id":1,"fecha_calculo":"2026-10-28T18:11:08.393+00:00","periodo":"2026-02","valor_en_libros":9697.92,"activo_id":10}
+{"id":86,"depreciacion_acumulada":204.16,"depreciacion_periodo":102.08,"empresa_id":1,"fecha_calculo":"2026-10-28T18:11:08.393+00:00","periodo":"2026-03","valor_en_libros":9595.84,"activo_id":10}
+{"id":87,"depreciacion_acumulada":306.24,"depreciacion_periodo":102.08,"empresa_id":1,"fecha_calculo":"2026-10-28T18:11:08.393+00:00","periodo":"2026-04","valor_en_libros":9493.76,"activo_id":10}
+{"id":88,"depreciacion_acumulada":408.32,"depreciacion_periodo":102.08,"empresa_id":1,"fecha_calculo":"2026-10-28T18:11:08.393+00:00","periodo":"2026-05","valor_en_libros":9391.68,"activo_id":10}
+{"id":89,"depreciacion_acumulada":510.40,"depreciacion_periodo":102.08,"empresa_id":1,"fecha_calculo":"2026-10-28T18:11:08.393+00:00","periodo":"2026-06","valor_en_libros":9289.60,"activo_id":10}
+{"id":90,"depreciacion_acumulada":612.48,"depreciacion_periodo":102.08,"empresa_id":1,"fecha_calculo":"2026-10-28T18:11:08.393+00:00","periodo":"2026-07","valor_en_libros":9187.52,"activo_id":10}
+{"id":91,"depreciacion_acumulada":714.56,"depreciacion_periodo":102.08,"empresa_id":1,"fecha_calculo":"2026-10-28T18:11:08.393+00:00","periodo":"2026-08","valor_en_libros":9085.44,"activo_id":10}
+{"id":92,"depreciacion_acumulada":816.64,"depreciacion_periodo":102.08,"empresa_id":1,"fecha_calculo":"2026-10-28T18:11:08.393+00:00","periodo":"2026-09","valor_en_libros":8983.36,"activo_id":10}
+{"id":93,"depreciacion_acumulada":918.72,"depreciacion_periodo":102.08,"empresa_id":1,"fecha_calculo":"2026-10-28T18:11:08.393+00:00","periodo":"2026-10","valor_en_libros":8881.28,"activo_id":10}
+{"id":94,"depreciacion_acumulada":56.25,"depreciacion_periodo":56.25,"empresa_id":1,"fecha_calculo":"2026-10-28T18:11:08.407+00:00","periodo":"2026-02","valor_en_libros":5343.75,"activo_id":11}
+{"id":95,"depreciacion_acumulada":112.50,"depreciacion_periodo":56.25,"empresa_id":1,"fecha_calculo":"2026-10-28T18:11:08.407+00:00","periodo":"2026-03","valor_en_libros":5287.50,"activo_id":11}
+{"id":96,"depreciacion_acumulada":168.75,"depreciacion_periodo":56.25,"empresa_id":1,"fecha_calculo":"2026-10-28T18:11:08.407+00:00","periodo":"2026-04","valor_en_libros":5231.25,"activo_id":11}
+{"id":97,"depreciacion_acumulada":225.00,"depreciacion_periodo":56.25,"empresa_id":1,"fecha_calculo":"2026-10-28T18:11:08.407+00:00","periodo":"2026-05","valor_en_libros":5175.00,"activo_id":11}
+{"id":98,"depreciacion_acumulada":281.25,"depreciacion_periodo":56.25,"empresa_id":1,"fecha_calculo":"2026-10-28T18:11:08.407+00:00","periodo":"2026-06","valor_en_libros":5118.75,"activo_id":11}
+{"id":99,"depreciacion_acumulada":337.50,"depreciacion_periodo":56.25,"empresa_id":1,"fecha_calculo":"2026-10-28T18:11:08.407+00:00","periodo":"2026-07","valor_en_libros":5062.50,"activo_id":11}
+{"id":100,"depreciacion_acumulada":393.75,"depreciacion_periodo":56.25,"empresa_id":1,"fecha_calculo":"2026-10-28T18:11:08.407+00:00","periodo":"2026-08","valor_en_libros":5006.25,"activo_id":11}
+{"id":101,"depreciacion_acumulada":450.00,"depreciacion_periodo":56.25,"empresa_id":1,"fecha_calculo":"2026-10-28T18:11:08.407+00:00","periodo":"2026-09","valor_en_libros":4950.00,"activo_id":11}
+{"id":102,"depreciacion_acumulada":506.25,"depreciacion_periodo":56.25,"empresa_id":1,"fecha_calculo":"2026-10-28T18:11:08.407+00:00","periodo":"2026-10","valor_en_libros":4893.75,"activo_id":11}
+{"id":103,"depreciacion_acumulada":3854.17,"depreciacion_periodo":3854.17,"empresa_id":1,"fecha_calculo":"2026-10-28T18:11:08.426+00:00","periodo":"2020-01","valor_en_libros":1846145.83,"activo_id":12}
+{"id":104,"depreciacion_acumulada":7708.34,"depreciacion_periodo":3854.17,"empresa_id":1,"fecha_calculo":"2026-10-28T18:11:08.426+00:00","periodo":"2020-02","valor_en_libros":1842291.66,"activo_id":12}
+{"id":105,"depreciacion_acumulada":11562.51,"depreciacion_periodo":3854.17,"empresa_id":1,"fecha_calculo":"2026-10-28T18:11:08.426+00:00","periodo":"2020-03","valor_en_libros":1838437.49,"activo_id":12}
+{"id":106,"depreciacion_acumulada":15416.68,"depreciacion_periodo":3854.17,"empresa_id":1,"fecha_calculo":"2026-10-28T18:11:08.426+00:00","periodo":"2020-04","valor_en_libros":1834583.32,"activo_id":12}
+{"id":107,"depreciacion_acumulada":19270.85,"depreciacion_periodo":3854.17,"empresa_id":1,"fecha_calculo":"2026-10-28T18:11:08.426+00:00","periodo":"2020-05","valor_en_libros":1830729.15,"activo_id":12}
+{"id":108,"depreciacion_acumulada":23125.02,"depreciacion_periodo":3854.17,"empresa_id":1,"fecha_calculo":"2026-10-28T18:11:08.426+00:00","periodo":"2020-06","valor_en_libros":1826874.98,"activo_id":12}
+{"id":109,"depreciacion_acumulada":26979.19,"depreciacion_periodo":3854.17,"empresa_id":1,"fecha_calculo":"2026-10-28T18:11:08.426+00:00","periodo":"2020-07","valor_en_libros":1823020.81,"activo_id":12}
+{"id":110,"depreciacion_acumulada":30833.36,"depreciacion_periodo":3854.17,"empresa_id":1,"fecha_calculo":"2026-10-28T18:11:08.426+00:00","periodo":"2020-08","valor_en_libros":1819166.64,"activo_id":12}
+{"id":111,"depreciacion_acumulada":34687.53,"depreciacion_periodo":3854.17,"empresa_id":1,"fecha_calculo":"2026-10-28T18:11:08.426+00:00","periodo":"2020-09","valor_en_libros":1815312.47,"activo_id":12}
+{"id":112,"depreciacion_acumulada":38541.70,"depreciacion_periodo":3854.17,"empresa_id":1,"fecha_calculo":"2026-10-28T18:11:08.426+00:00","periodo":"2020-10","valor_en_libros":1811458.30,"activo_id":12}
+{"id":113,"depreciacion_acumulada":42395.87,"depreciacion_periodo":3854.17,"empresa_id":1,"fecha_calculo":"2026-10-28T18:11:08.426+00:00","periodo":"2020-11","valor_en_libros":1807604.13,"activo_id":12}
+{"id":114,"depreciacion_acumulada":46250.04,"depreciacion_periodo":3854.17,"empresa_id":1,"fecha_calculo":"2026-10-28T18:11:08.426+00:00","periodo":"2020-12","valor_en_libros":1803749.96,"activo_id":12}
+{"id":115,"depreciacion_acumulada":50104.21,"depreciacion_periodo":3854.17,"empresa_id":1,"fecha_calculo":"2026-10-28T18:11:08.426+00:00","periodo":"2021-01","valor_en_libros":1799895.79,"activo_id":12}
+{"id":116,"depreciacion_acumulada":53958.38,"depreciacion_periodo":3854.17,"empresa_id":1,"fecha_calculo":"2026-10-28T18:11:08.426+00:00","periodo":"2021-02","valor_en_libros":1796041.62,"activo_id":12}
+{"id":117,"depreciacion_acumulada":57812.55,"depreciacion_periodo":3854.17,"empresa_id":1,"fecha_calculo":"2026-10-28T18:11:08.426+00:00","periodo":"2021-03","valor_en_libros":1792187.45,"activo_id":12}
+{"id":118,"depreciacion_acumulada":61666.72,"depreciacion_periodo":3854.17,"empresa_id":1,"fecha_calculo":"2026-10-28T18:11:08.426+00:00","periodo":"2021-04","valor_en_libros":1788333.28,"activo_id":12}
+{"id":119,"depreciacion_acumulada":65520.89,"depreciacion_periodo":3854.17,"empresa_id":1,"fecha_calculo":"2026-10-28T18:11:08.426+00:00","periodo":"2021-05","valor_en_libros":1784479.11,"activo_id":12}
+{"id":120,"depreciacion_acumulada":69375.06,"depreciacion_periodo":3854.17,"empresa_id":1,"fecha_calculo":"2026-10-28T18:11:08.426+00:00","periodo":"2021-06","valor_en_libros":1780624.94,"activo_id":12}
+{"id":121,"depreciacion_acumulada":73229.23,"depreciacion_periodo":3854.17,"empresa_id":1,"fecha_calculo":"2026-10-28T18:11:08.426+00:00","periodo":"2021-07","valor_en_libros":1776770.77,"activo_id":12}
+{"id":122,"depreciacion_acumulada":77083.40,"depreciacion_periodo":3854.17,"empresa_id":1,"fecha_calculo":"2026-10-28T18:11:08.426+00:00","periodo":"2021-08","valor_en_libros":1772916.60,"activo_id":12}
+{"id":123,"depreciacion_acumulada":80937.57,"depreciacion_periodo":3854.17,"empresa_id":1,"fecha_calculo":"2026-10-28T18:11:08.426+00:00","periodo":"2021-09","valor_en_libros":1769062.43,"activo_id":12}
+{"id":124,"depreciacion_acumulada":84791.74,"depreciacion_periodo":3854.17,"empresa_id":1,"fecha_calculo":"2026-10-28T18:11:08.426+00:00","periodo":"2021-10","valor_en_libros":1765208.26,"activo_id":12}
+{"id":125,"depreciacion_acumulada":88645.91,"depreciacion_periodo":3854.17,"empresa_id":1,"fecha_calculo":"2026-10-28T18:11:08.426+00:00","periodo":"2021-11","valor_en_libros":1761354.09,"activo_id":12}
+{"id":126,"depreciacion_acumulada":92500.08,"depreciacion_periodo":3854.17,"empresa_id":1,"fecha_calculo":"2026-10-28T18:11:08.426+00:00","periodo":"2021-12","valor_en_libros":1757499.92,"activo_id":12}
+{"id":127,"depreciacion_acumulada":96354.25,"depreciacion_periodo":3854.17,"empresa_id":1,"fecha_calculo":"2026-10-28T18:11:08.426+00:00","periodo":"2022-01","valor_en_libros":1753645.75,"activo_id":12}
+{"id":128,"depreciacion_acumulada":100208.42,"depreciacion_periodo":3854.17,"empresa_id":1,"fecha_calculo":"2026-10-28T18:11:08.426+00:00","periodo":"2022-02","valor_en_libros":1749791.58,"activo_id":12}
+{"id":129,"depreciacion_acumulada":104062.59,"depreciacion_periodo":3854.17,"empresa_id":1,"fecha_calculo":"2026-10-28T18:11:08.426+00:00","periodo":"2022-03","valor_en_libros":1745937.41,"activo_id":12}
+{"id":130,"depreciacion_acumulada":107916.76,"depreciacion_periodo":3854.17,"empresa_id":1,"fecha_calculo":"2026-10-28T18:11:08.426+00:00","periodo":"2022-04","valor_en_libros":1742083.24,"activo_id":12}
+{"id":131,"depreciacion_acumulada":111770.93,"depreciacion_periodo":3854.17,"empresa_id":1,"fecha_calculo":"2026-10-28T18:11:08.426+00:00","periodo":"2022-05","valor_en_libros":1738229.07,"activo_id":12}
+{"id":132,"depreciacion_acumulada":115625.10,"depreciacion_periodo":3854.17,"empresa_id":1,"fecha_calculo":"2026-10-28T18:11:08.426+00:00","periodo":"2022-06","valor_en_libros":1734374.90,"activo_id":12}
+{"id":133,"depreciacion_acumulada":119479.27,"depreciacion_periodo":3854.17,"empresa_id":1,"fecha_calculo":"2026-10-28T18:11:08.426+00:00","periodo":"2022-07","valor_en_libros":1730520.73,"activo_id":12}
+{"id":134,"depreciacion_acumulada":123333.44,"depreciacion_periodo":3854.17,"empresa_id":1,"fecha_calculo":"2026-10-28T18:11:08.426+00:00","periodo":"2022-08","valor_en_libros":1726666.56,"activo_id":12}
+{"id":135,"depreciacion_acumulada":127187.61,"depreciacion_periodo":3854.17,"empresa_id":1,"fecha_calculo":"2026-10-28T18:11:08.426+00:00","periodo":"2022-09","valor_en_libros":1722812.39,"activo_id":12}
+{"id":136,"depreciacion_acumulada":131041.78,"depreciacion_periodo":3854.17,"empresa_id":1,"fecha_calculo":"2026-10-28T18:11:08.426+00:00","periodo":"2022-10","valor_en_libros":1718958.22,"activo_id":12}
+{"id":137,"depreciacion_acumulada":134895.95,"depreciacion_periodo":3854.17,"empresa_id":1,"fecha_calculo":"2026-10-28T18:11:08.426+00:00","periodo":"2022-11","valor_en_libros":1715104.05,"activo_id":12}
+{"id":138,"depreciacion_acumulada":138750.12,"depreciacion_periodo":3854.17,"empresa_id":1,"fecha_calculo":"2026-10-28T18:11:08.426+00:00","periodo":"2022-12","valor_en_libros":1711249.88,"activo_id":12}
+{"id":139,"depreciacion_acumulada":142604.29,"depreciacion_periodo":3854.17,"empresa_id":1,"fecha_calculo":"2026-10-28T18:11:08.426+00:00","periodo":"2023-01","valor_en_libros":1707395.71,"activo_id":12}
+{"id":140,"depreciacion_acumulada":146458.46,"depreciacion_periodo":3854.17,"empresa_id":1,"fecha_calculo":"2026-10-28T18:11:08.426+00:00","periodo":"2023-02","valor_en_libros":1703541.54,"activo_id":12}
+{"id":141,"depreciacion_acumulada":150312.63,"depreciacion_periodo":3854.17,"empresa_id":1,"fecha_calculo":"2026-10-28T18:11:08.426+00:00","periodo":"2023-03","valor_en_libros":1699687.37,"activo_id":12}
+{"id":142,"depreciacion_acumulada":154166.80,"depreciacion_periodo":3854.17,"empresa_id":1,"fecha_calculo":"2026-10-28T18:11:08.426+00:00","periodo":"2023-04","valor_en_libros":1695833.20,"activo_id":12}
+{"id":143,"depreciacion_acumulada":158020.97,"depreciacion_periodo":3854.17,"empresa_id":1,"fecha_calculo":"2026-10-28T18:11:08.426+00:00","periodo":"2023-05","valor_en_libros":1691979.03,"activo_id":12}
+{"id":144,"depreciacion_acumulada":161875.14,"depreciacion_periodo":3854.17,"empresa_id":1,"fecha_calculo":"2026-10-28T18:11:08.426+00:00","periodo":"2023-06","valor_en_libros":1688124.86,"activo_id":12}
+{"id":145,"depreciacion_acumulada":165729.31,"depreciacion_periodo":3854.17,"empresa_id":1,"fecha_calculo":"2026-10-28T18:11:08.426+00:00","periodo":"2023-07","valor_en_libros":1684270.69,"activo_id":12}
+{"id":146,"depreciacion_acumulada":169583.48,"depreciacion_periodo":3854.17,"empresa_id":1,"fecha_calculo":"2026-10-28T18:11:08.426+00:00","periodo":"2023-08","valor_en_libros":1680416.52,"activo_id":12}
+{"id":147,"depreciacion_acumulada":173437.65,"depreciacion_periodo":3854.17,"empresa_id":1,"fecha_calculo":"2026-10-28T18:11:08.426+00:00","periodo":"2023-09","valor_en_libros":1676562.35,"activo_id":12}
+{"id":148,"depreciacion_acumulada":177291.82,"depreciacion_periodo":3854.17,"empresa_id":1,"fecha_calculo":"2026-10-28T18:11:08.426+00:00","periodo":"2023-10","valor_en_libros":1672708.18,"activo_id":12}
+{"id":149,"depreciacion_acumulada":181145.99,"depreciacion_periodo":3854.17,"empresa_id":1,"fecha_calculo":"2026-10-28T18:11:08.426+00:00","periodo":"2023-11","valor_en_libros":1668854.01,"activo_id":12}
+{"id":150,"depreciacion_acumulada":185000.16,"depreciacion_periodo":3854.17,"empresa_id":1,"fecha_calculo":"2026-10-28T18:11:08.426+00:00","periodo":"2023-12","valor_en_libros":1664999.84,"activo_id":12}
+{"id":151,"depreciacion_acumulada":188854.33,"depreciacion_periodo":3854.17,"empresa_id":1,"fecha_calculo":"2026-10-28T18:11:08.426+00:00","periodo":"2024-01","valor_en_libros":1661145.67,"activo_id":12}
+{"id":152,"depreciacion_acumulada":192708.50,"depreciacion_periodo":3854.17,"empresa_id":1,"fecha_calculo":"2026-10-28T18:11:08.426+00:00","periodo":"2024-02","valor_en_libros":1657291.50,"activo_id":12}
+{"id":153,"depreciacion_acumulada":196562.67,"depreciacion_periodo":3854.17,"empresa_id":1,"fecha_calculo":"2026-10-28T18:11:08.426+00:00","periodo":"2024-03","valor_en_libros":1653437.33,"activo_id":12}
+{"id":154,"depreciacion_acumulada":200416.84,"depreciacion_periodo":3854.17,"empresa_id":1,"fecha_calculo":"2026-10-28T18:11:08.426+00:00","periodo":"2024-04","valor_en_libros":1649583.16,"activo_id":12}
+{"id":155,"depreciacion_acumulada":204271.01,"depreciacion_periodo":3854.17,"empresa_id":1,"fecha_calculo":"2026-10-28T18:11:08.426+00:00","periodo":"2024-05","valor_en_libros":1645728.99,"activo_id":12}
+{"id":156,"depreciacion_acumulada":208125.18,"depreciacion_periodo":3854.17,"empresa_id":1,"fecha_calculo":"2026-10-28T18:11:08.426+00:00","periodo":"2024-06","valor_en_libros":1641874.82,"activo_id":12}
+{"id":157,"depreciacion_acumulada":211979.35,"depreciacion_periodo":3854.17,"empresa_id":1,"fecha_calculo":"2026-10-28T18:11:08.426+00:00","periodo":"2024-07","valor_en_libros":1638020.65,"activo_id":12}
+{"id":158,"depreciacion_acumulada":215833.52,"depreciacion_periodo":3854.17,"empresa_id":1,"fecha_calculo":"2026-10-28T18:11:08.426+00:00","periodo":"2024-08","valor_en_libros":1634166.48,"activo_id":12}
+{"id":159,"depreciacion_acumulada":219687.69,"depreciacion_periodo":3854.17,"empresa_id":1,"fecha_calculo":"2026-10-28T18:11:08.426+00:00","periodo":"2024-09","valor_en_libros":1630312.31,"activo_id":12}
+{"id":160,"depreciacion_acumulada":223541.86,"depreciacion_periodo":3854.17,"empresa_id":1,"fecha_calculo":"2026-10-28T18:11:08.426+00:00","periodo":"2024-10","valor_en_libros":1626458.14,"activo_id":12}
+{"id":161,"depreciacion_acumulada":227396.03,"depreciacion_periodo":3854.17,"empresa_id":1,"fecha_calculo":"2026-10-28T18:11:08.426+00:00","periodo":"2024-11","valor_en_libros":1622603.97,"activo_id":12}
+{"id":162,"depreciacion_acumulada":231250.20,"depreciacion_periodo":3854.17,"empresa_id":1,"fecha_calculo":"2026-10-28T18:11:08.426+00:00","periodo":"2024-12","valor_en_libros":1618749.80,"activo_id":12}
+{"id":163,"depreciacion_acumulada":235104.37,"depreciacion_periodo":3854.17,"empresa_id":1,"fecha_calculo":"2026-10-28T18:11:08.426+00:00","periodo":"2025-01","valor_en_libros":1614895.63,"activo_id":12}
+{"id":164,"depreciacion_acumulada":238958.54,"depreciacion_periodo":3854.17,"empresa_id":1,"fecha_calculo":"2026-10-28T18:11:08.426+00:00","periodo":"2025-02","valor_en_libros":1611041.46,"activo_id":12}
+{"id":165,"depreciacion_acumulada":242812.71,"depreciacion_periodo":3854.17,"empresa_id":1,"fecha_calculo":"2026-10-28T18:11:08.426+00:00","periodo":"2025-03","valor_en_libros":1607187.29,"activo_id":12}
+{"id":166,"depreciacion_acumulada":246666.88,"depreciacion_periodo":3854.17,"empresa_id":1,"fecha_calculo":"2026-10-28T18:11:08.426+00:00","periodo":"2025-04","valor_en_libros":1603333.12,"activo_id":12}
+{"id":167,"depreciacion_acumulada":250521.05,"depreciacion_periodo":3854.17,"empresa_id":1,"fecha_calculo":"2026-10-28T18:11:08.426+00:00","periodo":"2025-05","valor_en_libros":1599478.95,"activo_id":12}
+{"id":168,"depreciacion_acumulada":254375.22,"depreciacion_periodo":3854.17,"empresa_id":1,"fecha_calculo":"2026-10-28T18:11:08.426+00:00","periodo":"2025-06","valor_en_libros":1595624.78,"activo_id":12}
+{"id":169,"depreciacion_acumulada":258229.39,"depreciacion_periodo":3854.17,"empresa_id":1,"fecha_calculo":"2026-10-28T18:11:08.426+00:00","periodo":"2025-07","valor_en_libros":1591770.61,"activo_id":12}
+{"id":170,"depreciacion_acumulada":262083.56,"depreciacion_periodo":3854.17,"empresa_id":1,"fecha_calculo":"2026-10-28T18:11:08.426+00:00","periodo":"2025-08","valor_en_libros":1587916.44,"activo_id":12}
+{"id":171,"depreciacion_acumulada":265937.73,"depreciacion_periodo":3854.17,"empresa_id":1,"fecha_calculo":"2026-10-28T18:11:08.426+00:00","periodo":"2025-09","valor_en_libros":1584062.27,"activo_id":12}
+{"id":172,"depreciacion_acumulada":269791.90,"depreciacion_periodo":3854.17,"empresa_id":1,"fecha_calculo":"2026-10-28T18:11:08.426+00:00","periodo":"2025-10","valor_en_libros":1580208.10,"activo_id":12}
+{"id":173,"depreciacion_acumulada":273646.07,"depreciacion_periodo":3854.17,"empresa_id":1,"fecha_calculo":"2026-10-28T18:11:08.426+00:00","periodo":"2025-11","valor_en_libros":1576353.93,"activo_id":12}
+{"id":174,"depreciacion_acumulada":277500.24,"depreciacion_periodo":3854.17,"empresa_id":1,"fecha_calculo":"2026-10-28T18:11:08.426+00:00","periodo":"2025-12","valor_en_libros":1572499.76,"activo_id":12}
+{"id":175,"depreciacion_acumulada":281354.41,"depreciacion_periodo":3854.17,"empresa_id":1,"fecha_calculo":"2026-10-28T18:11:08.426+00:00","periodo":"2026-01","valor_en_libros":1568645.59,"activo_id":12}
+{"id":176,"depreciacion_acumulada":285208.58,"depreciacion_periodo":3854.17,"empresa_id":1,"fecha_calculo":"2026-10-28T18:11:08.426+00:00","periodo":"2026-02","valor_en_libros":1564791.42,"activo_id":12}
+{"id":177,"depreciacion_acumulada":289062.75,"depreciacion_periodo":3854.17,"empresa_id":1,"fecha_calculo":"2026-10-28T18:11:08.426+00:00","periodo":"2026-03","valor_en_libros":1560937.25,"activo_id":12}
+{"id":178,"depreciacion_acumulada":292916.92,"depreciacion_periodo":3854.17,"empresa_id":1,"fecha_calculo":"2026-10-28T18:11:08.426+00:00","periodo":"2026-04","valor_en_libros":1557083.08,"activo_id":12}
+{"id":179,"depreciacion_acumulada":296771.09,"depreciacion_periodo":3854.17,"empresa_id":1,"fecha_calculo":"2026-10-28T18:11:08.426+00:00","periodo":"2026-05","valor_en_libros":1553228.91,"activo_id":12}
+{"id":180,"depreciacion_acumulada":300625.26,"depreciacion_periodo":3854.17,"empresa_id":1,"fecha_calculo":"2026-10-28T18:11:08.426+00:00","periodo":"2026-06","valor_en_libros":1549374.74,"activo_id":12}
+{"id":181,"depreciacion_acumulada":304479.43,"depreciacion_periodo":3854.17,"empresa_id":1,"fecha_calculo":"2026-10-28T18:11:08.426+00:00","periodo":"2026-07","valor_en_libros":1545520.57,"activo_id":12}
+{"id":182,"depreciacion_acumulada":308333.60,"depreciacion_periodo":3854.17,"empresa_id":1,"fecha_calculo":"2026-10-28T18:11:08.426+00:00","periodo":"2026-08","valor_en_libros":1541666.40,"activo_id":12}
+{"id":183,"depreciacion_acumulada":312187.77,"depreciacion_periodo":3854.17,"empresa_id":1,"fecha_calculo":"2026-10-28T18:11:08.426+00:00","periodo":"2026-09","valor_en_libros":1537812.23,"activo_id":12}
+{"id":184,"depreciacion_acumulada":316041.94,"depreciacion_periodo":3854.17,"empresa_id":1,"fecha_calculo":"2026-10-28T18:11:08.426+00:00","periodo":"2026-10","valor_en_libros":1533958.06,"activo_id":12}
+## mantenimiento
+{"id":1,"costo":null,"descripcion":"Limpieza y revisión general","empresa_id":1,"estado":"PROGRAMADO","estado_previo_activo":null,"fecha_creacion":"2026-10-28T18:11:07.026+00:00","fecha_inicio":null,"fecha_programada":"2026-11-02","fecha_realizada":null,"observaciones":null,"periodicidad_dias":90,"tecnico":null,"tipo":"PREVENTIVO","activo_id":1,"creado_por_id":null}
+{"id":2,"costo":350.00,"descripcion":"Limpieza general y cambio de pasta termica (dato de fabrica)","empresa_id":1,"estado":"FINALIZADO","estado_previo_activo":"EN_USO","fecha_creacion":"2026-04-01T12:30:00.000+00:00","fecha_inicio":null,"fecha_programada":"2026-04-08","fecha_realizada":"2026-04-10","observaciones":"Trabajo registrado como dato de fabrica para la demo.","periodicidad_dias":90,"tecnico":"ServiTech SRL","tipo":"PREVENTIVO","activo_id":1,"creado_por_id":3}
+{"id":3,"costo":480.00,"descripcion":"Cambio de cabezal de impresion y limpieza de inyectores (dato de fabrica)","empresa_id":1,"estado":"FINALIZADO","estado_previo_activo":"DISPONIBLE","fecha_creacion":"2026-05-10T18:00:00.000+00:00","fecha_inicio":null,"fecha_programada":"2026-05-12","fecha_realizada":"2026-05-13","observaciones":"Trabajo registrado como dato de fabrica para la demo.","periodicidad_dias":null,"tecnico":"Comercial Andina","tipo":"CORRECTIVO","activo_id":3,"creado_por_id":2}
+{"id":4,"costo":null,"descripcion":"Reemplazo de lampara y revision de la fuente (dato de fabrica)","empresa_id":1,"estado":"EN_EJECUCION","estado_previo_activo":"DISPONIBLE","fecha_creacion":"2026-10-19T21:00:00.000+00:00","fecha_inicio":"2026-10-22T13:00:00.000+00:00","fecha_programada":"2026-10-20","fecha_realizada":null,"observaciones":"Trabajo registrado como dato de fabrica para la demo.","periodicidad_dias":null,"tecnico":"ClimaTech","tipo":"CORRECTIVO","activo_id":4,"creado_por_id":2}
+{"id":5,"costo":null,"descripcion":"Servicio de control de los 10.000 km (dato de fabrica)","empresa_id":1,"estado":"PROGRAMADO","estado_previo_activo":null,"fecha_creacion":"2026-10-20T15:00:00.000+00:00","fecha_inicio":null,"fecha_programada":"2026-11-15","fecha_realizada":null,"observaciones":"Trabajo registrado como dato de fabrica para la demo.","periodicidad_dias":180,"tecnico":"Toyotasa","tipo":"PREVENTIVO","activo_id":8,"creado_por_id":3}
+{"id":6,"costo":260.00,"descripcion":"Cambio de aceite y filtros del generador (dato de fabrica)","empresa_id":1,"estado":"FINALIZADO","estado_previo_activo":"DISPONIBLE","fecha_creacion":"2026-06-15T14:00:00.000+00:00","fecha_inicio":null,"fecha_programada":"2026-06-18","fecha_realizada":"2026-06-19","observaciones":"Trabajo registrado como dato de fabrica para la demo.","periodicidad_dias":120,"tecnico":"Ferreteria Central","tipo":"PREVENTIVO","activo_id":10,"creado_por_id":3}
+{"id":7,"costo":null,"descripcion":"Recarga de gas refrigerante, reprogramado para el siguiente mes (dato de fabrica)","empresa_id":1,"estado":"CANCELADO","estado_previo_activo":null,"fecha_creacion":"2026-09-25T13:30:00.000+00:00","fecha_inicio":null,"fecha_programada":"2026-09-30","fecha_realizada":null,"observaciones":"Trabajo registrado como dato de fabrica para la demo.","periodicidad_dias":null,"tecnico":"ClimaTech","tipo":"CORRECTIVO","activo_id":11,"creado_por_id":2}
+## presupuesto
+{"id":1,"empresa_id":1,"estado":"APROBADO","fecha_aprobacion":"2026-10-28T18:11:07.010+00:00","gestion":2026,"monto_aprobado":100000.00,"area_id":2,"usuario_aprobador_id":2}
+{"id":2,"empresa_id":1,"estado":"BORRADOR","fecha_aprobacion":null,"gestion":2026,"monto_aprobado":40000.00,"area_id":3,"usuario_aprobador_id":null}
+{"id":3,"empresa_id":1,"estado":"APROBADO","fecha_aprobacion":"2026-01-05T14:00:00.000+00:00","gestion":2026,"monto_aprobado":50000.00,"area_id":1,"usuario_aprobador_id":2}
+## partida_presupuestaria
+{"id":1,"codigo":"43100","empresa_id":1,"monto_planificado":60000.00,"nombre":"Equipos de computación","presupuesto_id":1}
+{"id":2,"codigo":"43200","empresa_id":1,"monto_planificado":30000.00,"nombre":"Mobiliario y enseres","presupuesto_id":1}
+{"id":3,"codigo":"43300","empresa_id":1,"monto_planificado":20000.00,"nombre":"Mantenimiento de instalaciones","presupuesto_id":3}
+{"id":4,"codigo":"43400","empresa_id":1,"monto_planificado":15000.00,"nombre":"Equipos de oficina","presupuesto_id":3}
+## ejecucion_presupuestaria
+{"id":1,"concepto":"Pedido SC-001: laptops para el area de Sistemas (dato de fabrica)","empresa_id":1,"fecha":"2026-01-10","monto":17000.00,"tipo":"COMPROMISO","activo_id":null,"compromiso_id":null,"partida_id":1,"usuario_id":5}
+{"id":2,"concepto":"Pago laptop Dell Latitude ACT-2026-0001 (dato de fabrica)","empresa_id":1,"fecha":"2026-01-15","monto":8500.00,"tipo":"EJECUCION","activo_id":1,"compromiso_id":null,"partida_id":1,"usuario_id":5}
+{"id":3,"concepto":"Pago laptop HP ProBook ACT-2026-0002 (dato de fabrica)","empresa_id":1,"fecha":"2026-01-15","monto":7900.00,"tipo":"EJECUCION","activo_id":2,"compromiso_id":null,"partida_id":1,"usuario_id":5}
+{"id":4,"concepto":"Pedido SC-002: impresora multifuncional (dato de fabrica)","empresa_id":1,"fecha":"2026-01-28","monto":2500.00,"tipo":"COMPROMISO","activo_id":null,"compromiso_id":null,"partida_id":1,"usuario_id":5}
+{"id":5,"concepto":"Compra impresora Epson L5590 ACT-2026-0003 (dato de fabrica)","empresa_id":1,"fecha":"2026-02-02","monto":2300.00,"tipo":"EJECUCION","activo_id":3,"compromiso_id":null,"partida_id":1,"usuario_id":5}
+{"id":6,"concepto":"Compra proyector Epson PowerLite ACT-2026-0004 (dato de fabrica)","empresa_id":1,"fecha":"2026-02-10","monto":3200.00,"tipo":"EJECUCION","activo_id":4,"compromiso_id":null,"partida_id":1,"usuario_id":5}
+{"id":7,"concepto":"Pedido SC-003: mobiliario de oficina (dato de fabrica)","empresa_id":1,"fecha":"2026-01-18","monto":2500.00,"tipo":"COMPROMISO","activo_id":null,"compromiso_id":null,"partida_id":2,"usuario_id":5}
+{"id":8,"concepto":"Compra escritorio ejecutivo ACT-2026-0005 (dato de fabrica)","empresa_id":1,"fecha":"2026-01-20","monto":950.00,"tipo":"EJECUCION","activo_id":5,"compromiso_id":null,"partida_id":2,"usuario_id":5}
+{"id":9,"concepto":"Compra silla ergonomica ACT-2026-0006 (dato de fabrica)","empresa_id":1,"fecha":"2026-01-20","monto":480.00,"tipo":"EJECUCION","activo_id":6,"compromiso_id":null,"partida_id":2,"usuario_id":5}
+{"id":10,"concepto":"Compra archivador metalico ACT-2026-0007 (dato de fabrica)","empresa_id":1,"fecha":"2026-01-25","monto":620.00,"tipo":"EJECUCION","activo_id":7,"compromiso_id":null,"partida_id":2,"usuario_id":5}
+{"id":11,"concepto":"Mantenimiento de instalaciones electricas (dato de fabrica)","empresa_id":1,"fecha":"2026-03-12","monto":1200.00,"tipo":"EJECUCION","activo_id":null,"compromiso_id":null,"partida_id":3,"usuario_id":5}
+## consulta_guardada
+{"id":1,"definicion":"{\"orden\": [{\"campo\": \"codigo\", \"direccion\": \"ASC\"}], \"limite\": 100, \"entidad\": \"activo\", \"filtros\": [{\"campo\": \"estado\", \"valor\": \"EN_USO\", \"operador\": \"=\"}], \"columnas\": [\"codigo\", \"nombre\", \"estado\", \"valor\"]}","empresa_id":1,"entidad":"activo","fecha":"2026-10-10T16:00:00.000+00:00","nombre":"Activos actualmente en uso","usuario_id":2}
+{"id":2,"definicion":"{\"orden\": [{\"campo\": \"fecha_programada\", \"direccion\": \"DESC\"}], \"limite\": 100, \"entidad\": \"mantenimiento\", \"columnas\": [\"id\", \"activo_id\", \"tipo\", \"estado\", \"costo\", \"tecnico\"]}","empresa_id":1,"entidad":"mantenimiento","fecha":"2026-10-10T16:00:00.000+00:00","nombre":"Mantenimientos con su costo","usuario_id":2}
+{"id":3,"definicion":"{\"limite\": 100, \"entidad\": \"ejecucion_presupuestaria\", \"filtros\": [{\"campo\": \"tipo\", \"valor\": \"EJECUCION\", \"operador\": \"=\"}], \"columnas\": [\"partida_id\", \"monto\"], \"agregacion\": {\"campo\": \"monto\", \"funcion\": \"SUM\", \"agruparPor\": [\"partida_id\"]}}","empresa_id":1,"entidad":"ejecucion_presupuestaria","fecha":"2026-10-10T16:00:00.000+00:00","nombre":"Total ejecutado por partida","usuario_id":2}
+## configuracion_empresa
+{"id":1,"color_primario":"#2c5cc5","color_secundario":"#0f2a5c","empresa_id":1,"idioma":"es","logo":null,"logo_nombre":null,"logo_tipo":null,"menu_config":"[]"}
+## programacion_respaldo
+{"id":1,"activa":true,"copias_a_conservar":3,"destino":"LOCAL","empresa_id":1,"frecuencia":"SEMANAL","hora":"02:00"}
+## verificacion_inventario
+{"id":1,"activo_id":1,"empresa_id":1,"fecha_hora":"2026-10-18T19:00:00.000+00:00","foto_url":null,"latitud":-17.78331,"longitud":-63.18255,"observacion":"Verificado en la oficina de sistemas, etiqueta legible.","precision_m":8.0,"resultado":"ENCONTRADO","usuario_id":3}
+{"id":2,"activo_id":2,"empresa_id":1,"fecha_hora":"2026-10-18T19:00:00.000+00:00","foto_url":null,"latitud":-17.78328,"longitud":-63.18249,"observacion":"Verificado en la oficina de sistemas, en el puesto de trabajo.","precision_m":9.5,"resultado":"ENCONTRADO","usuario_id":3}
+{"id":3,"activo_id":3,"empresa_id":1,"fecha_hora":"2026-10-18T19:00:00.000+00:00","foto_url":null,"latitud":-17.78402,"longitud":-63.1831,"observacion":"Verificado en el almacen central, embalaje en buen estado.","precision_m":12.0,"resultado":"ENCONTRADO","usuario_id":3}
+{"id":4,"activo_id":4,"empresa_id":1,"fecha_hora":"2026-10-18T19:00:00.000+00:00","foto_url":null,"latitud":-17.78405,"longitud":-63.18314,"observacion":"El sistema figura DISPONIBLE pero el activo esta en mantenimiento.","precision_m":11.0,"resultado":"DIFERENCIA_ESTADO","usuario_id":3}
+{"id":5,"activo_id":5,"empresa_id":1,"fecha_hora":"2026-10-18T19:00:00.000+00:00","foto_url":null,"latitud":-17.7839,"longitud":-63.18298,"observacion":"Verificado en el area administrativa.","precision_m":7.5,"resultado":"ENCONTRADO","usuario_id":3}
+{"id":6,"activo_id":9,"empresa_id":1,"fecha_hora":"2026-10-18T19:00:00.000+00:00","foto_url":null,"latitud":-17.7841,"longitud":-63.1832,"observacion":"No ubicado durante el conteo; corresponde a un activo dado de baja.","precision_m":14.0,"resultado":"NO_ENCONTRADO","usuario_id":3}
+## suscripcion
+{"id":1,"estado":"ACTIVA","fecha_estado":"2026-10-28T18:11:05.487+00:00","fecha_inicio":"2026-10-28T18:11:05.487+00:00","fecha_vencimiento":"2027-10-28T18:11:05.487+00:00","empresa_id":1,"plan_id":2}
+## pago
+{"id":1,"checkout_id":null,"detalle":"{\"banco\": \"Banco Union\", \"cuota\": \"agosto 2026\", \"moneda\": \"BOB\"}","estado":"APROBADO","fecha":"2026-08-05T14:15:00.000+00:00","fecha_aprobacion":null,"metodo":"TRANSFERENCIA_BANCARIA","monto":1000.00,"proveedor":"TRANSFERENCIA_BANCARIA","referencia":"PAGO-2026-08-001","suscripcion_id":1}
+{"id":2,"checkout_id":null,"detalle":"{\"cuota\": \"septiembre 2026\", \"entidad\": \"Visa\", \"ultimos4\": \"4821\"}","estado":"APROBADO","fecha":"2026-09-05T14:20:00.000+00:00","fecha_aprobacion":null,"metodo":"TARJETA_CREDITO","monto":1000.00,"proveedor":"TARJETA_CREDITO","referencia":"PAGO-2026-09-001","suscripcion_id":1}
+{"id":3,"checkout_id":null,"detalle":"{\"banco\": \"Banco Mercantil\", \"cuota\": \"octubre 2026\", \"moneda\": \"BOB\"}","estado":"APROBADO","fecha":"2026-10-05T13:05:00.000+00:00","fecha_aprobacion":null,"metodo":"TRANSFERENCIA_BANCARIA","monto":1000.00,"proveedor":"TRANSFERENCIA_BANCARIA","referencia":"PAGO-2026-10-001","suscripcion_id":1}
+{"id":4,"checkout_id":null,"detalle":"{\"cuota\": \"noviembre 2026\", \"observacion\": \"pendiente de conciliacion\"}","estado":"PENDIENTE","fecha":"2026-11-05T13:00:00.000+00:00","fecha_aprobacion":null,"metodo":"EFECTIVO","monto":1000.00,"proveedor":"EFECTIVO","referencia":"PAGO-2026-11-001","suscripcion_id":1}
+{"id":5,"checkout_id":"cs_test_a1etobd7hvmhQ5fzwbJKP1iblvTmascyPJb3ToicKz0LWZKToon95YkmgY","detalle":"{\"meses\": 1, \"planId\": 3, \"checkoutId\": \"cs_test_a1etobd7hvmhQ5fzwbJKP1iblvTmascyPJb3ToicKz0LWZKToon95YkmgY\", \"montoPasarela\": 700.00}","estado":"PENDIENTE","fecha":"2026-10-28T18:12:33.734+00:00","fecha_aprobacion":null,"metodo":"STRIPE","monto":700.00,"proveedor":"STRIPE","referencia":"PAG-1793211152807-73D48F","suscripcion_id":1}

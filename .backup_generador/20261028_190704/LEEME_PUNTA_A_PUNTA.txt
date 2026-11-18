@@ -1,0 +1,247 @@
+================================================================================
+ DE CERO A AZURE: GUIA DE PUNTA A PUNTA (Sprint 3)
+================================================================================
+
+Este archivo es el camino completo, en orden, para tener el sistema funcionando
+en Azure con cobros reales y la app movil apuntando a ese despliegue.
+
+Si solo quieres configurar las pasarelas, abre `LEEME_PASARELAS.txt`.
+Si solo quieres los datos de multiempresa y respaldos, `LEEME_MULTIEMPRESA_Y_PAGOS.txt`.
+
+
+--------------------------------------------------------------------------------
+ACTUALIZACION (RONDA 10): MOVIL + DESPLIEGUE SIN PANTALLAS VACIAS
+--------------------------------------------------------------------------------
+
+Si ya tenias el sistema desplegado, con esta version hay que hacer tres cosas
+(el generador nuevo ya lo trae todo; no hay que tocar codigo a mano):
+
+1) Volver a GENERAR el proyecto (trae el movil arreglado y el backend con los
+   datos de ejemplo por empresa):
+
+       python generar_proyecto_sprint3.py
+
+2) Volver a DESPLEGAR (misma web, misma Neon; el paso 7b ahora ademas completa
+   los datos de ejemplo de todas las empresas y verifica empresa por empresa):
+
+       python desplegar_azure.py --sitio waf-activosfijos-cpejk6 ^
+           --neon-cadena "postgresql://TU_USUARIO:TU_CLAVE@ep-....neon.tech/neondb?sslmode=require"
+
+   Al final debe salir "Todas las empresas tienen datos de ejemplo en todas sus
+   funciones." Si alguna empresa se queda vacia, el script avisa con su nombre.
+
+3) Volver a GENERAR el APK (el boton "Agregar empresa" y las pantallas sin
+   codigo de base de datos se arreglan en la app):
+
+       cd ActivosFijos-Sprint3
+       Generar_APK_Azure.bat
+
+Que se corrigio en esta version:
+
+  - El boton "Agregar empresa" del movil abria la pantalla equivocada.
+  - La pantalla de suscripcion y la de bitacora mostraban el codigo de la base
+    de datos (mapas y fechas en crudo) y el texto se apilaba letra por letra.
+  - Cambiar de empresa desde el menu del movil no actualizaba la app.
+  - Cada empresa (tambien las nuevas) nace con datos de ejemplo en TODAS sus
+    funciones: categorias, areas, activos, asignaciones, mantenimiento,
+    presupuesto, consultas, inventario, historial y respaldos.
+  - El Super Admin tiene el boton "Datos de ejemplo" en la administracion de la
+    plataforma (web y movil) para completar cualquier empresa cuando quieras.
+  - La restauracion de respaldos ya no falla cuando hay activos de ejemplo con
+    depreciacion.
+
+--------------------------------------------------------------------------------
+PASO 1. GENERAR EL PROYECTO (Windows)
+--------------------------------------------------------------------------------
+
+    python generar_proyecto_sprint3.py
+
+Crea la carpeta `ActivosFijos-Sprint3` con TODO el codigo (web, backend, movil,
+base de datos, scripts). Es idempotente: si la carpeta ya existe, hace un
+respaldo en `.backup_generador/<fecha y hora>/` y solo cambia lo que cambio.
+
+Si no tienes el generador a mano, el archivo es el unico que necesitas:
+copialo a la carpeta donde quieras trabajar y ejecuta el comando de arriba.
+
+
+--------------------------------------------------------------------------------
+PASO 2. PROBAR TODO EN LOCAL (opcional, pero recomendado)
+--------------------------------------------------------------------------------
+
+    cd ActivosFijos-Sprint3
+    iniciar_proyecto.bat          (doble clic)
+
+Levanta PostgreSQL, aplica el esquema, siembra los datos de fabrica, compila y
+arranca la web en http://localhost:4200 y la API en http://localhost:8080.
+Para parar: `detener_proyecto.bat`.
+
+Usuarios de prueba: `admin@uagrm.edu.bo` / `admin123` (administra dos empresas).
+
+Si solo quieres la base de datos desde cero: `restaurar_bd_cero.bat`.
+
+
+--------------------------------------------------------------------------------
+PASO 3. CREAR LA BASE DE DATOS EN NEON (gratis, sin tarjeta)
+--------------------------------------------------------------------------------
+
+1. Entra en https://console.neon.tech y crea una cuenta con GitHub.
+2. Crea un proyecto (plan Free), una rama y una base de datos.
+3. Copia la cadena de conexion: se parece a
+       postgresql://usuario:clave@ep-xxxx-pooler.us-east-2.aws.neon.tech/neondb?sslmode=require
+   (usa el host con "-pooler" para las conexiones desde Azure).
+4. Guardala en un archivo `cadena_neon.txt` o copiala cuando la pida el script.
+
+El plan Free de Neon es suficiente para la demo y para la entrega del curso.
+
+
+--------------------------------------------------------------------------------
+PASO 4. DESPLEGAR EN AZURE (App Service F1 + Neon)
+--------------------------------------------------------------------------------
+
+    cd ActivosFijos-Sprint3
+    python desplegar_azure.py --neon-cadena "postgresql://usuario:clave@ep-xxxx-pooler.us-east-2.aws.neon.tech/neondb?sslmode=require"
+
+El script hace TODO, en este orden:
+
+  1. Crea (o reutiliza) el grupo de recursos, el App Service F1 y el perfil.
+  2. Compila la web de Angular con `apiUrl='/api'` y la mete DENTRO del JAR.
+     => web y API quedan en el MISMO sitio: https://TU-WEBAPP.azurewebsites.net
+  3. Sube el JAR al App Service (Windows/Linux/jar) y lo configura con Java 17+.
+  4. Aplica `database/schema.sql` en Neon.
+  5. Arranca la app y espera a que la base este lista.
+  6. Siembra los datos de fabrica (activos, presupuestos, empresas, permisos...)
+     y **comprueba que ninguna tabla de negocio haya quedado vacia**.
+  7. Fija las variables de entorno, **incluida `APP_URL_PUBLICA`** (sin ella los
+     webhooks apuntarian a localhost y ningun pago se confirmaria).
+  8. Verifica el resultado y te imprime la URL.
+
+Perfiles: el Sprint 3 usa `.azure-despliegue-sp3` (aislado del Sprint 1/2), asi
+que el segundo despliegue crea OTRA web y otra base, sin pisar la anterior.
+
+DESPLIEGAR EN UNA WEB QUE YA EXISTE (misma URL, misma base)
+.............................................................
+Si ya tenes un despliegue y quieres actualizar ESA misma web (por ejemplo
+`waf-activosfijos-cpejk6`), usa `--sitio`. El script lee su grupo de recursos,
+su plan y su URL, NO crea nada nuevo y solo sube el JAR nuevo y las variables:
+
+    python desplegar_azure.py --sitio waf-activosfijos-cpejk6 ^
+        --neon-cadena "postgresql://usuario:clave@ep-xxxx-pooler.us-east-2.aws.neon.tech/neondb?sslmode=require"
+
+(En CMD de una linea, todo seguido; el `^` es solo para partir la linea.)
+
+Tambien sirve para dejar el codigo nuevo en la web actual:
+    python desplegar_azure.py --solo-app --sitio waf-activosfijos-cpejk6
+
+Comandos utiles:
+
+    python desplegar_azure.py --solo-app      # recompila, redespliega y re-siembra
+    python desplegar_azure.py --logs           # ver el log del backend en Azure
+    python desplegar_azure.py --estado          # muestra los recursos y la URL
+
+Si algo quedo a medias, no da por bueno el despliegue: el script reporta el
+error real (tablas vacias, seeds fallidos) en vez de decir "DESPLIEGUE TERMINADO".
+
+
+--------------------------------------------------------------------------------
+PASO 5. CONFIGURAR LA PASELA DE PAGO (real, no simulada)
+--------------------------------------------------------------------------------
+
+    python configurar_pasarelas.py
+
+El asistente te pide las claves del proveedor que elijas (Mercado Pago, PayPal,
+Stripe o QR Simple), **las valida contra la API real** y las guarda cifradas en
+el App Service. Al final te imprime la URL del webhook:
+
+OJO (este era el problema tipico): si todavia no hay despliegue, las claves se
+guardan en el archivo `pasarelas.env` de la carpeta del proyecto. **El
+`desplegar_azure.py` lee ese archivo solo**, asi que no hace falta ejecutar el
+`setx` ni abrir otra terminal: configurador -> despliegue, y la pasarela queda
+igual que en local. (El `setx` solo hace falta si prefieres tenerlas como
+variables de Windows.)
+
+    https://TU-WEBAPP.azurewebsites.net/api/pagos/webhook
+
+Registra esa URL en el panel del proveedor (el evento exacto de cada uno esta
+en `LEEME_PASARELAS.txt`).
+
+Para revisar como quedo:
+
+    python configurar_pasarelas.py --verificar
+
+PROBARLO EN LOCAL ANTES DE DESPLEGAR (recomendado):
+
+    copy pasarelas.env.ejemplo pasarelas.env     (rellena tus claves de test)
+    iniciar_proyecto.bat                         (el backend carga el archivo solo)
+    python configurar_pasarelas.py --probar-pago --url-publica http://localhost:8080
+
+El script crea un checkout real en la pasarela y te dice como confirmarlo
+(tarjeta de prueba 4242... y el boton "Ya pagué: comprobar estado"). Los
+detalles, en `LEEME_PASARELAS.txt` seccion "1 BIS".
+
+Despues: entra a la web, "Suscripcion", elige plan y metodo de pago, y prueba
+con la tarjeta de prueba del proveedor (Stripe: 4242 4242 4242 4242).
+
+
+--------------------------------------------------------------------------------
+PASO 6. GENERAR EL APK PARA AZURE (Windows)
+--------------------------------------------------------------------------------
+
+    Generar_APK_Azure.bat
+
+El script toma solo la URL de tu despliegue (del perfil `.azure-despliegue-sp3`)
+y compila el movil con:
+
+    --dart-define=API_URL=https://TU-WEBAPP.azurewebsites.net
+
+Sale `ActivosFijos-SP3-movil-azure.apk`. Se instala como una app NUEVA
+(`com.uagrm.activos.sp3`), convive con la del Sprint 2 y no la reemplaza.
+
+Requisitos: Android SDK + JDK 17. El primer build descarga dependencias
+(puede tardar 10-20 minutos segun la conexion).
+
+
+--------------------------------------------------------------------------------
+PASO 7. COMPROBAR QUE TODO ESTA BIEN
+--------------------------------------------------------------------------------
+
+En el movil (con la app instalada):
+
+  [ ] Login con admin@uagrm.edu.bo / admin123
+  [ ] El menu lateral abre y cierra sin quedar atrapado
+  [ ] Se ven activos, presupuestos, mantenimientos, proveedores, inventario,
+      respaldos, consultas guardadas, bitacora, IA y suscripcion
+  [ ] "MIS EMPRESAS" permite cambiar de empresa y los datos cambian
+  [ ] "+ Agregar empresa" abre el formulario y registra una empresa nueva
+  [ ] La empresa nueva entra con datos de ejemplo (activos, presupuestos,
+      mantenimiento, inventario) y no se ve ningun "{id: 1, ...}" en pantalla
+  [ ] La bitacora muestra las fechas como dd/mm/aaaa y el texto no se apila
+  [ ] Respaldos: crear, descargar y restaurar
+  [ ] Suscripcion: elegir plan y ver el aviso de que falta credencial (o pagar)
+
+En la web (mismo navegador):
+
+  [ ] La web carga con estilos (no sale sin CSS) y el QR de pago se ve
+  [ ] "Suscripcion" muestra el estado real de las pasarelas
+  [ ] El webhook responde: `python configurar_pasarelas.py --probar-webhook`
+
+En el servidor:
+
+    python configurar_pasarelas.py --verificar   # estado real de las 4 pasarelas
+    python desplegar_azure.py --estado            # recursos y URL del despliegue
+
+
+--------------------------------------------------------------------------------
+RESUMEN DE LOS ARCHIVOS QUE TE VAN A SERVIR
+--------------------------------------------------------------------------------
+
+  LEEME_PASARELAS.txt           Como configurar cada pasarela, paso a paso
+  LEEME_MULTIEMPRESA_Y_PAGOS.txt Multiempresa, pagos y respaldos
+  LEEME_INICIO.txt              Como arrancar en local
+  DESPLIEGUE_SPRINT3.txt        Detalle del despliegue por perfiles
+  README.md                     Documentacion completa
+  configurar_pasarelas.py       Asistente de pasarelas (valida y guarda)
+  configurar_ia.py              Asistente de IA (Groq / Gemini, gratis)
+  desplegar_azure.py            Despliegue completo a Azure
+  iniciar_proyecto.py           Levanta todo en local
+  Generar_APK_Azure.bat         Compila el APK apuntando a Azure
+  verificar_estado.py           Chequeo rapido de la instalacion

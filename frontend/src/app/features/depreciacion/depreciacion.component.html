@@ -1,0 +1,80 @@
+<div class="page-header">
+  <div><h2>Depreciación y valor en libros</h2><p class="sub">Método de línea recta: (valor de adquisición − valor residual) ÷ vida útil en meses.</p></div>
+  <button *ngIf="auth.hasPermission('DEPRECIACION_CREAR')" class="btn-primary" (click)="calcular()" [disabled]="calculando">
+    {{ calculando ? 'Calculando...' : 'Calcular periodos pendientes' }}</button>
+</div>
+
+<div *ngIf="error" class="alert-error">{{ error }}</div>
+<div *ngIf="ok" class="alert-ok">{{ ok }}</div>
+
+<div class="kpis">
+  <div class="kpi"><span>Activos depreciables</span><strong>{{ totales.cantidad }}</strong></div>
+  <div class="kpi"><span>Valor de adquisición</span><strong>Bs {{ totales.adquisicion | number: '1.2-2' }}</strong></div>
+  <div class="kpi alerta"><span>Depreciación acumulada</span><strong>Bs {{ totales.acumulada | number: '1.2-2' }}</strong></div>
+  <div class="kpi bien"><span>Valor en libros</span><strong>Bs {{ totales.libros | number: '1.2-2' }}</strong></div>
+</div>
+
+<div class="card table-wrap">
+  <div class="row cabecera"><h3>Activos</h3><span class="spacer"></span>
+    <input class="input" name="filtro" [(ngModel)]="filtro" placeholder="Filtrar por código, nombre o categoría"></div>
+  <table class="data">
+    <thead><tr><th>Código</th><th>Activo</th><th>Categoría</th><th>Estado</th><th class="num">Valor (Bs)</th><th class="num">Vida útil</th><th class="num">Cuota mensual</th><th class="num">Acumulada</th><th class="num">En libros</th></tr></thead>
+    <tbody>
+      <tr *ngFor="let r of filtrados" class="clicable" [class.seleccionada]="seleccionId === r.activoId" (click)="ver(r)">
+        <td class="mono">{{ r.codigo }}</td><td>{{ r.nombre }}</td><td>{{ r.categoria }}</td>
+        <td><span [class]="claseBadge(r.estado)">{{ etiqueta(r.estado) }}</span></td>
+        <td class="num">{{ r.valorAdquisicion | number: '1.2-2' }}</td>
+        <td class="num">{{ r.depreciable ? r.vidaUtilAnios + ' años' : 'No deprecia' }}</td>
+        <td class="num">{{ r.depreciable ? (r.depreciacionMensual | number: '1.2-2') : '-' }}</td>
+        <td class="num">{{ r.depreciacionAcumulada | number: '1.2-2' }}</td>
+        <td class="num"><strong>{{ r.valorEnLibros | number: '1.2-2' }}</strong></td>
+      </tr>
+      <tr *ngIf="!filtrados.length"><td colspan="9" class="empty">No hay activos para mostrar.</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="card table-wrap" *ngIf="seleccionado as d">
+  <div class="row cabecera"><h3>{{ d.resumen.codigo }} · {{ d.resumen.nombre }}</h3><span class="spacer"></span>
+    <a class="btn-secondary enlace-boton" [routerLink]="['/activos', d.resumen.activoId]">Ver ficha</a></div>
+  <p class="alert-warn" *ngIf="!d.resumen.depreciable">{{ d.resumen.observacion }}</p>
+  <div class="scroll-tabla" *ngIf="d.resumen.depreciable">
+    <table class="data">
+      <thead><tr><th>Periodo</th><th class="num">Depreciación del periodo</th><th class="num">Depreciación acumulada</th><th class="num">Valor en libros</th></tr></thead>
+      <tbody>
+        <tr *ngFor="let f of d.filas"><td class="mono">{{ f.periodo }}</td><td class="num">{{ f.depreciacionPeriodo | number: '1.2-2' }}</td><td class="num">{{ f.depreciacionAcumulada | number: '1.2-2' }}</td><td class="num">{{ f.valorEnLibros | number: '1.2-2' }}</td></tr>
+        <tr *ngIf="!d.filas.length"><td colspan="4" class="empty">Todavía no hay periodos calculados.</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="card table-wrap">
+  <div class="row cabecera"><div><h3>Parámetros por categoría</h3><p class="sub">Vida útil (años), valor residual (%) y método. Al cambiarlos se recalcula la depreciación de la categoría.</p></div></div>
+  <table class="data">
+    <thead><tr><th>Categoría</th><th>Depreciable</th><th class="num">Vida útil</th><th class="num">Valor residual</th><th>Método</th><th></th></tr></thead>
+    <tbody>
+      <tr *ngFor="let c of categorias">
+        <td>{{ c.nombre }}</td><td>{{ c.depreciable ? 'Sí' : 'No' }}</td>
+        <td class="num">{{ c.depreciable ? c.vidaUtil + ' años' : '-' }}</td>
+        <td class="num">{{ c.valorResidualPct ?? 0 }} %</td><td>{{ c.metodoDepreciacion || '-' }}</td>
+        <td class="acciones"><button *ngIf="puedeParametrizar" class="btn-link" (click)="editarCategoria(c)">Editar</button></td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<div *ngIf="editandoCategoria" class="modal-backdrop" (click)="editandoCategoria = null">
+  <form class="card modal" (ngSubmit)="guardarCategoria()" (click)="$event.stopPropagation()">
+    <div class="modal-header"><div><span class="eyebrow">DEPRECIACIÓN</span><h2>{{ editandoCategoria.nombre }}</h2></div>
+      <button type="button" class="close-button" (click)="editandoCategoria = null">&times;</button></div>
+    <div *ngIf="errorCat" class="alert-error">{{ errorCat }}</div>
+    <div class="form-grid2">
+      <div class="field span-2"><label><input type="checkbox" name="dep" [(ngModel)]="formCat.depreciable"> La categoría se deprecia</label></div>
+      <div class="field"><label>Vida útil (años)</label><input type="number" name="vida" min="1" max="100" [(ngModel)]="formCat.vidaUtil" [disabled]="!formCat.depreciable"></div>
+      <div class="field"><label>Valor residual (%)</label><input type="number" name="pct" min="0" max="100" step="0.01" [(ngModel)]="formCat.valorResidualPct" [disabled]="!formCat.depreciable"></div>
+      <div class="field span-2"><label>Método</label><select name="metodo" [(ngModel)]="formCat.metodoDepreciacion"><option value="LINEA_RECTA">Línea recta</option></select></div>
+    </div>
+    <div class="modal-actions"><button type="button" class="btn-secondary" (click)="editandoCategoria = null">Cancelar</button><button type="submit" class="btn-primary">Guardar parámetros</button></div>
+  </form>
+</div>

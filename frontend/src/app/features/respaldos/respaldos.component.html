@@ -1,0 +1,76 @@
+<div class="stack">
+  <div class="page-header">
+    <div>
+      <h2>Respaldos y restauración</h2>
+      <p class="sub">Cada archivo incluye hash SHA-256. La restauración es transaccional y crea un respaldo de seguridad previo.</p>
+    </div>
+    <button class="btn-primary" (click)="crear()" [disabled]="trabajando">{{ trabajando ? 'Procesando...' : 'Crear respaldo ahora' }}</button>
+  </div>
+
+  <div class="alert-error" *ngIf="errorMsg">{{ errorMsg }}</div>
+  <div class="alert-ok" *ngIf="okMsg">{{ okMsg }}</div>
+
+  <div class="card">
+    <h3>Programación automática</h3>
+    <div class="row programacion">
+      <label class="field">
+        <span>Frecuencia</span>
+        <select [(ngModel)]="programacion.frecuencia">
+          <option value="DIARIA">Diaria</option>
+          <option value="SEMANAL">Semanal</option>
+        </select>
+      </label>
+      <label class="field">
+        <span>Hora</span>
+        <input type="time" [(ngModel)]="programacion.hora" />
+      </label>
+      <label class="field">
+        <span>Copias a conservar</span>
+        <input type="number" min="1" max="30" [(ngModel)]="programacion.copiasAConservar" />
+      </label>
+      <label class="field">
+        <span>Destino</span>
+        <select [(ngModel)]="programacion.destino">
+          <option value="LOCAL">Local</option>
+          <option value="NUBE">Nube (S3 opcional)</option>
+        </select>
+      </label>
+      <label class="field check">
+        <input type="checkbox" [(ngModel)]="programacion.activa" />
+        <span>Programación activa</span>
+      </label>
+      <button class="btn-secondary" (click)="guardarProgramacion()" [disabled]="trabajando">Guardar programación</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Historial de respaldos</h3>
+    <div class="table-wrap">
+      <table class="data">
+        <thead>
+          <tr><th>Fecha</th><th>Tipo</th><th>Destino</th><th>Archivo</th><th>Tamaño</th><th>Estado</th><th>SHA-256</th><th>Acciones</th></tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let r of respaldos">
+            <td>{{ r.fecha | date:'short' }}</td>
+            <td>{{ r.tipo }}</td>
+            <td>{{ r.destino }}</td>
+            <td class="mono">{{ r.archivo }}</td>
+            <td>{{ tamano(r.tamanoBytes) }}</td>
+            <td><span class="badge" [class.badge--ok]="r.estado === 'COMPLETADO'">{{ r.estado }}</span></td>
+            <td class="mono hash" [title]="r.sha256">{{ r.sha256.slice(0, 12) }}…</td>
+            <td class="row">
+              <button class="btn-link" (click)="descargar(r)">Descargar</button>
+              <button class="btn-link danger" (click)="restaurar(r)">Restaurar</button>
+              <span class="sin-contenido" *ngIf="r.descargable === false"
+                    title="Es un registro antiguo: no guardaba el archivo, solo la ruta. Crea un respaldo nuevo.">
+                sin contenido
+              </span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="empty" *ngIf="respaldos.length === 0">Todavía no hay respaldos. Crea el primero con el botón superior.</p>
+  </div>
+</div>

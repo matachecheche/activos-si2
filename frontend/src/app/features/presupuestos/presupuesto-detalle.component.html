@@ -1,0 +1,133 @@
+<a routerLink="/presupuestos" class="volver">&larr; Volver a presupuestos</a>
+
+<div *ngIf="error" class="alert-error">{{ error }}</div>
+<div *ngIf="ok" class="alert-ok">{{ ok }}</div>
+
+<ng-container *ngIf="presupuesto as p">
+  <div class="page-header">
+    <div>
+      <span class="eyebrow">GESTIÓN {{ p.gestion }}</span>
+      <h2>{{ p.areaNombre }}</h2>
+      <p class="sub"><span [class]="claseBadge(p.estado)">{{ etiqueta(p.estado) }}</span>
+        <span *ngIf="p.fechaAprobacion"> · aprobado el {{ p.fechaAprobacion | date: 'dd/MM/yyyy HH:mm' }} por {{ p.aprobador }}</span></p>
+    </div>
+    <div class="row">
+      <button *ngIf="esBorrador && auth.hasPermission('PRESUPUESTO_EDITAR')" class="btn-secondary" (click)="abrirMonto()">Cambiar monto aprobado</button>
+      <button *ngIf="esBorrador && auth.hasPermission('PRESUPUESTO_EDITAR')" class="btn-ok" (click)="aprobar()">Aprobar presupuesto</button>
+      <button *ngIf="esAprobado && auth.hasPermission('PRESUPUESTO_EDITAR')" class="btn-secondary" (click)="cerrar()">Cerrar gestión</button>
+    </div>
+  </div>
+
+  <div class="kpis">
+    <div class="kpi"><span>Monto aprobado</span><strong>Bs {{ p.montoAprobado | number: '1.2-2' }}</strong></div>
+    <div class="kpi"><span>Planificado (partidas)</span><strong>Bs {{ p.montoPlanificado | number: '1.2-2' }}</strong></div>
+    <div class="kpi"><span>Sin distribuir</span><strong>Bs {{ p.sinDistribuir | number: '1.2-2' }}</strong></div>
+    <div class="kpi alerta"><span>Comprometido</span><strong>Bs {{ p.comprometido | number: '1.2-2' }}</strong></div>
+    <div class="kpi"><span>Ejecutado</span><strong>Bs {{ p.ejecutado | number: '1.2-2' }} ({{ p.porcentajeEjecucion | number: '1.0-2' }} %)</strong></div>
+    <div class="kpi bien"><span>Saldo disponible</span><strong>Bs {{ p.saldoDisponible | number: '1.2-2' }}</strong></div>
+  </div>
+
+  <div class="tabs">
+    <button [class.activa]="pestana === 'partidas'" (click)="pestana = 'partidas'">Partidas y seguimiento</button>
+    <button [class.activa]="pestana === 'ejecucion'" (click)="pestana = 'ejecucion'">Compromisos y ejecución</button>
+  </div>
+
+  <!-- PARTIDAS -->
+  <div class="card table-wrap" *ngIf="pestana === 'partidas'">
+    <div class="row cabecera"><h3>Partidas presupuestarias</h3><span class="spacer"></span>
+      <button *ngIf="esBorrador && auth.hasPermission('PRESUPUESTO_CREAR')" class="btn-primary" (click)="nuevaPartida()">+ Nueva partida</button></div>
+    <table class="data">
+      <thead><tr><th>Código</th><th>Partida</th><th class="num">Planificado</th><th class="num">Comprometido</th><th class="num">Ejecutado</th><th class="num">Saldo disponible</th><th>Ejecución</th><th></th></tr></thead>
+      <tbody>
+        <tr *ngFor="let pa of partidas">
+          <td class="mono">{{ pa.codigo }}</td><td>{{ pa.nombre }}</td>
+          <td class="num">{{ pa.montoPlanificado | number: '1.2-2' }}</td><td class="num">{{ pa.comprometido | number: '1.2-2' }}</td>
+          <td class="num">{{ pa.ejecutado | number: '1.2-2' }}</td><td class="num"><strong>{{ pa.saldoDisponible | number: '1.2-2' }}</strong></td>
+          <td><div [class]="claseProgreso(pa.porcentajeEjecucion)"><i [style.width.%]="pa.porcentajeEjecucion > 100 ? 100 : pa.porcentajeEjecucion"></i></div><span class="muted">{{ pa.porcentajeEjecucion | number: '1.0-2' }} %</span></td>
+          <td class="acciones">
+            <ng-container *ngIf="esBorrador">
+              <button *ngIf="auth.hasPermission('PRESUPUESTO_EDITAR')" class="btn-link" (click)="editarPartida(pa)">Editar</button>
+              <button *ngIf="auth.hasPermission('PRESUPUESTO_EDITAR')" class="btn-link danger" (click)="eliminarPartida(pa)">Eliminar</button>
+            </ng-container>
+          </td>
+        </tr>
+        <tr *ngIf="!partidas.length"><td colspan="8" class="empty">Todavía no hay partidas. {{ esBorrador ? 'Agrega las partidas y luego aprueba el presupuesto.' : '' }}</td></tr>
+      </tbody>
+    </table>
+    <p class="muted" *ngIf="esBorrador" style="margin-top:10px">La suma de las partidas no puede superar el monto aprobado. Un presupuesto aprobado o cerrado no puede modificarse.</p>
+  </div>
+
+  <!-- EJECUCION -->
+  <div class="stack" *ngIf="pestana === 'ejecucion'">
+    <div class="card" *ngIf="esAprobado && auth.hasPermission('PRESUPUESTO_CREAR')">
+      <h3>Registrar compromiso o ejecución</h3>
+      <div *ngIf="errorEjec" class="alert-error" style="margin-top:10px">{{ errorEjec }}</div>
+      <div class="form-grid2" style="margin-top:12px">
+        <div class="field"><label>Partida *</label>
+          <select name="partida" [(ngModel)]="formEjec.partidaId" (ngModelChange)="formEjec.compromisoId = null">
+            <option [ngValue]="null">Seleccione...</option>
+            <option *ngFor="let pa of partidas" [ngValue]="pa.id">{{ pa.codigo }} — {{ pa.nombre }} (saldo {{ pa.saldoDisponible | number: '1.2-2' }})</option>
+          </select></div>
+        <div class="field"><label>Tipo *</label>
+          <select name="tipoEjec" [(ngModel)]="formEjec.tipo" (ngModelChange)="alCambiarTipo()"><option value="COMPROMISO">Compromiso (reserva saldo)</option><option value="EJECUCION">Ejecución (gasto real)</option></select></div>
+        <div class="field"><label>Fecha *</label><input name="fechaEjec" type="date" [(ngModel)]="formEjec.fecha"></div>
+        <div class="field"><label>Monto (Bs) *</label><input name="montoEjec" type="number" step="0.01" min="0.01" [(ngModel)]="formEjec.monto">
+          <small *ngIf="partidaSeleccionada">Saldo disponible de la partida: Bs {{ partidaSeleccionada.saldoDisponible | number: '1.2-2' }}</small></div>
+        <div class="field span-2"><label>Concepto *</label><input name="conceptoEjec" [(ngModel)]="formEjec.concepto" maxlength="200"></div>
+        <div class="field" *ngIf="formEjec.tipo === 'EJECUCION'"><label>Compromiso previo (opcional)</label>
+          <select name="compromiso" [(ngModel)]="formEjec.compromisoId" (ngModelChange)="alElegirCompromiso()">
+            <option [ngValue]="null">Sin compromiso</option>
+            <option *ngFor="let c of compromisosPendientes" [ngValue]="c.id">#{{ c.id }} — {{ c.concepto }} (Bs {{ c.monto | number: '1.2-2' }})</option>
+          </select><small>Al ejecutarlo, el compromiso se libera y su monto no se duplica en el saldo.</small></div>
+        <div class="field" *ngIf="activos.length"><label>Activo adquirido (opcional)</label>
+          <select name="activoEjec" [(ngModel)]="formEjec.activoId"><option [ngValue]="null">Ninguno</option>
+            <option *ngFor="let a of activos" [ngValue]="a.id">{{ a.codigo }} — {{ a.nombre }}</option></select></div>
+        <div class="field span-2"><div><button class="btn-primary" (click)="registrarEjecucion()">Registrar</button></div></div>
+      </div>
+    </div>
+    <div class="alert-warn" *ngIf="!esAprobado">Solo se pueden registrar compromisos y ejecuciones en presupuestos aprobados (estado actual: {{ etiqueta(p.estado) }}).</div>
+
+    <div class="card table-wrap">
+      <h3>Movimientos</h3>
+      <table class="data">
+        <thead><tr><th>Fecha</th><th>Partida</th><th>Tipo</th><th>Concepto</th><th>Activo</th><th class="num">Monto (Bs)</th><th>Registró</th></tr></thead>
+        <tbody>
+          <tr *ngFor="let e of ejecuciones">
+            <td>{{ e.fecha | date: 'dd/MM/yyyy' }}</td><td class="mono">{{ e.partidaCodigo }}</td>
+            <td><span [class]="claseBadge(e.tipo)">{{ etiqueta(e.tipo) }}</span><span class="muted" *ngIf="e.liberado"> · liberado</span><span class="muted" *ngIf="e.compromisoId"> · de #{{ e.compromisoId }}</span></td>
+            <td>{{ e.concepto }}</td><td class="mono">{{ e.activoCodigo || '-' }}</td>
+            <td class="num">{{ e.monto | number: '1.2-2' }}</td><td>{{ e.usuario || '-' }}</td>
+          </tr>
+          <tr *ngIf="!ejecuciones.length"><td colspan="7" class="empty">Sin movimientos registrados.</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- modal partida -->
+  <div *ngIf="partidaAbierta" class="modal-backdrop" (click)="partidaAbierta = false">
+    <form class="card modal" (ngSubmit)="guardarPartida()" (click)="$event.stopPropagation()">
+      <div class="modal-header"><div><span class="eyebrow">PARTIDA</span><h2>{{ partidaEditando ? 'Editar partida' : 'Nueva partida' }}</h2></div>
+        <button type="button" class="close-button" (click)="partidaAbierta = false">&times;</button></div>
+      <div *ngIf="errorPartida" class="alert-error">{{ errorPartida }}</div>
+      <div class="form-grid2">
+        <div class="field"><label>Código *</label><input name="codigoPartida" [(ngModel)]="formPartida.codigo" maxlength="30" placeholder="Ej.: 43100"></div>
+        <div class="field"><label>Monto planificado (Bs) *</label><input name="montoPartida" type="number" step="0.01" min="0.01" [(ngModel)]="formPartida.montoPlanificado"></div>
+        <div class="field span-2"><label>Nombre *</label><input name="nombrePartida" [(ngModel)]="formPartida.nombre" maxlength="150" placeholder="Ej.: Equipos de computación"></div>
+      </div>
+      <p class="muted" style="margin-top:10px">Disponible para distribuir: Bs {{ p.sinDistribuir + (partidaEditando ? partidaEditando.montoPlanificado : 0) | number: '1.2-2' }}</p>
+      <div class="modal-actions"><button type="button" class="btn-secondary" (click)="partidaAbierta = false">Cancelar</button><button type="submit" class="btn-primary">Guardar partida</button></div>
+    </form>
+  </div>
+
+  <!-- modal monto -->
+  <div *ngIf="editandoMonto" class="modal-backdrop" (click)="editandoMonto = false">
+    <form class="card modal" (ngSubmit)="guardarMonto()" (click)="$event.stopPropagation()">
+      <div class="modal-header"><div><span class="eyebrow">PRESUPUESTO</span><h2>Monto aprobado</h2></div>
+        <button type="button" class="close-button" (click)="editandoMonto = false">&times;</button></div>
+      <div *ngIf="errorPartida" class="alert-error">{{ errorPartida }}</div>
+      <div class="field"><label>Monto aprobado (Bs)</label><input name="nuevoMonto" type="number" step="0.01" min="0.01" [(ngModel)]="nuevoMonto"></div>
+      <div class="modal-actions"><button type="button" class="btn-secondary" (click)="editandoMonto = false">Cancelar</button><button type="submit" class="btn-primary">Guardar</button></div>
+    </form>
+  </div>
+</ng-container>

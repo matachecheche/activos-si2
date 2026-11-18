@@ -1,0 +1,227 @@
+================================================================================
+SPRINT 3 - MULTIEMPRESA, PAGOS REALES Y RESPALDOS QUE FUNCIONAN
+================================================================================
+
+Este archivo resume las tres entregas nuevas del Sprint 3 y como probarlas en
+Windows, sin romper el Sprint 1 ni el Sprint 2.
+
+--------------------------------------------------------------------------------
+1. MULTIEMPRESA: VARIAS EMPRESAS CON UN SOLO LOGIN
+--------------------------------------------------------------------------------
+
+Como esta implementado
+  * Tabla `cuenta`: la identidad global de la persona (correo unico, contrasena,
+    nivel, bloqueo). Es la que inicia sesion.
+  * Tabla `usuario`: la membresia por empresa (empresa_id + rol + cuenta_id).
+    La unicidad real es (empresa_id, correo): la misma persona puede tener una
+    fila en cada empresa en la que trabaja.
+  * Cada tabla de negocio sigue con `empresa_id` y Hibernate aplica el filtro de
+    empresa en todas las consultas: los datos de una empresa nunca se mezclan
+    con los de otra.
+
+Como se usa
+  1. Entra con tu usuario normal (por ejemplo admin@uagrm.edu.bo / admin123).
+  2. En la web, arriba a la derecha (o en el menu lateral si la barra esta
+     abajo) aparece el nombre de la empresa actual: pulsalo y elige otra.
+  3. En el movil, abre el menu lateral -> "MIS EMPRESAS" -> elige la otra.
+  4. La app se recarga con los datos, el tema y los permisos de la nueva
+     empresa. No hay que volver a iniciar sesion.
+
+Usuarios de prueba
+  admin@uagrm.edu.bo   / admin123    -> Empresa Demo UAGRM y Sede Norte
+  norte@uagrm.edu.bo   / norte123    -> solo Sede Norte
+  encargado@uagrm.edu.bo / encargado123, contador@uagrm.edu.bo / contador123,
+  financiero@uagrm.edu.bo / financiero123  -> Empresa Demo UAGRM
+
+Datos de fabrica
+  El seed `database/seed_multiempresa_datos.sql` crea la segunda empresa
+  ("Empresa Demo UAGRM - Sede Norte") con sus roles, permisos, configuracion,
+  suscripcion, categorias, areas y activos, para que ninguna pantalla salga
+  vacia al cambiar de empresa.
+
+API
+  GET  /api/auth/mis-empresas     -> lista de empresas con su rol
+  POST /api/auth/cambiar-empresa  -> body { "empresaId": 2 }, devuelve token nuevo
+
+--------------------------------------------------------------------------------
+2. PASARELA DE PAGOS REAL (Mercado Pago, PayPal, Stripe o QR Simple)
+--------------------------------------------------------------------------------
+
+Regla principal: NO se simulan pagos. Si falta la credencial, la pantalla de
+suscripcion lo avisa y la contratacion falla con un error claro (HTTP 503
+"Pasarela de pagos no esta configurada"). El unico modo simulado es el
+sandbox explicito (APP_PAGOS_SANDBOX=true), que se rotula en pantalla como
+"MODO DEMOSTRACION".
+
+Variables de entorno (en Windows, antes de desplegar)
+  setx APP_PAGOS_PROVEEDOR MERCADO_PAGO
+  setx MERCADOPAGO_ACCESS_TOKEN "APP_USR-0000000000-0000-0000-0000-000000000000"
+  setx MERCADOPAGO_WEBHOOK_SECRET "la-clave-del-webhook"
+  setx APP_PAGOS_MONEDA BOB
+  setx APP_PAGOS_FACTOR_CONVERSION 1
+  setx APP_URL_PUBLICA https://tu-webapp.azurewebsites.net
+
+  Para PayPal en vez de Mercado Pago:
+  setx APP_PAGOS_PROVEEDOR PAYPAL
+  setx PAYPAL_CLIENT_ID "..."
+  setx PAYPAL_CLIENT_SECRET "..."
+  setx PAYPAL_AMBIENTE live
+
+  Para Stripe (Checkout Sessions, https://dashboard.stripe.com/apikeys):
+  setx APP_PAGOS_PROVEEDOR STRIPE
+  setx STRIPE_SECRET_KEY "sk_test_... o sk_live_..."
+  setx STRIPE_WEBHOOK_SECRET "whsec_..."   (el secreto del webhook del panel)
+  setx STRIPE_MONEDA USD
+  setx STRIPE_FACTOR_CONVERSION 6.9        (si el plan esta en bolivianos)
+
+  Para QR Simple (Red Enlace / ATC, el QR oficial e interoperable del BCB):
+  setx APP_PAGOS_PROVEEDOR QR
+  setx APP_PAGOS_QR_CLIENT_ID "..."
+  setx APP_PAGOS_QR_CLIENT_SECRET "..."
+  setx APP_PAGOS_QR_ID_ESTABLECIMIENTO 422717
+  setx APP_PAGOS_QR_NOMBRE_ESTABLECIMIENTO "Activos Fijos"
+  setx APP_PAGOS_QR_BASE_URL https://atcgwapitest.redenlace.com.bo/sandbox
+  setx APP_PAGOS_QR_WEBHOOK_KEY x-api-key
+  setx APP_PAGOS_QR_WEBHOOK_VALUE "una-clave-que-solo-conozcas-tu"
+  En produccion la URL base es https://api.redenlace.com.bo
+
+  Si la pasarela cobra en dolares y el plan esta en bolivianos:
+  setx APP_PAGOS_MONEDA USD
+  setx APP_PAGOS_FACTOR_CONVERSION 6.9
+
+Como queda configurado en Azure
+  `python desplegar_azure.py` lee esas variables y las guarda en App Service
+  (cifradas en reposo). El script te avisa:
+    - "Pasarela de pagos: Mercado Pago configurado en App Service."  -> listo
+    - "Pasarela de pagos SIN CONFIGURAR: ..." -> falta la credencial
+  Para cambiar las variables sin volver a desplegar:
+    `python desplegar_azure.py --solo-variaveis`
+
+Como funciona el cobro
+  1. "Contratar / renovar" -> el backend crea el pago PENDIENTE y llama a la API
+     del proveedor para crear el checkout real.
+  2. La web abre la URL de pago en una pestana; el movil la abre con el
+     navegador del telefono (url_launcher).
+  3. El proveedor notifica a POST /api/pagos/webhook. El backend NO se fia de
+     esa notificacion: consulta el pago en la API del proveedor y solo entonces
+     lo aprueba y extiende la suscripcion.
+  4. La suscripcion queda ACTIVA con la nueva vigencia y el cambio se registra
+     en la bitacora de auditoria.
+
+Webhook en Mercado Pago
+  URL:  https://tu-webapp.azurewebsites.net/api/pagos/webhook
+  Eventos: payment
+  Si configuras MERCADOPAGO_WEBHOOK_SECRET, el backend ademas valida la firma
+  (x-signature / x-hash). Si no lo configuras, sigue funcionando porque el pago
+  se verifica contra la API del proveedor.
+
+Webhook en Stripe
+  URL:  https://tu-webapp.azurewebsites.net/api/pagos/webhook
+  Eventos: checkout.session.completed, checkout.session.async_payment_succeeded
+  El backend valida la firma de la cabecera Stripe-Signature (t=...,v1=...
+  HMAC-SHA256 con STRIPE_WEBHOOK_SECRET, tolerancia de 5 minutos) y despues
+  consulta la sesion en la API de Stripe: el aviso nunca se aprueba solo.
+
+Webhook en QR Simple (Red Enlace / ATC)
+  URL:  https://tu-webapp.azurewebsites.net/api/pagos/webhook
+  El backend genera el QR con la URL del webhook y la clave que definiste
+  (APP_PAGOS_QR_WEBHOOK_KEY / APP_PAGOS_QR_WEBHOOK_VALUE). La notificacion se
+  valida con esa cabecera y el estado se consulta en la API de ATC
+  (PAGADO / PENDIENTE / CANCELADO / EXPIRADO). El codigo QR se muestra en la
+  web y en el movil para escanearlo con la app del banco.
+
+Elige el metodo de pago desde la pantalla de suscripcion
+  Mercado Pago, PayPal, Stripe y QR Simple aparecen en el desplegable (web y
+  movil). Si el metodo elegido no tiene credenciales, la contratacion falla con
+  HTTP 503 diciendo que credencial falta: nunca se simula el cobro.
+  Ademas, "GET /api/pagos/{referencia}" consulta el estado en la pasarela
+  (server a server), que es lo que usa el boton "Ya pague: comprobar estado".
+
+Prueba rapida sin credenciales (para ver el mensaje claro)
+  GET  /api/pagos/estado        -> configurado: false y el mensaje
+  POST /api/suscripcion/contratar -> HTTP 503 con la causa
+
+--------------------------------------------------------------------------------
+3. RESPALDOS QUE FUNCIONAN DE VERDAD
+--------------------------------------------------------------------------------
+
+  * Crear:  POST /api/respaldos
+  * Listar:  GET  /api/respaldos
+  * Bajar:   GET  /api/respaldos/{id}/descargar
+  * Restaurar: POST /api/respaldos/{id}/restaurar
+  * Programar: GET/PUT /api/respaldos/programacion
+
+Garantias
+  * El contenido del respaldo se guarda DENTRO de la base de datos
+    (`respaldo.contenido`, tipo bytea) y tambien en disco como cache. En Azure
+    el disco del contenedor es efimero: sin la copia en la base el respaldo
+    desapareceria al reiniciar.
+  * Cada respaldo guarda su SHA-256. Al restaurar se recalcula y se compara: si
+    el archivo fue alterado, la restauracion se rechaza.
+  * Antes de tocar datos se crea un respaldo de seguridad automatico.
+  * La restauracion va dentro de una transaccion: si algo falla, se revierte
+    todo y el error dice que paso.
+  * Al terminar se reajustan las secuencias de ids, para que el siguiente
+    registro no choque con uno restaurado.
+  * Las carpetas son portables (relativas al proyecto) y configurables con
+    APP_RESPALDOS_CARPETA y APP_ARCHIVOS_CARPETA.
+  * Al abrir la pantalla de respaldos, si la empresa no tiene ninguno que se
+    pueda descargar, el backend crea uno real (ya con los datos de fabrica
+    sembrados, para que restaurarlo no borre nada). Asi la pantalla nunca
+    muestra registros que den error al descargarlos.
+  * Los registros antiguos que solo guardaban la ruta del archivo (sin el
+    contenido) se marcan con "descargable: false" y la web y el movil
+    deshabilitan sus botones con el motivo: hay que crear un respaldo nuevo.
+
+--------------------------------------------------------------------------------
+COMO PROBAR TODO EN WINDOWS
+--------------------------------------------------------------------------------
+
+  1) Genera el proyecto:      python ..\generar_proyecto_sprint3.py
+  2) Base de datos + backend + web:   doble clic en iniciar_proyecto.bat
+  3) Multiempresa: entra con admin@uagrm.edu.bo / admin123 y cambia de empresa
+     con el selector de la barra superior.
+  4) Pagos: entra a "Suscripcion". Sin credenciales veras el aviso en rojo
+     ("Pasarela de pagos no configurada") y el boton de contratar devolvera el
+     error. Con credenciales, el flujo te lleva a Mercado Pago / PayPal /
+     Stripe (el checkout de Stripe se abre en el navegador) o te muestra el
+     codigo QR (QR Simple) para escanearlo con la app de tu banco.
+  5) Respaldos: entra a "Respaldos", crea uno, descargalo y restauralo.
+  6) Movil: generar_apk.bat (el APK del Sprint 3 se instala junto al del
+     Sprint 2: son aplicaciones distintas).
+
+Pruebas automaticas que puedes correr
+  Backend:  cd backend && mvn test        (34 pruebas)
+  Movil:    cd mobile && flutter test
+  Web:      cd frontend && npm test
+
+
+AGREGAR EMPRESAS (MULTIEMPRESA)
+================================
+
+1) Con la sesion iniciada (web o movil):
+   - Web: abre el selector de empresa (barra superior o menu lateral) y pulsa
+     "+ Agregar empresa".
+   - Movil: menu lateral -> "Agregar empresa".
+   Escribe los datos de la empresa nueva y el plan. Se crea con 15 dias de
+   prueba, el usuario queda como administrador y puede cambiar a ella de
+   inmediato (no hace falta volver a iniciar sesion).
+   Si el NIT ya existe, la pantalla avisa y no deja crearla (esta bien: el NIT
+   es unico por empresa).
+
+2) Sin sesion (visitante): en la pantalla de acceso, "Registra tu empresa aqui".
+
+3) Super Admin: "Administracion de plataforma" (en la web Y en el movil) lista
+   todas las empresas de la plataforma con su uso y sus limites, permite
+   suspenderlas o activarlas y **entrar a cualquiera de ellas** ("Entrar como"),
+   para trabajar con sus datos (activos, presupuestos, usuarios, respaldos).
+   Usuario: superadmin@plataforma.local / Cambiar123!
+   (la clave se cambia con la variable APP_SUPERADMIN_PASSWORD).
+
+Notas:
+- No se pide contrasena al agregar una empresa a tu cuenta: la identidad es tu
+  misma cuenta global (correo), asi que entras con el mismo login.
+- La empresa nueva arranca con 15 dias de prueba; el cobro real (Mercado Pago
+  o PayPal) se hace desde "Mi suscripcion" cuando configures la pasarela.
+- Cada empresa tiene sus datos aislados: activos, presupuestos, inventario,
+  usuarios, respaldos y bitacora son de esa empresa y de ninguna otra.

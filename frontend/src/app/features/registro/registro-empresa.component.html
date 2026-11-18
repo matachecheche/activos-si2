@@ -1,0 +1,139 @@
+<div class="registro-shell">
+  <div class="registro-hero card">
+    <span class="brand-mark">AF</span>
+    <h2>Activos Fijos <small>SaaS multiempresa</small></h2>
+    <p class="sub" *ngIf="!sesionActiva">Registra tu organización y empieza con 15 días de prueba del plan elegido. Puedes pagar la renovación al instante con <strong>Stripe</strong>, QR o transferencia bancaria, o hacerlo después desde la pantalla de suscripción.</p>
+    <p class="sub" *ngIf="sesionActiva">Agrega otra empresa a tu cuenta <strong>{{ correoSesion }}</strong>. Quedas como administrador de la nueva empresa y puedes cambiar a ella desde el selector de empresa.</p>
+  </div>
+
+  <div class="card registro-card" *ngIf="!exito">
+    <h3>Planes disponibles</h3>
+    <div class="planes">
+      <article
+        *ngFor="let plan of planes"
+        class="plan"
+        [class.plan--activo]="form.planId === plan.id"
+        (click)="seleccionarPlan(plan)"
+      >
+        <header>
+          <strong>{{ plan.nombre }}</strong>
+          <span class="precio">Bs {{ plan.precioMensual }}<small>/mes</small></span>
+        </header>
+        <ul>
+          <li>{{ plan.maxUsuarios ?? '∞' }} usuarios</li>
+          <li>{{ plan.maxActivos ?? '∞' }} activos</li>
+          <li *ngIf="plan.incluyeBi">Tablero BI</li>
+          <li *ngIf="plan.incluyeConsultasDinamicas">Consultas dinámicas</li>
+          <li *ngIf="plan.respaldoProgramado">Respaldos programados</li>
+          <li *ngIf="plan.respaldoNube">Respaldo en la nube</li>
+          <li *ngIf="plan.idiomaAdicional">Idioma es/en</li>
+        </ul>
+        <span class="check" *ngIf="form.planId === plan.id">✓ seleccionado</span>
+      </article>
+    </div>
+
+    <h3 class="seccion">Datos de la empresa y el administrador</h3>
+    <div class="alert-error" *ngIf="errorMsg">{{ errorMsg }}</div>
+    <form (ngSubmit)="onSubmit()">
+      <div class="form-grid2">
+        <div class="field">
+          <label>Razón social</label>
+          <input name="nombreEmpresa" [(ngModel)]="form.nombreEmpresa" required placeholder="Empresa Srl." />
+        </div>
+        <div class="field">
+          <label>NIT</label>
+          <input name="nit" [(ngModel)]="form.nit" required placeholder="100200300" />
+        </div>
+        <div class="field">
+          <label>Rubro</label>
+          <input name="rubro" [(ngModel)]="form.rubro" placeholder="Comercio, servicios..." />
+        </div>
+        <div class="field">
+          <label>Correo de contacto</label>
+          <input type="email" name="correoContacto" [(ngModel)]="form.correoContacto" required placeholder="contacto@empresa.com" />
+        </div>
+        <div class="field" *ngIf="!sesionActiva">
+          <label>Nombre del administrador</label>
+          <input name="nombreAdmin" [(ngModel)]="form.nombreAdmin" required placeholder="Nombre completo" />
+        </div>
+        <div class="field" *ngIf="!sesionActiva">
+          <label>Correo del administrador</label>
+          <input type="email" name="correoAdmin" [(ngModel)]="form.correoAdmin" required placeholder="admin@empresa.com" />
+        </div>
+        <div class="field" *ngIf="!sesionActiva">
+          <label>Contraseña (mín. 8, mayúscula, minúscula, número y especial)</label>
+          <input type="password" name="passwordAdmin" [(ngModel)]="form.passwordAdmin" required minlength="8" />
+        </div>
+        <div class="field" *ngIf="sesionActiva">
+          <label>Correo del administrador</label>
+          <input type="email" name="correoAdmin" [(ngModel)]="form.correoAdmin" readonly />
+        </div>
+        <div class="field">
+          <label>Meses a contratar (al renovar)</label>
+          <input type="number" name="meses" [(ngModel)]="form.meses" min="1" max="36" required />
+        </div>
+        <div class="field">
+          <label>Cómo vas a pagar (Stripe, QR o transferencia bancaria)</label>
+          <select name="metodoPago" [(ngModel)]="form.metodoPago">
+            <option value="STRIPE">Stripe (tarjeta)</option>
+            <option value="QR">QR Simple (Red Enlace)</option>
+            <option value="MERCADO_PAGO">Mercado Pago</option>
+            <option value="PAYPAL">PayPal</option>
+            <option value="TRANSFERENCIA">Transferencia bancaria</option>
+          </select>
+          <small class="muted" *ngIf="mensajeMetodo(form.metodoPago)">
+            {{ mensajeMetodo(form.metodoPago) }}
+          </small>
+        </div>
+      </div>
+      <div class="row acciones">
+        <button class="btn-primary" type="submit" [disabled]="enviando">{{ enviando ? 'Creando cuenta...' : (sesionActiva ? 'Agregar empresa a mi cuenta (15 días de prueba)' : 'Crear cuenta (15 días de prueba)') }}</button>
+        <a class="btn-secondary" routerLink="/login" *ngIf="!sesionActiva">Volver al acceso</a>
+      </div>
+    </form>
+  </div>
+
+  <div class="card registro-exito" *ngIf="exito">
+    <div class="ok-badge">✓</div>
+    <h3>Empresa registrada</h3>
+    <p class="sub">Tu workspace está activo con <strong>{{ exito.plan }}</strong> hasta el {{ exito.vencimiento | date:'shortDate' }}. Paga la renovación ahora o luego desde la pantalla de suscripción.</p>
+
+    <!-- Ronda 11: cobro abierto al crear la empresa -->
+    <div class="alert-warn" *ngIf="exito.mensajePago">
+      <strong>No se pudo abrir el cobro:</strong> {{ exito.mensajePago }}
+    </div>
+
+    <div class="card card--qr" *ngIf="exito.qrImagen">
+      <h3>Paga con el código QR</h3>
+      <p class="sub">Escanea el código con la app de tu banco. La suscripción se activa al confirmarse el pago.</p>
+      <img class="qr-imagen" [src]="exito.qrImagen" alt="Codigo QR de pago" />
+    </div>
+
+    <div class="card" *ngIf="exito.datosBancarios">
+      <h3>Datos para la transferencia bancaria</h3>
+      <dl class="resumen">
+        <dt>Banco</dt><dd>{{ exito.datosBancarios['banco'] || '—' }}</dd>
+        <dt>Cuenta</dt><dd class="mono">{{ exito.datosBancarios['cuenta'] || '—' }}</dd>
+        <dt>Titular</dt><dd>{{ exito.datosBancarios['titular'] || '—' }}</dd>
+        <dt>NIT / CI</dt><dd>{{ exito.datosBancarios['nit'] || '—' }}</dd>
+        <dt>Sucursal</dt><dd>{{ exito.datosBancarios['sucursal'] || '—' }}</dd>
+        <dt>Monto</dt><dd>Bs {{ exito.monto }}</dd>
+        <dt>Referencia</dt><dd class="mono">{{ exito.referenciaPago }}</dd>
+      </dl>
+      <p class="sub" *ngIf="exito.instrucciones">{{ exito.instrucciones }}</p>
+    </div>
+
+    <div class="row acciones" *ngIf="exito.checkoutUrl">
+      <a class="btn-primary" [href]="exito.checkoutUrl" target="_blank" rel="noopener">Pagar ahora con {{ exito.metodoPago }}</a>
+    </div>
+    <dl class="resumen">
+      <dt>Empresa</dt><dd>{{ exito.nombreEmpresa }}</dd>
+      <dt>Plan</dt><dd>{{ exito.plan }}</dd>
+      <dt>Prueba gratuita hasta</dt><dd>{{ exito.vencimiento | date:'shortDate' }}</dd>
+      <dt>Referencia</dt><dd class="mono">{{ exito.referenciaPago }}</dd>
+      <dt>Correo administrador</dt><dd>{{ exito.correoAdmin }}</dd>
+    </dl>
+    <a class="btn-primary" routerLink="/login" *ngIf="!sesionActiva">Ir a iniciar sesión</a>
+    <button class="btn-primary" *ngIf="sesionActiva" (click)="irAMiEmpresa()">Ir a mi empresa</button>
+  </div>
+</div>

@@ -1,0 +1,56 @@
+ACTIVOS-FIJOS-BACKUP-V1
+empresaId=0
+fecha=2026-10-28T13:13:13.135626100
+## rol
+{"id":6,"nombre":"SUPER_ADMIN","activo":true,"descripcion":"Super administrador de la plataforma SaaS","empresa_id":0,"es_sistema":true}
+## rol_permiso
+{"rol_id":6,"permiso_id":1}
+{"rol_id":6,"permiso_id":2}
+{"rol_id":6,"permiso_id":3}
+{"rol_id":6,"permiso_id":4}
+{"rol_id":6,"permiso_id":5}
+{"rol_id":6,"permiso_id":6}
+{"rol_id":6,"permiso_id":7}
+{"rol_id":6,"permiso_id":8}
+{"rol_id":6,"permiso_id":9}
+{"rol_id":6,"permiso_id":10}
+{"rol_id":6,"permiso_id":11}
+{"rol_id":6,"permiso_id":12}
+{"rol_id":6,"permiso_id":13}
+{"rol_id":6,"permiso_id":14}
+{"rol_id":6,"permiso_id":15}
+{"rol_id":6,"permiso_id":16}
+{"rol_id":6,"permiso_id":17}
+{"rol_id":6,"permiso_id":18}
+{"rol_id":6,"permiso_id":19}
+{"rol_id":6,"permiso_id":20}
+{"rol_id":6,"permiso_id":21}
+{"rol_id":6,"permiso_id":22}
+{"rol_id":6,"permiso_id":23}
+{"rol_id":6,"permiso_id":24}
+{"rol_id":6,"permiso_id":25}
+{"rol_id":6,"permiso_id":26}
+{"rol_id":6,"permiso_id":27}
+{"rol_id":6,"permiso_id":28}
+{"rol_id":6,"permiso_id":29}
+{"rol_id":6,"permiso_id":30}
+## usuario
+{"id":1,"nombre":"Super Administrador","correo":"superadmin@plataforma.local","password":"$2a$12$yhCykKy/iwfGa0N9MrQsrO2SKqyaDjTZd6ZjWssCv51FSxVqZk8fK","rol_id":6,"intentos_fallidos":0,"bloqueado_hasta":null,"activo":true,"cuenta_id":5,"empresa_id":0,"nivel":"SUPER_ADMIN"}
+## categoria
+## area
+## ubicacion
+## activo
+## asignacion
+## historial_estado_activo
+## depreciacion_activo
+## mantenimiento
+## presupuesto
+## partida_presupuestaria
+## ejecucion_presupuestaria
+## consulta_guardada
+## configuracion_empresa
+## programacion_respaldo
+## verificacion_inventario
+{"id":7,"activo_id":1,"empresa_id":0,"fecha_hora":"2026-10-28T17:12:16.455+00:00","foto_url":"","latitud":null,"longitud":null,"observacion":"","precision_m":null,"resultado":"ENCONTRADO","usuario_id":1}
+## suscripcion
+## pago

@@ -1,0 +1,134 @@
+<div class="ia-shell">
+  <div class="page-header">
+    <div>
+      <h2>Asistente de consultas IA</h2>
+      <p class="sub">Pregunta en lenguaje natural. Groq es el proveedor principal, Gemini el respaldo; sin claves configuradas responde en modo guiado con consultas seguras (solo SELECT, alcance limitado a tu empresa).</p>
+    </div>
+    <div class="header-acciones">
+      <button class="btn-secondary" type="button" (click)="probarConexion()" [disabled]="probando">
+        {{ probando ? 'Probando...' : 'Probar conexión' }}
+      </button>
+      <a class="btn-secondary" routerLink="/reportes">Constructor de consultas</a>
+    </div>
+  </div>
+
+  <div class="alert-ok" *ngIf="estadoIa && iaConfigurada">
+    IA configurada (fuente: {{ estadoIa.fuente }}). Groq: {{ estadoIa.groqConfigurado ? 'sí (' + estadoIa.modeloGroq + ')' : 'no' }}
+    · Gemini: {{ estadoIa.geminiConfigurado ? 'sí (' + estadoIa.modeloGemini + ')' : 'no' }}
+  </div>
+  <div class="alert-error" *ngIf="estadoIa && !iaConfigurada">
+    El backend no recibió ninguna clave de IA. Ejecuta <strong>configurar_ia.bat</strong> (o <code>python configurar_ia.py</code>),
+    guarda una clave de Groq o Gemini y reinicia el proyecto con iniciar_proyecto.bat.
+  </div>
+  <div class="alert-warn" *ngIf="hayFormatoInvalido">
+    <strong>Aviso:</strong> una de las claves no tiene el formato que su API acepta (Groq empieza por
+    <code>gsk_</code> y Gemini por <code>AIza</code>; los tokens <code>AQ.</code>/<code>ya29.</code> son OAuth y no sirven).
+    El proveedor principal sigue funcionando; este aviso solo afecta al respaldo. Para corregirlo, regenera la clave
+    en consola.groq.com/keys o aistudio.google.com/app/apikey y vuelve a ejecutar configurar_ia.bat.
+  </div>
+
+  <div class="card pruebas" *ngIf="pruebas">
+    <h3>Diagnóstico de conexión con las IA</h3>
+    <table class="data">
+      <thead>
+        <tr>
+          <th>Proveedor</th><th>Modelo</th><th>Resultado</th><th>Detalle</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let p of pruebas">
+          <td>{{ p.proveedor }}</td>
+          <td class="mono">{{ p.modelo }}</td>
+          <td>
+            <span class="badge" [class.badge--ok]="p.ok" [class.badge--fail]="!p.ok">
+              {{ p.ok ? 'OK' : ('HTTP ' + p.httpStatus) }}
+            </span>
+          </td>
+          <td>{{ p.detalle }}</td>
+        </tr>
+      </tbody>
+    </table>
+    <p class="pruebas__ayuda">
+      Si ambas pruebas fallan con HTTP 401/403, la clave es inválida o está revocada: vuelve a crearla y ejecuta configurar_ia.bat.
+      Si fallan con HTTP 0, es un problema de red (internet, firewall o proxy) del equipo donde corre el backend.
+    </p>
+  </div>
+
+  <div class="card chat">
+    <div class="chat__mensajes">
+      <p class="empty" *ngIf="mensajes.length === 0">Aún no hay conversación. Empieza con una pregunta o elige un ejemplo.</p>
+
+      <div *ngFor="let m of mensajes" class="mensaje" [class.mensaje--usuario]="m.rol === 'usuario'" [class.mensaje--error]="m.error">
+        <div class="mensaje__cabecera">
+          <strong>{{ m.rol === 'usuario' ? 'Tú' : 'Asistente' }}</strong>
+          <span class="modo" *ngIf="m.respuesta">{{ etiquetaModo(m.respuesta.modo, m.respuesta.diagnostico) }}</span>
+        </div>
+        <p style="white-space: pre-line;">{{ m.texto }}</p>
+
+        <ul class="diagnostico" *ngIf="m.respuesta?.diagnostico?.length">
+          <li *ngFor="let d of m.respuesta?.diagnostico">{{ d }}</li>
+        </ul>
+
+        <div class="table-wrap" *ngIf="m.respuesta?.filas?.length">
+          <table class="data">
+            <thead>
+              <tr><th *ngFor="let col of m.respuesta?.columnas">{{ col }}</th></tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let fila of m.respuesta?.filas">
+                <td *ngFor="let col of m.respuesta?.columnas">{{ fila[col] }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <details *ngIf="m.respuesta?.sqlEjecutado">
+          <summary>SQL ejecutado (generado y validado con lista blanca)</summary>
+          <code class="mono">{{ m.respuesta?.sqlEjecutado }}</code>
+        </details>
+
+        <ul class="sugerencias" *ngIf="m.respuesta?.sugerencias?.length">
+          <li *ngFor="let s of m.respuesta?.sugerencias">
+            <button class="btn-link" (click)="preguntar(s)">{{ s }}</button>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="chat__ejemplos" *ngIf="mensajes.length === 0">
+      <button class="chip" *ngFor="let e of ejemplos" (click)="preguntar(e)">{{ e }}</button>
+    </div>
+
+    <form class="chat__entrada" (ngSubmit)="preguntar()">
+      <input
+        name="pregunta"
+        [(ngModel)]="pregunta"
+        placeholder="Ej: ¿cuántos activos están en mantenimiento? (o dicta con el micrófono)"
+        [disabled]="enviando"
+      />
+      <button
+        type="button"
+        class="btn-mic"
+        [class.escuchando]="escuchando"
+        [attr.aria-label]="escuchando ? 'Detener dictado' : 'Preguntar por voz'"
+        [title]="vozDisponible ? (escuchando ? 'Detener dictado' : 'Preguntar por voz') : 'Este navegador no soporta dictado por voz'"
+        (click)="alternarVoz()"
+        [disabled]="enviando"
+      >
+        <svg *ngIf="!escuchando" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <rect x="9" y="2" width="6" height="12" rx="3"></rect>
+          <path d="M5 10a7 7 0 0 0 14 0"></path>
+          <line x1="12" y1="19" x2="12" y2="22"></line>
+          <line x1="8" y1="22" x2="16" y2="22"></line>
+        </svg>
+        <svg *ngIf="escuchando" width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+          <rect x="6" y="6" width="12" height="12" rx="2"></rect>
+        </svg>
+      </button>
+      <button class="btn-primary" type="submit" [disabled]="enviando || !pregunta.trim()">
+        {{ enviando ? '...' : 'Preguntar' }}
+      </button>
+    </form>
+    <p class="voz-aviso" *ngIf="avisoVoz">{{ avisoVoz }}</p>
+  </div>
+</div>

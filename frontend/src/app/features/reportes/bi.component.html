@@ -1,0 +1,84 @@
+<div class="stack">
+  <div class="page-header">
+    <div>
+      <h2>Tablero BI</h2>
+      <p class="sub">Indicadores clave y gráficos de la empresa. Generado: {{ data['generado'] }}</p>
+    </div>
+    <button class="btn-secondary" (click)="ngOnInit()">Actualizar</button>
+  </div>
+
+  <p class="empty" *ngIf="cargando">Cargando tablero...</p>
+  <div class="alert-error" *ngIf="errorMsg">{{ errorMsg }}</div>
+
+  <ng-container *ngIf="!cargando">
+    <section class="kpis">
+      <article class="kpi card" *ngFor="let k of kpis">
+        <span class="kpi__valor">{{ k.valor }}</span>
+        <span class="kpi__nombre">{{ k.nombre }}</span>
+      </article>
+    </section>
+
+    <div class="graficos">
+      <section class="card grafico">
+        <h3>Activos por estado</h3>
+        <div class="donut-wrap" *ngIf="segmentosDonut().length; else sinDatos">
+          <svg viewBox="0 0 180 180" class="donut">
+            <g transform="translate(90,90) rotate(-90)">
+              <circle
+                *ngFor="let s of segmentosDonut(); let i = index"
+                r="70"
+                cx="0"
+                cy="0"
+                [attr.stroke]="s.color"
+                [attr.stroke-dasharray]="dashArray(s.porcentaje)"
+                [attr.stroke-dashoffset]="dashOffset(i)"
+                class="donut-seg"
+              />
+            </g>
+          </svg>
+          <ul class="leyenda">
+            <li *ngFor="let s of segmentosDonut()">
+              <span class="punto" [style.background]="s.color"></span>
+              {{ s.etiqueta }}: {{ s.valor }} ({{ s.porcentaje | number:'1.0-1' }}%)
+            </li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="card grafico">
+        <h3>Activos por categoría</h3>
+        <div class="barras" *ngIf="categorias().length; else sinDatos">
+          <div class="barra" *ngFor="let f of categorias()">
+            <span class="barra__valor">{{ f.valor }}</span>
+            <div class="barra__relleno" [style.height.px]="alturaBarra(f.valor, categorias())"></div>
+            <span class="barra__etiqueta" [title]="f.etiqueta">{{ f.etiqueta }}</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="card grafico">
+        <h3>Depreciación mensual (últimos 12 periodos)</h3>
+        <div class="barras" *ngIf="depreciacionMensual().length; else sinDatos">
+          <div class="barra" *ngFor="let f of depreciacionMensual()">
+            <span class="barra__valor">{{ f.valor | number:'1.0-0' }}</span>
+            <div class="barra__relleno barra__relleno--azul" [style.height.px]="alturaBarra(f.valor, depreciacionMensual())"></div>
+            <span class="barra__etiqueta" [title]="f.etiqueta">{{ f.etiqueta }}</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="card grafico">
+        <h3>Presupuesto aprobado por gestión</h3>
+        <div class="barras" *ngIf="presupuestos().length; else sinDatos">
+          <div class="barra" *ngFor="let f of presupuestos()">
+            <span class="barra__valor">{{ f.valor | number:'1.0-0' }}</span>
+            <div class="barra__relleno barra__relleno--verde" [style.height.px]="alturaBarra(f.valor, presupuestos())"></div>
+            <span class="barra__etiqueta">{{ f.etiqueta }}</span>
+          </div>
+        </div>
+      </section>
+    </div>
+  </ng-container>
+
+  <ng-template #sinDatos><p class="empty">Sin datos suficientes para este gráfico.</p></ng-template>
+</div>

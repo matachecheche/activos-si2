@@ -1,0 +1,175 @@
+.shell {
+  min-height: 100vh;
+
+  &--lateral {
+    display: grid;
+    grid-template-columns: 250px 1fr;
+  }
+}
+
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px max(24px, calc((100vw - 1200px) / 2));
+  background: var(--color-secundario, #172033);
+  color: #fff;
+
+  .brand { display: flex; align-items: center; gap: 10px; }
+  .brand-mark {
+    display: grid;
+    place-items: center;
+    width: 34px;
+    height: 34px;
+    border-radius: 8px;
+    background: var(--color-primario, #2f80ed);
+    color: #fff;
+    font-size: 12px;
+    font-weight: 800;
+  }
+  .brand-logo { max-height: 38px; max-width: 130px; border-radius: 6px; background: #fff; padding: 3px; }
+  .brand strong, .brand small { display: block; }
+  .brand strong { font-size: 14px; }
+  .brand small { color: #aebbd0; font-size: 11px; }
+
+  nav {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+
+    a {
+      color: #fff;
+      text-decoration: none;
+      font-size: 14px;
+      padding: 8px 10px;
+      border-radius: 6px;
+
+      &:hover { background: rgba(255, 255, 255, .1); }
+      &.activo { background: rgba(255, 255, 255, .16); font-weight: 600; }
+    }
+
+    .user-chip { color: #cbd5e1; font-size: 12px; border-left: 1px solid #3c485c; padding-left: 12px; }
+    .user-dot { display: inline-block; width: 7px; height: 7px; background: #35c48b; border-radius: 50%; margin-right: 6px; }
+
+    .lang-button, .logout-button {
+      background: transparent;
+      border: 1px solid #fff;
+      color: #fff;
+      padding: 6px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+
+      &:hover { background: #fff; color: #1f2a37; }
+    }
+  }
+}
+
+.sidebar {
+  background: var(--color-secundario, #172033);
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  padding: 18px 14px;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
+
+  &__brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 22px;
+
+    .brand-mark {
+      display: grid;
+      place-items: center;
+      width: 34px;
+      height: 34px;
+      border-radius: 8px;
+      background: var(--color-primario, #2f80ed);
+      font-size: 12px;
+      font-weight: 800;
+    }
+    .brand-logo { max-height: 38px; max-width: 120px; border-radius: 6px; background: #fff; padding: 3px; }
+    strong, small { display: block; }
+    small { color: #aebbd0; font-size: 11px; }
+  }
+
+  &__nav {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    flex: 1;
+
+    a {
+      color: #e5e7eb;
+      text-decoration: none;
+      padding: 10px 12px;
+      border-radius: 8px;
+      font-size: 14px;
+
+      &:hover { background: rgba(255, 255, 255, .08); }
+      &.activo { background: var(--color-primario, #2f80ed); color: #fff; font-weight: 600; }
+    }
+  }
+
+  &__pie {
+    border-top: 1px solid #3c485c;
+    padding-top: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+
+    .row { gap: 8px; }
+    .user-chip { color: #cbd5e1; font-size: 12px; }
+    .user-dot { display: inline-block; width: 7px; height: 7px; background: #35c48b; border-radius: 50%; margin-right: 6px; }
+    .lang-button, .logout-button {
+      background: transparent;
+      border: 1px solid #fff;
+      color: #fff;
+      padding: 6px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      flex: 1;
+
+      &:hover { background: #fff; color: #1f2a37; }
+    }
+  }
+}
+
+.content {
+  max-width: 1160px;
+  margin: 34px auto;
+  padding: 0 24px;
+
+  &--lateral {
+    max-width: none;
+    margin: 0;
+    padding: 28px;
+    width: 100%;
+  }
+
+  &--publico {
+    max-width: none;
+    margin: 0;
+    padding: 0;
+  }
+}
+
+@media (max-width: 760px) {
+  .navbar { align-items: flex-start; gap: 14px; flex-direction: column; }
+  .navbar nav { flex-wrap: wrap; }
+  .content { margin-top: 24px; padding: 0 14px; }
+  .shell--lateral { grid-template-columns: 1fr; }
+  .sidebar { position: static; height: auto; }
+}
+
+@media (max-width: 480px) {
+  .navbar { padding: 14px 16px; }
+  .navbar nav { gap: 8px; }
+  .navbar nav a, .navbar nav button { padding: 6px 8px; font-size: 13px; }
+  .navbar nav .user-chip { padding-left: 0; border-left: 0; }
+}
+

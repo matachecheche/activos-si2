@@ -1,0 +1,56 @@
+<div class="page-header">
+  <div><h2>Presupuestos</h2><p class="sub">Presupuesto anual por gestión y área, con seguimiento de lo planificado frente a lo ejecutado.</p></div>
+  <button *ngIf="auth.hasPermission('PRESUPUESTO_CREAR')" class="btn-primary" (click)="nuevo()">+ Nuevo presupuesto</button>
+</div>
+
+<div *ngIf="error" class="alert-error">{{ error }}</div>
+<div *ngIf="ok" class="alert-ok">{{ ok }}</div>
+
+<div class="card filtros row">
+  <input class="input" type="number" name="gestion" [(ngModel)]="filtroGestion" placeholder="Gestión (ej. 2026)" (change)="cargar()">
+  <select class="input" name="area" [(ngModel)]="filtroArea" (change)="cargar()">
+    <option [ngValue]="null">Todas las áreas</option>
+    <option *ngFor="let a of areas" [ngValue]="a.id">{{ a.nombre }}</option>
+  </select>
+  <button class="btn-secondary" (click)="limpiarFiltros()">Limpiar</button>
+</div>
+
+<div class="card table-wrap">
+  <table class="data">
+    <thead><tr><th>Gestión</th><th>Área</th><th class="num">Monto aprobado</th><th class="num">Planificado</th><th class="num">Ejecutado</th><th class="num">Saldo disponible</th><th>Ejecución</th><th>Estado</th><th></th></tr></thead>
+    <tbody>
+      <tr *ngFor="let p of presupuestos">
+        <td><strong>{{ p.gestion }}</strong></td><td>{{ p.areaNombre }}</td>
+        <td class="num">{{ p.montoAprobado | number: '1.2-2' }}</td>
+        <td class="num">{{ p.montoPlanificado | number: '1.2-2' }}</td>
+        <td class="num">{{ p.ejecutado | number: '1.2-2' }}</td>
+        <td class="num"><strong>{{ p.saldoDisponible | number: '1.2-2' }}</strong></td>
+        <td><div [class]="claseProgreso(p.porcentajeEjecucion)"><i [style.width.%]="p.porcentajeEjecucion > 100 ? 100 : p.porcentajeEjecucion"></i></div><span class="muted">{{ p.porcentajeEjecucion | number: '1.0-2' }} %</span></td>
+        <td><span [class]="claseBadge(p.estado)">{{ etiqueta(p.estado) }}</span></td>
+        <td class="acciones">
+          <a class="btn-link" [routerLink]="['/presupuestos', p.id]">Abrir</a>
+          <button *ngIf="p.estado === 'BORRADOR' && auth.hasPermission('PRESUPUESTO_ELIMINAR')" class="btn-link danger" (click)="eliminar(p)">Eliminar</button>
+        </td>
+      </tr>
+      <tr *ngIf="!presupuestos.length"><td colspan="9" class="empty">No hay presupuestos para los filtros seleccionados.</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<div *ngIf="formAbierto" class="modal-backdrop" (click)="formAbierto = false">
+  <form class="card modal" (ngSubmit)="guardar()" (click)="$event.stopPropagation()">
+    <div class="modal-header"><div><span class="eyebrow">PRESUPUESTO</span><h2>Nuevo presupuesto</h2></div>
+      <button type="button" class="close-button" (click)="formAbierto = false">&times;</button></div>
+    <div *ngIf="errorForm" class="alert-error">{{ errorForm }}</div>
+    <div class="form-grid2">
+      <div class="field span-2"><label>Área *</label>
+        <select name="area" [(ngModel)]="form.areaId"><option [ngValue]="null">Seleccione...</option><option *ngFor="let a of areas" [ngValue]="a.id">{{ a.nombre }}</option></select></div>
+      <div class="field span-2" *ngIf="auth.hasPermission('PRESUPUESTO_CREAR')"><label>¿No está el área?</label>
+        <div class="row"><input name="nuevaArea" [(ngModel)]="nuevaArea" placeholder="Nueva área" maxlength="120" style="flex:1"><button type="button" class="btn-secondary" (click)="crearArea()">Agregar</button></div></div>
+      <div class="field"><label>Gestión *</label><input name="gestion" type="number" min="2000" max="2100" [(ngModel)]="form.gestion"></div>
+      <div class="field"><label>Monto aprobado (Bs) *</label><input name="monto" type="number" step="0.01" min="0.01" [(ngModel)]="form.montoAprobado"></div>
+    </div>
+    <p class="muted" style="margin-top:10px">Un área solo puede tener un presupuesto por gestión. Se crea como Borrador.</p>
+    <div class="modal-actions"><button type="button" class="btn-secondary" (click)="formAbierto = false">Cancelar</button><button type="submit" class="btn-primary">Crear presupuesto</button></div>
+  </form>
+</div>

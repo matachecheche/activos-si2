@@ -1,0 +1,74 @@
+<div class="stack">
+  <div class="page-header">
+    <div>
+      <h2>Bitácora de auditoría</h2>
+      <p class="sub">Registro inmutable: la base de datos rechaza cualquier actualización o borrado. Cada entrada encadena un hash SHA-256 con la anterior.</p>
+    </div>
+    <button class="btn-primary" (click)="verificar()" [disabled]="verificando">
+      {{ verificando ? 'Verificando...' : 'Verificar integridad de la cadena' }}
+    </button>
+  </div>
+
+  <div class="alert-error" *ngIf="errorMsg">{{ errorMsg }}</div>
+  <div class="alert-ok" *ngIf="verificacion?.integra">
+    Cadena íntegra: los {{ total }} registros visibles y el histórico completo son consistentes (0 alterados).
+  </div>
+  <div class="alert-error" *ngIf="verificacion && !verificacion.integra">
+    ¡Alerta! Se detectaron {{ verificacion.registrosAlterados }} registros alterados. Investigue de inmediato.
+  </div>
+
+  <div class="card">
+    <div class="row filtros">
+      <label class="field">
+        <span>Usuario</span>
+        <input [(ngModel)]="filtros.usuario" placeholder="Correo o nombre" (keyup.enter)="buscar(0)" />
+      </label>
+      <label class="field">
+        <span>Acción</span>
+        <select [(ngModel)]="filtros.accion" (ngModelChange)="buscar(0)">
+          <option value="">Todas</option>
+          <option *ngFor="let a of acciones" [value]="a">{{ a }}</option>
+        </select>
+      </label>
+      <label class="field">
+        <span>Entidad</span>
+        <input [(ngModel)]="filtros.entidad" placeholder="Ej: ACTIVO" (keyup.enter)="buscar(0)" />
+      </label>
+      <button class="btn-secondary" (click)="buscar(0)">Buscar</button>
+      <button class="btn-link" (click)="limpiar()">Limpiar</button>
+    </div>
+
+    <p class="empty" *ngIf="cargando">Cargando...</p>
+    <div class="table-wrap">
+      <table class="data">
+        <thead>
+          <tr><th>Fecha</th><th>Usuario</th><th>Acción</th><th>Entidad</th><th>Detalle</th><th>IP</th><th>Hash</th></tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let b of entradas">
+            <td class="nowrap">{{ b.fechaHora | date:'short' }}</td>
+            <td>{{ b.usuarioNombre || '—' }}</td>
+            <td><span class="badge-accion">{{ b.accion }}</span></td>
+            <td class="mono">{{ b.entidad }}<span *ngIf="b.entidadId"> #{{ b.entidadId }}</span></td>
+            <td class="detalle">{{ b.detalle }}</td>
+            <td class="mono">{{ b.ip }}</td>
+            <td class="mono hash" [title]="b.hashRegistro">{{ b.hashRegistro.slice(0, 10) }}…</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="empty" *ngIf="!cargando && entradas.length === 0">No hay registros con esos filtros.</p>
+
+    <div class="paginacion" *ngIf="total > tamano">
+      <button class="btn-secondary" [disabled]="pagina === 0" (click)="buscar(pagina - 1)">Anterior</button>
+      <button
+        class="btn-secondary pagina"
+        *ngFor="let p of rangoPaginas()"
+        [class.pagina--activa]="p === pagina"
+        (click)="buscar(p)"
+      >{{ p + 1 }}</button>
+      <button class="btn-secondary" [disabled]="pagina >= totalPaginas - 1" (click)="buscar(pagina + 1)">Siguiente</button>
+      <span class="muted">Total: {{ total }}</span>
+    </div>
+  </div>
+</div>

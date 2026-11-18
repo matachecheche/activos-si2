@@ -1,0 +1,153 @@
+COMO CORRER EL PROYECTO EN TU MAQUINA
+=====================================
+
+1) Doble clic en  iniciar_proyecto.bat
+   (o en una consola:  python iniciar_proyecto.py)
+
+   El lanzador hace todo solo:
+     - busca JDK, Maven (si falta lo descarga), Node y PostgreSQL
+     - *** BORRA y recrea desde cero la base activos_fijos_db en cada arranque ***
+       (asi siempre empiezas con datos limpios; ver el punto 1b)
+     - cierra una version vieja del proyecto si sigue ocupando los puertos 8080 / 4200
+     - instala las dependencias del frontend (solo la primera vez)
+     - arranca el backend (http://localhost:8080) y el frontend (http://localhost:4200)
+     - abre el navegador
+
+   La primera vez tarda unos minutos (Maven y npm descargan dependencias).
+
+1b) BASE DE DATOS: borrado automatico en cada inicio
+   - Por defecto, cada vez que arrancas el proyecto la base se elimina y se
+     recrea desde cero con el esquema, los usuarios de prueba y DATOS
+     FICTICIOS DE FABRICA EN TODAS LAS TABLAS (roles, permisos, areas,
+     categorias, activos, asignaciones, mantenimientos, depreciaciones,
+     presupuestos, partidas, ejecuciones, pagos de suscripcion, inventario,
+     consultas, respaldos y bitacora de auditoria).
+   - El lanzador espera a que el backend termine de crear las tablas antes de
+     sembrar (si llega demasiado temprano reintenta solo) y al final imprime
+     un resumen con el conteo de filas de cada tabla; si alguna quedara vacia
+     lo veras anunciado explicitamente.
+   - Para restaurarla a mano en cualquier momento:  restaurar_bd_cero.bat
+     (o:  python restaurar_bd_cero.py). Pide confirmacion antes de borrar.
+   - Si quieres una base limpia SIN datos ficticios:
+       python iniciar_proyecto.py --sin-datos-demo
+   - Si algun dia quieres CONSERVAR tus datos entre arranques, tienes dos opciones:
+       a) lanzar una vez con:  python iniciar_proyecto.py --conservar-datos
+       b) editar iniciar_proyecto.py y poner  RESETEAR_BD_CADA_INICIO = False
+     Para forzar el borrado aun con la constante en False:
+       python iniciar_proyecto.py --resetear-bd
+
+2) Usuarios de prueba:
+     admin@uagrm.edu.bo        admin123        (ADMINISTRADOR de las DOS empresas:
+                                               "Empresa Demo UAGRM" y "Sede Norte";
+                                               puedes cambiar de empresa con el
+                                               selector de la barra superior o
+                                               con el menu lateral del movil)
+     encargado@uagrm.edu.bo    encargado123    (ENCARGADO_ACTIVOS)
+     contador@uagrm.edu.bo     contador123     (CONTADOR)
+     financiero@uagrm.edu.bo   financiero123   (RESPONSABLE_FINANCIERO)
+
+3) APP MOVIL (Flutter) - requiere Flutter instalado (https://docs.flutter.dev/get-started/install)
+     iniciar_todo_con_movil.bat   web + backend + app movil
+     iniciar_movil.bat            solo la app movil (el backend ya debe estar corriendo)
+     generar_apk.bat              genera ActivosFijos-SP3-movil.apk y lo instala si hay un celular conectado
+   El APK del Sprint 3 es una app DISTINTA (paquete com.uagrm.activos.sp3, icono "Activos Fijos SP3"):
+   se instala al lado de la del Sprint 2 en el mismo telefono y NO la actualiza.
+   El lanzador elige solo el dispositivo (celular por USB > emulador Android > Windows > Chrome) y
+   la URL del backend: celular por USB usa "adb reverse" (no depende de la WiFi); emulador usa 10.0.2.2;
+   escritorio/navegador usa localhost; por WiFi usa la IP de tu PC (se detecta; o --ip 192.168.X.X).
+   Para elegir dispositivo:  iniciar_movil.bat --dispositivo <id>   (ver ids con: flutter devices)
+
+4) ASISTENTE DE IA (opcional y gratuito)
+   Sin claves, el asistente de la pestana "Asistente IA" funciona en modo
+   guiado. Para activar el lenguaje natural con modelos reales:
+     - doble clic en  configurar_ia.bat  (o: python configurar_ia.py)
+     - pega una clave gratuita de Groq (https://console.groq.com/keys;
+       empieza por gsk_) y/o de Gemini (https://aistudio.google.com/app/apikey;
+       empieza por AIza; los tokens AQ./ya29. son OAuth y NO sirven)
+     - reinicia el proyecto con iniciar_proyecto.bat
+   Verificar: python configurar_ia.py --mostrar
+   Borrar claves: python configurar_ia.py --borrar
+   Las claves se guardan en ia_config.json (no se suben a git ni al generador).
+   El backend las toma por variable de entorno y ademas lee directamente el
+   archivo, asi que funciona aunque se ejecute el JAR fuera del lanzador.
+   EN LA NUBE (Azure): desplegar_azure.py copia la clave de ia_config.json (o
+   de las variables de Windows, o de --groq-clave) a las variables de entorno
+   de App Service y te avisa si la IA quedo configurada o en modo guiado.
+   Para cambiarla despues:  python desplegar_azure.py --solo-app
+   En la app, la pestana "Asistente IA" muestra un aviso verde si el backend
+   recibio las claves (o rojo con la solucion si sigue en modo guiado);
+   verificar_estado.bat tambien reporta las claves detectadas.
+   Si responde en modo guiado pese al aviso verde, pulsa el boton
+   "Probar conexion": hace una llamada real y te dice el motivo exacto
+   (clave rechazada, modelo retirado, limite de uso o problema de internet).
+   Los modelos viejos retirados por Groq o Gemini se sustituyen solos por
+   modelos vigentes (openai/gpt-oss-120b y gemini-3.8-flash).
+   El asistente tambien conversa: saluda, explica que hace el sistema y pide
+   aclaraciones en vez de forzar una consulta; ademas recuerda los ultimos
+   mensajes, asi que puedes hacer preguntas de seguimiento ("y los de
+   mantenimiento?"). Todo sigue siendo gratuito con los modelos de arriba.
+   Tambien puedes preguntar por voz con el microfono del cuadro de pregunta:
+   en la web funciona en Chrome/Edge (pide permiso de microfono; requiere
+   https o localhost) y en la app movil usa el reconocimiento del sistema.
+   La app movil tiene las mismas funciones que la web, incluido el
+   constructor de consultas y la exportacion de reportes.
+
+5) Para detener: detener_proyecto.bat
+
+Si algo falla: el mensaje aparece en la ventana y el detalle completo queda en la carpeta logs\
+(backend.log, frontend.log y movil.log).
+
+Importante: el frontend en modo desarrollo (npm start) usa el backend LOCAL.
+Como el navegador solo habla con http://localhost:4200 y el archivo
+frontend/proxy.conf.json redirige solo las rutas /api al backend (target fijo
+http://127.0.0.1:8080, IPv4), no hay errores CORS ni de IPv6. Los builds de
+produccion (ng build) usan rutas relativas /api porque el Angular se sirve
+desde el propio backend (mismo origen).
+
+SI EL LOGIN FALLA, LA FORMA MAS RAPIDA ES DOBLE CLIC EN:
+    verificar_estado.bat     (o: python verificar_estado.py)
+Comprueba PostgreSQL, el backend (8080) y el frontend (4200), y te muestra el
+final del log del componente que este caido.
+
+Sintomas y causas:
+  * "Http failure response ... 0 Unknown Error"
+  * "[vite] http proxy error ... ECONNREFUSED"
+  * "500 Internal Server Error" en /api/auth/login
+  => Los tres significan lo mismo: el BACKEND no esta escuchando en el puerto
+     8080 (su ventana se cerro, Maven sigue compilando, o el proceso murio).
+     El 500 lo genera el proxy del frontend cuando no alcanza el backend; no es
+     un error de tu codigo ni de la base de datos.
+
+Que hacer, en orden:
+  1. Ejecuta verificar_estado.bat y lee el diagnostico y el final de logs\backend.log.
+  2. Verifica que la ventana "Backend - activos-backend" siga abierta y que ponga
+     "Started ActivosBackendApplication". Si se cerro, vuelve a ejecutar
+     iniciar_proyecto.bat (el lanzador ahora reintenta el arranque solo una vez).
+  3. Prueba directo en el navegador:  http://localhost:8080/api/categorias
+     Debe devolver JSON o un 401/403. Si no carga, el backend no esta vivo.
+  4. Si cambiaste el puerto del backend, edita el "target" de proxy.conf.json.
+  5. Para detener procesos colgados: detener_proyecto.bat y vuelve a iniciar.
+
+Si el backend arranca pero el login responde 401/403, el problema es de
+credenciales: usa las que imprime el lanzador (admin@uagrm.edu.bo / admin123)
+o restaura la base con restaurar_bd_cero.bat.
+
+
+3) MULTIEMPRESA, PAGOS REALES Y RESPALDOS (Sprint 3)
+   - Multiempresa: el usuario admin@uagrm.edu.bo administra las dos empresas
+     de demostracion. Cambia de empresa con el selector de la web o con el
+     bloque "MIS EMPRESAS" del menu lateral del movil. Los datos de cada
+     empresa estan aislados.
+   - Pagos: la pasarela es REAL (Mercado Pago, PayPal, Stripe o QR Simple). Sin
+     credenciales la pantalla de suscripcion lo avisa y no se cobra nada (no se
+     simula). La forma mas facil de activarla es el asistente:
+         python configurar_pasarelas.py
+     (te pide las claves, las valida contra la API del proveedor y te dice que
+     URL de webhook registrar). A mano, en Windows:
+         setx MERCADOPAGO_ACCESS_TOKEN "TU_TOKEN"
+         setx MERCADOPAGO_WEBHOOK_SECRET "TU_SECRETO"
+     y vuelve a desplegar. Los detalles estan en LEEME_PASARELAS.txt
+   - Respaldos: en "Respaldos" puedes crear, descargar y restaurar. El archivo
+     queda guardado tambien dentro de la base de datos, asi que no se pierde al
+     reiniciar el servidor.
+   - Mas detalle: LEEME_MULTIEMPRESA_Y_PAGOS.txt, LEEME_PASARELAS.txt y el README.md

@@ -1,0 +1,8 @@
+.volver { display: inline-block; margin-bottom: 14px; color: #1769e0; text-decoration: none; font-size: 14px; }
+.page-header p.sub { margin-top: 6px; }
+.qr-card { display: flex; gap: 28px; align-items: center; flex-wrap: wrap; }
+.qr-vista { min-width: 240px; min-height: 240px; display: grid; place-items: center; }
+.qr-vista img { image-rendering: pixelated; border: 1px solid #e5e7eb; border-radius: 8px; }
+.qr-info { flex: 1; min-width: 260px; }
+.scroll-tabla { max-height: 420px; overflow: auto; margin-top: 10px; }
+.enlace-boton { text-decoration: none; display: inline-block; }

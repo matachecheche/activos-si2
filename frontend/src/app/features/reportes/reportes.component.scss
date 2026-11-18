@@ -1,0 +1,53 @@
+h3 {
+  margin: 18px 0 10px;
+  font-size: 15px;
+  color: #172033;
+}
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border: 1px solid #d1d5db;
+  border-radius: 999px;
+  padding: 6px 12px;
+  font-size: 13px;
+  cursor: pointer;
+  background: #fff;
+
+  &:hover { border-color: var(--color-primario, #1769e0); }
+
+  small { color: #8490a3; }
+}
+
+.filtros {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.filtro {
+  select, input {
+    padding: 8px 10px;
+    border: 1px solid #d1d5db;
+    border-radius: 7px;
+    font-size: 14px;
+  }
+
+  select:first-child { min-width: 180px; }
+  select:nth-child(2) { min-width: 130px; }
+  input { flex: 1; min-width: 160px; }
+}
+
+.acciones {
+  margin-top: 20px;
+
+  .input { max-width: 320px; }
+}

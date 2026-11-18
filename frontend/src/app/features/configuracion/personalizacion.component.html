@@ -1,0 +1,81 @@
+<div class="stack">
+  <div class="page-header">
+    <div>
+      <h2>Personalización de la empresa</h2>
+      <p class="sub">Colores de marca, logo, idioma y posición del menú. Los cambios se aplican a todos los usuarios de la empresa.</p>
+    </div>
+  </div>
+
+  <div class="alert-error" *ngIf="errorMsg">{{ errorMsg }}</div>
+  <div class="alert-ok" *ngIf="okMsg">{{ okMsg }}</div>
+
+  <div class="grid-form">
+    <div class="card">
+      <h3>Identidad visual</h3>
+      <div class="form-grid2">
+        <label class="field">
+          <span>Color primario</span>
+          <input type="color" [(ngModel)]="colorPrimario" (ngModelChange)="previsualizar()" />
+          <small class="mono">{{ colorPrimario }}</small>
+        </label>
+        <label class="field">
+          <span>Color secundario</span>
+          <input type="color" [(ngModel)]="colorSecundario" (ngModelChange)="previsualizar()" />
+          <small class="mono">{{ colorSecundario }}</small>
+        </label>
+      </div>
+
+      <h3>Logo</h3>
+      <div class="logo-row">
+        <img *ngIf="tieneLogo" [src]="service.urlLogo()" alt="Logo de la empresa" class="logo-preview" />
+        <div class="empty-box" *ngIf="!tieneLogo">Sin logo</div>
+        <div>
+          <input type="file" accept="image/png,image/jpeg,image/svg+xml" (change)="seleccionarLogo($event)" />
+          <small class="muted">Máximo 1 MB · PNG, JPG o SVG</small>
+          <div *ngIf="logoNombre" class="muted">Actual: {{ logoNombre }}</div>
+          <button class="btn-link danger" *ngIf="tieneLogo" (click)="quitarLogo()">Quitar logo</button>
+          <p class="muted" *ngIf="subiendo">Subiendo...</p>
+        </div>
+      </div>
+
+      <h3>Preferencias</h3>
+      <div class="form-grid2">
+        <label class="field">
+          <span>Idioma</span>
+          <select [(ngModel)]="idioma" (ngModelChange)="previsualizar()">
+            <option value="es">Español</option>
+            <option value="en">English</option>
+          </select>
+        </label>
+        <label class="field">
+          <span>Posición del menú</span>
+          <select [(ngModel)]="posicionMenu">
+            <option value="SUPERIOR">Barra superior</option>
+            <option value="LATERAL">Menú lateral</option>
+          </select>
+        </label>
+      </div>
+
+      <div class="row acciones">
+        <button class="btn-primary" (click)="guardar()" [disabled]="guardando">{{ guardando ? 'Guardando...' : 'Guardar personalización' }}</button>
+      </div>
+    </div>
+
+    <div class="card vista-previa">
+      <h3>Vista previa</h3>
+      <div class="demo-navbar" [class.demo-navbar--lateral]="posicionMenu === 'LATERAL'">
+        <span class="demo-brand">AF</span>
+        <nav>
+          <a class="demo-link">Activos</a>
+          <a class="demo-link">Reportes</a>
+          <a class="demo-link">IA</a>
+        </nav>
+      </div>
+      <div class="demo-botones">
+        <button class="btn-primary">Botón primario</button>
+        <button class="btn-secondary">Botón secundario</button>
+      </div>
+      <p class="muted">La vista previa refleja colores e idioma antes de guardar.</p>
+    </div>
+  </div>
+</div>

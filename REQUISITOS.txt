@@ -1,0 +1,21 @@
+REQUISITOS PARA CORRER ESTE PROYECTO EN LOCAL
+Sistema de Activos Fijos y Presupuestos - Grupo 7 (UAGRM - FICCT)
+
+Lo unico que tenes que instalar a mano (iniciar_proyecto.bat lo verifica y te dice que falta):
+
+1) Python 3.8 o superior (para el lanzador)       winget install Python.Python.3.12
+2) JDK 17 o superior (el pom pide 25; si tenes    winget install EclipseAdoptium.Temurin.25.JDK
+   otro, el lanzador compila para esa version)
+3) Node.js 18 o superior (incluye npm)            winget install OpenJS.NodeJS.LTS
+4) PostgreSQL 14 o superior con psql en el PATH   https://www.postgresql.org/download/windows/
+   (el lanzador usa usuario postgres y clave password1234 por defecto; si tu clave es otra
+    te la pide una vez y la guarda en .local_config.json)
+
+5) Flutter SDK (SOLO para la app movil)            https://docs.flutter.dev/get-started/install
+   + un celular con depuracion USB, un emulador Android, o Windows/Chrome habilitado en Flutter.
+
+Maven: si no lo tenes, el lanzador lo descarga solo (portable, en .tools\).
+Git: opcional.
+
+Para arrancar todo: doble clic en iniciar_proyecto.bat
+Para detener todo : doble clic en detener_proyecto.bat

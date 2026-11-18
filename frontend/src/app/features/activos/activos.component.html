@@ -1,0 +1,52 @@
+<div class="page-header">
+  <div><h2>Activos fijos</h2><p class="sub">Registro, estado, asignación y etiqueta QR de cada activo.</p></div>
+  <button *ngIf="auth.hasPermission('ACTIVOS_CREAR')" class="btn-primary" (click)="nuevo()">+ Nuevo activo</button>
+</div>
+
+<div *ngIf="error" class="alert-error">{{ error }}</div>
+<div *ngIf="mensaje" class="alert-ok">{{ mensaje }}</div>
+
+<div class="card toolbar">
+  <form class="row buscador" (ngSubmit)="buscarPorCodigo()">
+    <input class="input mono" name="codigo" [(ngModel)]="codigoBusqueda" placeholder="Código o lectura del QR (ACT-2026-0001)" />
+    <button type="submit" class="btn-secondary">Abrir ficha</button>
+  </form>
+  <div class="row filtros">
+    <input class="input" name="q" [(ngModel)]="q" placeholder="Filtrar por nombre, código o responsable" />
+    <select class="input" name="estado" [(ngModel)]="filtroEstado">
+      <option value="">Todos los estados</option>
+      <option *ngFor="let e of estados" [value]="e">{{ etiqueta(e) }}</option>
+    </select>
+    <select class="input" name="categoria" [(ngModel)]="filtroCategoria">
+      <option value="">Todas las categorías</option>
+      <option *ngFor="let c of categorias" [ngValue]="c.id">{{ c.nombre }}</option>
+    </select>
+  </div>
+</div>
+
+<div class="card table-wrap">
+  <table class="data">
+    <thead>
+      <tr><th>Código</th><th>Nombre</th><th>Categoría</th><th class="num">Valor (Bs)</th><th>Estado</th><th>Responsable</th><th>Ubicación</th><th></th></tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let a of filtrados">
+        <td class="mono"><a [routerLink]="['/activos', a.id]">{{ a.codigo }}</a></td>
+        <td>{{ a.nombre }}</td>
+        <td>{{ a.categoriaNombre }}</td>
+        <td class="num">{{ a.valor | number: '1.2-2' }}</td>
+        <td><span [class]="claseBadge(a.estado)">{{ a.estadoEtiqueta || etiqueta(a.estado) }}</span></td>
+        <td>{{ a.responsable?.nombre || '-' }}</td>
+        <td>{{ a.ubicacion?.nombre || '-' }}</td>
+        <td class="acciones">
+          <a class="btn-link" [routerLink]="['/activos', a.id]">Ficha</a>
+          <button *ngIf="auth.hasPermission('ACTIVOS_EDITAR')" class="btn-link" (click)="editar(a)">Editar</button>
+        </td>
+      </tr>
+      <tr *ngIf="!filtrados.length"><td colspan="8" class="empty">{{ activos.length ? 'Ningún activo coincide con los filtros.' : 'No hay activos registrados todavía.' }}</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<app-activo-form *ngIf="formularioAbierto" [activo]="activoEnEdicion" [categorias]="categorias"
+  (guardado)="alGuardar($event)" (cerrar)="formularioAbierto = false" />

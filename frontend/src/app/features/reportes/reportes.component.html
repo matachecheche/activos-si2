@@ -1,0 +1,147 @@
+<div class="stack">
+  <div class="page-header">
+    <div>
+      <h2>Reportes y consultas dinámicas</h2>
+      <p class="sub">Constructor seguro: solo entidades y campos permitidos (whitelist), sin SQL libre.</p>
+    </div>
+    <div class="row">
+      <button class="btn-secondary" (click)="exportar('pdf')">Exportar PDF</button>
+      <button class="btn-secondary" (click)="exportar('excel')">Exportar Excel</button>
+    </div>
+  </div>
+
+  <div class="alert-error" *ngIf="errorMsg">{{ errorMsg }}</div>
+
+  <div class="card">
+    <div class="form-grid2">
+      <label class="field">
+        <span>Entidad</span>
+        <select [ngModel]="entidad" (ngModelChange)="cargarEntidad($event)">
+          <option *ngFor="let t of catalogo" [value]="t.tabla">{{ t.etiqueta }} ({{ t.tabla }})</option>
+        </select>
+      </label>
+      <label class="field">
+        <span>Límite de filas</span>
+        <input type="number" min="1" max="5000" [(ngModel)]="limite" />
+      </label>
+    </div>
+
+    <p class="muted" *ngIf="tablaActual">{{ tablaActual.descripcion }}</p>
+
+    <h3>Columnas</h3>
+    <div class="chips">
+      <label class="chip" *ngFor="let c of tablaActual?.columnas">
+        <input type="checkbox" [checked]="columnasSeleccionadas.includes(c.nombre)" (change)="toggleColumna(c.nombre)" />
+        {{ c.etiqueta }} <small class="mono">{{ c.nombre }}</small>
+      </label>
+    </div>
+
+    <h3>Filtros</h3>
+    <div class="filtros">
+      <div class="filtro row" *ngFor="let f of filtros; let i = index">
+        <select [(ngModel)]="f.campo">
+          <option *ngFor="let c of tablaActual?.columnas" [value]="c.nombre">{{ c.etiqueta }}</option>
+        </select>
+        <select [(ngModel)]="f.operador">
+          <option *ngFor="let op of operadores" [value]="op">{{ op }}</option>
+        </select>
+        <input *ngIf="f.operador !== 'IS NULL' && f.operador !== 'IS NOT NULL' && f.operador !== 'BETWEEN' && f.operador !== 'IN'"
+               placeholder="Valor" [(ngModel)]="f.valor" />
+        <ng-container *ngIf="f.operador === 'BETWEEN'">
+          <input placeholder="Desde" [(ngModel)]="f.valor" />
+          <input placeholder="Hasta" [(ngModel)]="f.valorHasta" />
+        </ng-container>
+        <input *ngIf="f.operador === 'IN'" placeholder="valores separados por coma" [(ngModel)]="f.valores" />
+        <button class="btn-link danger" (click)="quitarFiltro(i)">Quitar</button>
+      </div>
+    </div>
+    <button class="btn-secondary" (click)="nuevoFiltro()">+ Agregar filtro</button>
+
+    <h3>Orden y agregación</h3>
+    <div class="form-grid2">
+      <label class="field">
+        <span>Ordenar por</span>
+        <select [(ngModel)]="ordenCampo">
+          <option value="">Sin orden</option>
+          <option *ngFor="let c of tablaActual?.columnas" [value]="c.nombre">{{ c.etiqueta }}</option>
+        </select>
+      </label>
+      <label class="field">
+        <span>Dirección</span>
+        <select [(ngModel)]="ordenDireccion">
+          <option value="ASC">Ascendente</option>
+          <option value="DESC">Descendente</option>
+        </select>
+      </label>
+      <label class="field">
+        <span>Función de agregación</span>
+        <select [(ngModel)]="agregacionFuncion">
+          <option value="">Sin agregación (listado)</option>
+          <option *ngFor="let fn of funciones" [value]="fn">{{ fn }}</option>
+        </select>
+      </label>
+      <label class="field">
+        <span>Campo de la función</span>
+        <select [(ngModel)]="agregacionCampo">
+          <option value="*">*</option>
+          <option *ngFor="let c of tablaActual?.columnas" [value]="c.nombre">{{ c.etiqueta }}</option>
+        </select>
+      </label>
+    </div>
+    <h3 *ngIf="agregacionFuncion">Agrupar por</h3>
+    <div class="chips" *ngIf="agregacionFuncion">
+      <label class="chip" *ngFor="let c of tablaActual?.columnas">
+        <input type="checkbox" [checked]="agruparPor.includes(c.nombre)" (change)="toggleAgrupacion(c.nombre)" />
+        {{ c.etiqueta }}
+      </label>
+    </div>
+
+    <div class="row acciones">
+      <button class="btn-primary" (click)="ejecutar()" [disabled]="ejecutando || columnasSeleccionadas.length === 0">
+        {{ ejecutando ? 'Ejecutando...' : 'Ejecutar consulta' }}
+      </button>
+      <input class="input" placeholder="Nombre para guardar la consulta" [(ngModel)]="nombreConsulta" />
+      <button class="btn-secondary" (click)="guardarConsulta()">Guardar consulta</button>
+    </div>
+  </div>
+
+  <div class="card" *ngIf="resultado">
+    <div class="row">
+      <h3>Resultados ({{ filasResultado().length }} filas)</h3>
+      <span class="spacer"></span>
+      <small class="mono">{{ resultado.sql }}</small>
+    </div>
+    <div class="table-wrap">
+      <table class="data">
+        <thead>
+          <tr><th *ngFor="let col of resultado.columnas">{{ col }}</th></tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let fila of filasResultado()">
+            <td *ngFor="let col of resultado.columnas">{{ fila[col] }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="empty" *ngIf="filasResultado().length === 0">La consulta no devolvió filas.</p>
+  </div>
+
+  <div class="card" *ngIf="guardadas.length">
+    <h3>Consultas guardadas</h3>
+    <div class="table-wrap">
+      <table class="data">
+        <thead><tr><th>Nombre</th><th>Entidad</th><th>Acciones</th></tr></thead>
+        <tbody>
+          <tr *ngFor="let g of guardadas">
+            <td>{{ g.nombre }}</td>
+            <td class="mono">{{ g.entidad }}</td>
+            <td class="row">
+              <button class="btn-link" (click)="ejecutarGuardada(g)">Ejecutar</button>
+              <button class="btn-link danger" (click)="eliminarGuardada(g)">Eliminar</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

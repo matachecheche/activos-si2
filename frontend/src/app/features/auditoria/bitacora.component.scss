@@ -1,0 +1,54 @@
+.filtros {
+  align-items: flex-end;
+  gap: 12px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+
+  .field { min-width: 170px; }
+  .field span { display: block; font-size: 13px; font-weight: 600; color: #526078; margin-bottom: 6px; }
+}
+
+.nowrap { white-space: nowrap; }
+
+.detalle {
+  max-width: 320px;
+  font-size: 13px;
+  color: #374151;
+}
+
+.hash {
+  max-width: 110px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 12px;
+}
+
+.badge-accion {
+  display: inline-block;
+  background: #eef2ff;
+  color: #3730a3;
+  border-radius: 6px;
+  padding: 2px 8px;
+  font-size: 12px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.paginacion {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 16px;
+  flex-wrap: wrap;
+
+  .pagina {
+    min-width: 38px;
+
+    &--activa {
+      background: var(--color-primario, #1769e0);
+      color: #fff;
+      border-color: var(--color-primario, #1769e0);
+    }
+  }
+}
